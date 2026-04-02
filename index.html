@@ -453,18 +453,30 @@ mark{background:rgba(59,130,246,.2);color:var(--accent);border-radius:2px;paddin
     </div>
     <!-- Google Sheets Sub-panel -->
     <div id="msub-panel-sheets" style="display:none;">
-      <div class="card" style="max-width:560px;margin:0 auto;">
-        <div class="card-title">📊 Google Sheets Connection</div>
+      <div class="card" style="max-width:600px;margin:0 auto;">
+        <div class="card-title">📊 Real-Time Multi-User Sync</div>
+
+        <div style="background:rgba(26,79,160,.07);border:1px solid rgba(91,141,217,.4);border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:12.5px;color:var(--text2);line-height:1.7;font-family:'DM Sans',sans-serif;">
+          <strong style="color:var(--accent2);font-family:'Roboto Serif',serif;display:block;margin-bottom:6px;">🌐 ৪ জন একসাথে কীভাবে কাজ করবে:</strong>
+          ১. নিচের Apps Script কোডটা Google Sheet-এ deploy করুন।<br>
+          ২. Web App URL paste করে <strong>"Connect & Sync"</strong> চাপুন।<br>
+          ৩. একই URL টা বাকি ৩ জনকে দিন — তারাও paste করে Connect করবে।<br>
+          ৪. যেকোনো একজন data change করলে বাকিরা <strong>৮ সেকেন্ডের মধ্যে</strong> auto-update পাবে।<br>
+          <span style="color:var(--teal);font-size:11.5px;">💡 Google Sheets-ই shared database হিসেবে কাজ করে — কোনো server লাগবে না।</span>
+        </div>
+
         <div class="fg">
           <label>Google Apps Script Web App URL</label>
           <input id="sheetsUrl" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:12px;">
-          <div class="hint">💡 Deploy the Apps Script code below in your Google Sheet, then paste the URL here.</div>
+          <div class="hint">⚠️ Deploy করার সময় "Execute as: Me" এবং "Who has access: Anyone" সিলেক্ট করতে হবে।</div>
         </div>
-        <div style="background:rgba(221,232,248,.7);border:1px solid var(--border);border-radius:8px;padding:12px;margin:12px 0;font-size:11.5px;color:var(--text2);font-family:'DM Mono',monospace;max-height:220px;overflow-y:auto;line-height:1.6;white-space:pre-wrap;user-select:all;" id="scriptCode"></div>
+
+        <div style="background:rgba(221,232,248,.7);border:1px solid var(--border);border-radius:8px;padding:12px;margin:12px 0;font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;max-height:260px;overflow-y:auto;line-height:1.6;white-space:pre-wrap;user-select:all;" id="scriptCode"></div>
+
         <div style="display:flex;justify-content:space-between;gap:9px;margin-top:12px;flex-wrap:wrap;">
-          <button class="btn btn-g" onclick="copyScript()">📋 Copy Script</button>
+          <button class="btn btn-g" onclick="copyScript()">📋 Script Copy করুন</button>
           <div style="display:flex;gap:9px;">
-            <button class="btn btn-b" onclick="syncToSheetsInline()">📤 Sync Now</button>
+            <button class="btn btn-b" onclick="syncToSheetsInline()">🔗 Connect &amp; Sync</button>
           </div>
         </div>
         <div id="syncStatusInline" style="margin-top:10px;font-size:12px;text-align:center;color:var(--muted);font-family:'DM Sans',sans-serif;"></div>
@@ -549,49 +561,120 @@ function gid(){return Date.now().toString(36)+Math.random().toString(36).substr(
 let CUSTOM_ITEMS=JSON.parse(localStorage.getItem('customItems')||'[]');
 function saveCustomItems(){localStorage.setItem('customItems',JSON.stringify(CUSTOM_ITEMS));}
 
-let D=JSON.parse(localStorage.getItem('inv7')||'null')||{
+let D={
   unassigned:[],deleted:[],
-  rupchan:[],
-  amit:[],
-  tamim:[],
-  nazrul:[],
+  rupchan:[],amit:[],tamim:[],nazrul:[],
   done:[]
 };
+
+// ── REAL-TIME MULTI-USER SYNC ──────────────────────────────────────────────
+// Architecture: Google Sheets = single source of truth (shared DB)
+// • Every save → debounced push (POST) to Apps Script → writes JSON to a
+//   hidden "JSON_STORE" sheet cell  AND  formats the visible sheets.
+// • Every 8 s → all clients pull (GET) latest JSON from Apps Script.
+// • On pull, if remote version is newer, local D is replaced and UI re-renders.
+// • "version" is a monotonically increasing timestamp (Date.now()) written on
+//   every save so clients can detect stale local state.
+// ──────────────────────────────────────────────────────────────────────────
+
+let _lastVersion = 0;      // tracks the version we last loaded
+let _pushTimer   = null;   // debounce for push
+let _pollHandle  = null;   // setInterval handle for polling
+
+function getUrl(){return localStorage.getItem('sheetsUrl')||'';}
+
 function save(){
-  localStorage.setItem('inv7',JSON.stringify(D));
-  scheduleAutoSync();
+  // Stamp current version
+  D._version = Date.now();
+  localStorage.setItem('inv7', JSON.stringify(D));
+  schedulePush();
 }
 
-let _syncTimer=null;
-function scheduleAutoSync(){
-  const url=localStorage.getItem('sheetsUrl');
-  if(!url)return;
+// ── PUSH (local → Sheets) ─────────────────────────────────────────────────
+function schedulePush(){
+  if(!getUrl()) return;
   setSyncIndicator('pending');
-  clearTimeout(_syncTimer);
-  _syncTimer=setTimeout(()=>autoSync(),3000);
+  clearTimeout(_pushTimer);
+  _pushTimer = setTimeout(pushNow, 2000);
 }
-async function autoSync(){
-  const url=localStorage.getItem('sheetsUrl');
-  if(!url)return;
+
+async function pushNow(){
+  const url = getUrl();
+  if(!url) return;
   setSyncIndicator('syncing');
   try{
-    const resp=await fetch(url,{method:'POST',body:JSON.stringify(D),headers:{'Content-Type':'text/plain'}});
-    const json=await resp.json();
-    if(json.success){setSyncIndicator('ok');setTimeout(()=>setSyncIndicator('idle'),4000);}
-    else setSyncIndicator('error');
-  }catch(err){setSyncIndicator('error');}
+    const resp = await fetch(url, {
+      method:'POST',
+      body: JSON.stringify(D),
+      headers:{'Content-Type':'text/plain'}
+    });
+    const json = await resp.json();
+    if(json.success){
+      _lastVersion = D._version;
+      setSyncIndicator('ok');
+      setTimeout(()=>setSyncIndicator('idle'),4000);
+    } else {
+      setSyncIndicator('error');
+    }
+  } catch(err){
+    setSyncIndicator('error');
+  }
 }
+
+// ── PULL (Sheets → local) ─────────────────────────────────────────────────
+async function pullFromSheets(){
+  const url = getUrl();
+  if(!url) return;
+  try{
+    // GET request to Apps Script to fetch stored JSON
+    const resp = await fetch(url + '?action=getData', {method:'GET', cache:'no-store'});
+    const text = await resp.text();
+    let remote;
+    try{ remote = JSON.parse(text); } catch(e){ return; }
+    if(!remote || typeof remote !== 'object') return;
+    if(remote.error) return; // Apps Script returned an error object
+
+    const remoteVer = remote._version || 0;
+
+    // Only update if remote is strictly newer than what we last loaded
+    if(remoteVer > _lastVersion){
+      _lastVersion = remoteVer;
+      D = remote;
+      localStorage.setItem('inv7', JSON.stringify(D));
+      renderAll();
+      setSyncIndicator('ok');
+      setTimeout(()=>setSyncIndicator('idle'), 3000);
+    }
+  } catch(err){
+    // Network error — silently ignore, will retry next poll
+  }
+}
+
+// Start / stop polling
+function startPolling(){
+  if(_pollHandle) return;
+  _pollHandle = setInterval(pullFromSheets, 8000);
+  // Immediate first pull when URL is configured
+  pullFromSheets();
+}
+function stopPolling(){
+  clearInterval(_pollHandle);
+  _pollHandle = null;
+}
+
 function setSyncIndicator(state){
   const el=document.getElementById('syncDot');
   if(!el)return;
-  const url=localStorage.getItem('sheetsUrl');
-  if(!url){el.style.display='none';return;}
+  const url=getUrl();
+  if(!url){el.style.display='none';stopPolling();return;}
   el.style.display='flex';
+  // Make sure polling is running whenever URL is set
+  if(!_pollHandle) startPolling();
   const cfg={
-    idle:   {bg:'#5b8dd9',text:'✅ Synced'},
+    idle:   {bg:'#5b8dd9',text:'✅ Live Sync ON'},
     pending:{bg:'#f9a825',text:'⏳ Saving...'},
-    syncing:{bg:'#3b82f6',text:'🔄 Syncing'},
-    ok:     {bg:'#1a4fa0',text:'✅ Synced'},
+    syncing:{bg:'#3b82f6',text:'🔄 Syncing...'},
+    ok:     {bg:'#1a4fa0',text:'✅ Updated'},
     error:  {bg:'#c62828',text:'❌ Sync Error'},
   }[state]||{bg:'#5b8dd9',text:''};
   el.style.background=cfg.bg;
@@ -866,64 +949,106 @@ function restoreDeleted(id){
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>{t.style.opacity='0';setTimeout(()=>{t.style.display='none';},300);},2800);}
 
 // ---- GOOGLE SHEETS ----
-const SCRIPT_CODE = `function doPost(e) {
-  var data = JSON.parse(e.postData.contents);
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  
-  // Headers
-  var headers = ["Sheet","#","Item Name","Serial/MAC","Status","Technician","Client ID","Ticket ID","Engineer","Remarks","Date"];
-  
-  // Clear and rewrite each sheet
-  var sheetNames = ["Rupchan","Amit","Tamim","Nazrul","Done","Unassigned","All Equipment"];
-  sheetNames.forEach(function(name) {
-    var sh = ss.getSheetByName(name) || ss.insertSheet(name);
-    sh.clearContents();
-    sh.getRange(1,1,1,headers.length).setValues([headers]);
-    sh.getRange(1,1,1,headers.length).setFontWeight("bold")
-      .setBackground("#2e7d32").setFontColor("#ffffff");
-  });
-  
-  // Write engineer data
-  ["rupchan","amit","tamim","nazrul"].forEach(function(eng) {
-    var sh = ss.getSheetByName(eng.charAt(0).toUpperCase()+eng.slice(1));
-    var rows = (data[eng]||[]).map(function(it,i) {
-      return [eng,i+1,it.name,it.serial,it.status,it.tech||"",it.client||"",it.ticket||"",eng,it.remarks||"",it.date?new Date(it.date).toLocaleString():""]; 
+const SCRIPT_CODE = `// ════════════════════════════════════════════════════════════════════
+// Inventory Dashboard — Real-Time Multi-User Apps Script
+// Deploy as: Web App → Execute as ME → Access: ANYONE (even anonymous)
+// ════════════════════════════════════════════════════════════════════
+
+var STORE_SHEET = "JSON_STORE";   // hidden sheet used as shared database
+var STORE_CELL  = "A1";           // cell that holds the full JSON string
+
+// ── doGet: clients pull latest data ──────────────────────────────────
+function doGet(e) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sh = ss.getSheetByName(STORE_SHEET);
+    if (!sh) {
+      return ContentService.createTextOutput(JSON.stringify({error:"no store"}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    var raw = sh.getRange(STORE_CELL).getValue();
+    if (!raw) {
+      return ContentService.createTextOutput(JSON.stringify({error:"empty"}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    // Return raw JSON directly (already a string)
+    return ContentService.createTextOutput(raw)
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({error:err.message}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// ── doPost: clients push updated data ────────────────────────────────
+function doPost(e) {
+  try {
+    var raw  = e.postData.contents;
+    var data = JSON.parse(raw);
+    var ss   = SpreadsheetApp.getActiveSpreadsheet();
+
+    // 1. Save full JSON to hidden store sheet (shared DB)
+    var storeSh = ss.getSheetByName(STORE_SHEET) || ss.insertSheet(STORE_SHEET);
+    storeSh.getRange(STORE_CELL).setValue(raw);
+    storeSh.hideSheet();
+
+    // 2. Format visible sheets for human readability
+    var headers = ["Sheet","#","Item Name","Serial/MAC","Status","Technician","Client ID","Ticket ID","Engineer","Remarks","Date"];
+    var sheetNames = ["Rupchan","Amit","Tamim","Nazrul","Done","Unassigned","All Equipment"];
+    sheetNames.forEach(function(name) {
+      var sh = ss.getSheetByName(name) || ss.insertSheet(name);
+      sh.clearContents();
+      sh.getRange(1,1,1,headers.length).setValues([headers]);
+      sh.getRange(1,1,1,headers.length).setFontWeight("bold")
+        .setBackground("#1a4fa0").setFontColor("#ffffff");
     });
-    if(rows.length) sh.getRange(2,1,rows.length,headers.length).setValues(rows);
-  });
-  
-  // Write done
-  var doneSh = ss.getSheetByName("Done");
-  var doneRows = (data.done||[]).map(function(it,i) {
-    return ["Done",i+1,it.name,it.serial,"Done",it.tech||"",it.client||"",it.ticket||"",it.engineer||"",it.remarks||"",it.date?new Date(it.date).toLocaleString():""];
-  });
-  if(doneRows.length) doneSh.getRange(2,1,doneRows.length,headers.length).setValues(doneRows);
-  
-  // Write unassigned
-  var unSh = ss.getSheetByName("Unassigned");
-  var unRows = (data.unassigned||[]).map(function(it,i) {
-    return ["Unassigned",i+1,it.name,it.serial,"Unassigned","","","","",it.remarks||"",""];
-  });
-  if(unRows.length) unSh.getRange(2,1,unRows.length,headers.length).setValues(unRows);
-  
-  // All Equipment sheet
-  var allSh = ss.getSheetByName("All Equipment");
-  var allRows = [];
-  ["rupchan","amit","tamim","nazrul"].forEach(function(eng) {
-    (data[eng]||[]).forEach(function(it,i) {
-      allRows.push([eng,allRows.length+1,it.name,it.serial,it.status,it.tech||"",it.client||"",it.ticket||"",eng,it.remarks||"",it.date?new Date(it.date).toLocaleString():""]);
+
+    // Engineer sheets
+    ["rupchan","amit","tamim","nazrul"].forEach(function(eng) {
+      var sh = ss.getSheetByName(eng.charAt(0).toUpperCase()+eng.slice(1));
+      var rows = (data[eng]||[]).map(function(it,i) {
+        return [eng,i+1,it.name,it.serial,it.status,it.tech||"",it.client||"",it.ticket||"",eng,it.remarks||"",it.date?new Date(it.date).toLocaleString():""];
+      });
+      if(rows.length) sh.getRange(2,1,rows.length,headers.length).setValues(rows);
     });
-  });
-  (data.done||[]).forEach(function(it) {
-    allRows.push(["Done",allRows.length+1,it.name,it.serial,"Done",it.tech||"",it.client||"",it.ticket||"",it.engineer||"",it.remarks||"",it.date?new Date(it.date).toLocaleString():""]);
-  });
-  (data.unassigned||[]).forEach(function(it) {
-    allRows.push(["Unassigned",allRows.length+1,it.name,it.serial,"Unassigned","","","","",it.remarks||"",""]); 
-  });
-  if(allRows.length) allSh.getRange(2,1,allRows.length,headers.length).setValues(allRows);
-  
-  return ContentService.createTextOutput(JSON.stringify({success:true,rows:allRows.length}))
-    .setMimeType(ContentService.MimeType.JSON);
+
+    // Done sheet
+    var doneSh = ss.getSheetByName("Done");
+    var doneRows = (data.done||[]).map(function(it,i) {
+      return ["Done",i+1,it.name,it.serial,"Done",it.tech||"",it.client||"",it.ticket||"",it.engineer||"",it.remarks||"",it.date?new Date(it.date).toLocaleString():""];
+    });
+    if(doneRows.length) doneSh.getRange(2,1,doneRows.length,headers.length).setValues(doneRows);
+
+    // Unassigned sheet
+    var unSh = ss.getSheetByName("Unassigned");
+    var unRows = (data.unassigned||[]).map(function(it,i) {
+      return ["Unassigned",i+1,it.name,it.serial,"Unassigned","","","","",it.remarks||"",""];
+    });
+    if(unRows.length) unSh.getRange(2,1,unRows.length,headers.length).setValues(unRows);
+
+    // All Equipment sheet
+    var allSh = ss.getSheetByName("All Equipment");
+    var allRows = [];
+    ["rupchan","amit","tamim","nazrul"].forEach(function(eng) {
+      (data[eng]||[]).forEach(function(it) {
+        allRows.push([eng,allRows.length+1,it.name,it.serial,it.status,it.tech||"",it.client||"",it.ticket||"",eng,it.remarks||"",it.date?new Date(it.date).toLocaleString():""]);
+      });
+    });
+    (data.done||[]).forEach(function(it) {
+      allRows.push(["Done",allRows.length+1,it.name,it.serial,"Done",it.tech||"",it.client||"",it.ticket||"",it.engineer||"",it.remarks||"",it.date?new Date(it.date).toLocaleString():""]);
+    });
+    (data.unassigned||[]).forEach(function(it) {
+      allRows.push(["Unassigned",allRows.length+1,it.name,it.serial,"Unassigned","","","","",it.remarks||"",""]);
+    });
+    if(allRows.length) allSh.getRange(2,1,allRows.length,headers.length).setValues(allRows);
+
+    return ContentService.createTextOutput(JSON.stringify({success:true,rows:allRows.length,version:data._version||0}))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({success:false,error:err.message}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 }`;
 
 function openSheetsModal(){go('manage');switchManageSub('sheets');}
@@ -944,12 +1069,14 @@ async function syncToSheetsInline(){
     const resp=await fetch(url,{method:'POST',body:JSON.stringify(D),headers:{'Content-Type':'text/plain'}});
     const json=await resp.json();
     if(json.success){
+      _lastVersion=D._version||Date.now();
       setSyncIndicator('ok');setTimeout(()=>setSyncIndicator('idle'),4000);
-      statusEl.innerHTML='<span style="color:var(--green)">✅ Sync successful! '+json.rows+' rows written.</span>';
-      toast('✅ Synced to Google Sheets!');
+      statusEl.innerHTML='<span style="color:var(--green)">✅ Sync successful! '+json.rows+' rows written. Live sync চালু হয়েছে — প্রতি ৮ সেকেন্ডে auto-refresh হবে।</span>';
+      toast('✅ Synced! Live sync চালু — সব user একই data দেখবে।');
+      startPolling();
     } else {
       setSyncIndicator('error');
-      statusEl.innerHTML='<span style="color:var(--red)">❌ Sync ব্যর্থ।</span>';
+      statusEl.innerHTML='<span style="color:var(--red)">❌ Sync ব্যর্থ। Apps Script deploy ঠিকভাবে হয়েছে কি?</span>';
     }
   }catch(err){
     setSyncIndicator('error');
@@ -961,12 +1088,29 @@ document.getElementById('sheetsModal').addEventListener('click',ev=>{});
 
 document.getElementById('doneModal').addEventListener('click',ev=>{if(ev.target===document.getElementById('doneModal'))closeDM();});
 document.getElementById('itemMgrModal').addEventListener('click',ev=>{if(ev.target===document.getElementById('itemMgrModal'))closeItemMgr();});
-setSyncIndicator('idle');
+
 // init scriptCode for when sheets panel opens
 document.getElementById('scriptCode').textContent=SCRIPT_CODE;
-// set default active tab to manage
+
+// ── STARTUP ──────────────────────────────────────────────────────────────
+// Load saved URL
+const _savedUrl = localStorage.getItem('sheetsUrl')||'';
+if(_savedUrl){
+  document.getElementById('sheetsUrl').value = _savedUrl;
+}
+
+// Load local snapshot first so UI shows immediately
+const _local = JSON.parse(localStorage.getItem('inv7')||'null');
+if(_local){ D = _local; _lastVersion = _local._version||0; }
+
+setSyncIndicator('idle');
 go('manage');
 renderAll();
+
+// If URL already configured, pull latest from Sheets right away and start polling
+if(_savedUrl){
+  startPolling();
+}
 </script>
 </body>
 </html>
