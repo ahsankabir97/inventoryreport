@@ -567,30 +567,39 @@ let D={
   done:[]
 };
 
-// ── REAL-TIME MULTI-USER SYNC ──────────────────────────────────────────────
-// Architecture: Google Sheets = single source of truth (shared DB)
-// • Every save → debounced push (POST) to Apps Script → writes JSON to a
-//   hidden "JSON_STORE" sheet cell  AND  formats the visible sheets.
-// • Every 8 s → all clients pull (GET) latest JSON from Apps Script.
-// • On pull, if remote version is newer, local D is replaced and UI re-renders.
-// • "version" is a monotonically increasing timestamp (Date.now()) written on
-//   every save so clients can detect stale local state.
-// ──────────────────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════
+// REAL-TIME MULTI-USER SYNC
+// Google Sheets = shared database (single source of truth)
+//
+// KEY RULE: কখনো local empty/পুরনো data দিয়ে remote overwrite করা যাবে না।
+//   • save() → শুধুমাত্র user নিজে কিছু করলে push হবে (_userMadeChange flag)
+//   • startup → সবসময় আগে pull করো, তারপর polling শুরু করো
+//   • pull → remote version বেশি হলেই D আপডেট হবে
+//   • push → local version remote-এর চেয়ে বেশি হলেই push হবে
+// ══════════════════════════════════════════════════════════════════════
 
-let _lastVersion = 0;      // tracks the version we last loaded
-let _pushTimer   = null;   // debounce for push
-let _pollHandle  = null;   // setInterval handle for polling
+let _lastVersion    = 0;     // সর্বশেষ যে version আমরা জানি (local বা remote)
+let _pushTimer      = null;  // debounce timer
+let _pollHandle     = null;  // polling interval
+let _userMadeChange = false; // শুধু user-triggered change হলে true
 
-function getUrl(){return localStorage.getItem('sheetsUrl')||'';}
+function getUrl(){ return localStorage.getItem('sheetsUrl')||''; }
+
+function countItems(obj){
+  // data আছে কিনা বোঝার জন্য total item count
+  return (obj.rupchan||[]).length+(obj.amit||[]).length+
+         (obj.tamim||[]).length+(obj.nazrul||[]).length+
+         (obj.unassigned||[]).length+(obj.done||[]).length;
+}
 
 function save(){
-  // Stamp current version
+  _userMadeChange = true;
   D._version = Date.now();
   localStorage.setItem('inv7', JSON.stringify(D));
   schedulePush();
 }
 
-// ── PUSH (local → Sheets) ─────────────────────────────────────────────────
+// ── PUSH ─────────────────────────────────────────────────────────────
 function schedulePush(){
   if(!getUrl()) return;
   setSyncIndicator('pending');
@@ -601,6 +610,24 @@ function schedulePush(){
 async function pushNow(){
   const url = getUrl();
   if(!url) return;
+
+  // Safety check: remote থেকে আগে latest version নাও
+  // তারপর শুধু push করো যদি আমাদের version বেশি হয়
+  let remoteVer = 0;
+  try{
+    const chk = await fetch(url+'?action=getData', {method:'GET', cache:'no-store'});
+    const txt  = await chk.text();
+    const rem  = JSON.parse(txt);
+    if(rem && !rem.error) remoteVer = rem._version||0;
+  } catch(e){ /* ignore, proceed with push */ }
+
+  // যদি remote-এ বেশি data থাকে এবং আমরা সেটা pull না করে push করতে যাচ্ছি — বন্ধ করো
+  if(remoteVer > (D._version||0)){
+    // আমাদের কাছে পুরনো version — push করব না, pull করব
+    await pullFromSheets(true);
+    return;
+  }
+
   setSyncIndicator('syncing');
   try{
     const resp = await fetch(url, {
@@ -610,9 +637,10 @@ async function pushNow(){
     });
     const json = await resp.json();
     if(json.success){
-      _lastVersion = D._version;
+      _lastVersion    = D._version;
+      _userMadeChange = false;
       setSyncIndicator('ok');
-      setTimeout(()=>setSyncIndicator('idle'),4000);
+      setTimeout(()=>setSyncIndicator('idle'), 4000);
     } else {
       setSyncIndicator('error');
     }
@@ -621,41 +649,55 @@ async function pushNow(){
   }
 }
 
-// ── PULL (Sheets → local) ─────────────────────────────────────────────────
-async function pullFromSheets(){
+// ── PULL ─────────────────────────────────────────────────────────────
+// force=true হলে version check ছাড়াই D আপডেট করে (startup-এ ব্যবহার হয়)
+async function pullFromSheets(force){
   const url = getUrl();
-  if(!url) return;
+  if(!url) return false;
   try{
-    // GET request to Apps Script to fetch stored JSON
-    const resp = await fetch(url + '?action=getData', {method:'GET', cache:'no-store'});
-    const text = await resp.text();
+    const resp   = await fetch(url+'?action=getData', {method:'GET', cache:'no-store'});
+    const text   = await resp.text();
     let remote;
-    try{ remote = JSON.parse(text); } catch(e){ return; }
-    if(!remote || typeof remote !== 'object') return;
-    if(remote.error) return; // Apps Script returned an error object
+    try{ remote = JSON.parse(text); } catch(e){ return false; }
+    if(!remote || typeof remote !== 'object' || remote.error) return false;
 
-    const remoteVer = remote._version || 0;
+    const remoteVer   = remote._version||0;
+    const remoteItems = countItems(remote);
 
-    // Only update if remote is strictly newer than what we last loaded
-    if(remoteVer > _lastVersion){
+    // আপডেট করব যদি:
+    //   a) force=true (startup pull), অথবা
+    //   b) remote version বেশি, অথবা
+    //   c) remote-এ data আছে কিন্তু local-এ নেই (নতুন user join করেছে)
+    const localItems  = countItems(D);
+    const shouldUpdate = force
+      || remoteVer > _lastVersion
+      || (remoteItems > 0 && localItems === 0 && remoteVer > 0);
+
+    if(shouldUpdate){
+      const wasEmpty = localItems === 0 && remoteItems > 0;
       _lastVersion = remoteVer;
       D = remote;
       localStorage.setItem('inv7', JSON.stringify(D));
       renderAll();
-      setSyncIndicator('ok');
+      if(wasEmpty){
+        setSyncIndicator('ok');
+        toast('✅ Shared data লোড হয়েছে!');
+      } else if(!force){
+        setSyncIndicator('ok');
+      }
       setTimeout(()=>setSyncIndicator('idle'), 3000);
+      return true;
     }
+    return false;
   } catch(err){
-    // Network error — silently ignore, will retry next poll
+    return false;
   }
 }
 
-// Start / stop polling
+// ── POLLING ───────────────────────────────────────────────────────────
 function startPolling(){
   if(_pollHandle) return;
   _pollHandle = setInterval(pullFromSheets, 8000);
-  // Immediate first pull when URL is configured
-  pullFromSheets();
 }
 function stopPolling(){
   clearInterval(_pollHandle);
@@ -664,18 +706,17 @@ function stopPolling(){
 
 function setSyncIndicator(state){
   const el=document.getElementById('syncDot');
-  if(!el)return;
+  if(!el) return;
   const url=getUrl();
-  if(!url){el.style.display='none';stopPolling();return;}
+  if(!url){ el.style.display='none'; stopPolling(); return; }
   el.style.display='flex';
-  // Make sure polling is running whenever URL is set
   if(!_pollHandle) startPolling();
   const cfg={
-    idle:   {bg:'#5b8dd9',text:'✅ Live Sync ON'},
-    pending:{bg:'#f9a825',text:'⏳ Saving...'},
-    syncing:{bg:'#3b82f6',text:'🔄 Syncing...'},
-    ok:     {bg:'#1a4fa0',text:'✅ Updated'},
-    error:  {bg:'#c62828',text:'❌ Sync Error'},
+    idle:   {bg:'#5b8dd9', text:'🟢 Live Sync'},
+    pending:{bg:'#f9a825', text:'⏳ Saving...'},
+    syncing:{bg:'#3b82f6', text:'🔄 Syncing...'},
+    ok:     {bg:'#1a4fa0', text:'✅ Updated'},
+    error:  {bg:'#c62828', text:'❌ Sync Error'},
   }[state]||{bg:'#5b8dd9',text:''};
   el.style.background=cfg.bg;
   el.querySelector('span').textContent=cfg.text;
@@ -1064,23 +1105,62 @@ async function syncToSheetsInline(){
   if(!url){statusEl.textContent='⚠️ Please enter Web App URL first.';return;}
   localStorage.setItem('sheetsUrl',url);
   setSyncIndicator('syncing');
-  statusEl.textContent='⏳ Sync হচ্ছে...';
+  statusEl.textContent='⏳ Connecting...';
+
+  // ১. আগে remote থেকে pull করো
+  let remoteData = null;
+  let remoteVer  = 0;
   try{
-    const resp=await fetch(url,{method:'POST',body:JSON.stringify(D),headers:{'Content-Type':'text/plain'}});
-    const json=await resp.json();
-    if(json.success){
-      _lastVersion=D._version||Date.now();
-      setSyncIndicator('ok');setTimeout(()=>setSyncIndicator('idle'),4000);
-      statusEl.innerHTML='<span style="color:var(--green)">✅ Sync successful! '+json.rows+' rows written. Live sync চালু হয়েছে — প্রতি ৮ সেকেন্ডে auto-refresh হবে।</span>';
-      toast('✅ Synced! Live sync চালু — সব user একই data দেখবে।');
-      startPolling();
-    } else {
+    const chk  = await fetch(url+'?action=getData',{method:'GET',cache:'no-store'});
+    const txt  = await chk.text();
+    const rem  = JSON.parse(txt);
+    if(rem && !rem.error){ remoteData=rem; remoteVer=rem._version||0; }
+  } catch(e){}
+
+  const localItems  = countItems(D);
+  const remoteItems = remoteData ? countItems(remoteData) : 0;
+
+  // ২. সিদ্ধান্ত নাও — কার data রাখব?
+  if(remoteItems > 0 && remoteVer >= (D._version||0)){
+    // Remote-এ data আছে এবং সেটা newer/same → remote data নাও
+    D = remoteData;
+    _lastVersion = remoteVer;
+    localStorage.setItem('inv7', JSON.stringify(D));
+    renderAll();
+    statusEl.innerHTML='<span style="color:var(--green)">✅ Connected! Shared data লোড হয়েছে। Live sync চালু।</span>';
+    toast('✅ Connected — shared data লোড হয়েছে!');
+    setSyncIndicator('ok');
+    setTimeout(()=>setSyncIndicator('idle'),4000);
+    startPolling();
+    return;
+  }
+
+  // ৩. Local-এ data আছে এবং remote-এ নেই বা পুরনো → push করো
+  if(localItems > 0){
+    D._version = Date.now();
+    localStorage.setItem('inv7', JSON.stringify(D));
+    try{
+      const resp=await fetch(url,{method:'POST',body:JSON.stringify(D),headers:{'Content-Type':'text/plain'}});
+      const json=await resp.json();
+      if(json.success){
+        _lastVersion=D._version;
+        setSyncIndicator('ok');setTimeout(()=>setSyncIndicator('idle'),4000);
+        statusEl.innerHTML='<span style="color:var(--green)">✅ Sync successful! '+json.rows+' rows written. Live sync চালু।</span>';
+        toast('✅ Synced! Live sync চালু — সব user একই data দেখবে।');
+        startPolling();
+      } else {
+        setSyncIndicator('error');
+        statusEl.innerHTML='<span style="color:var(--red)">❌ Sync ব্যর্থ। Apps Script deploy ঠিকভাবে হয়েছে কি?</span>';
+      }
+    }catch(err){
       setSyncIndicator('error');
-      statusEl.innerHTML='<span style="color:var(--red)">❌ Sync ব্যর্থ। Apps Script deploy ঠিকভাবে হয়েছে কি?</span>';
+      statusEl.innerHTML='<span style="color:var(--red)">❌ Error: '+err.message+'</span>';
     }
-  }catch(err){
-    setSyncIndicator('error');
-    statusEl.innerHTML='<span style="color:var(--red)">❌ Error: '+err.message+'</span>';
+  } else {
+    // দুটোতেই data নেই
+    statusEl.innerHTML='<span style="color:var(--teal)">✅ Connected. Data entry শুরু করুন।</span>';
+    setSyncIndicator('idle');
+    startPolling();
   }
 }
 async function syncToSheets(){return syncToSheetsInline();}
@@ -1092,14 +1172,13 @@ document.getElementById('itemMgrModal').addEventListener('click',ev=>{if(ev.targ
 // init scriptCode for when sheets panel opens
 document.getElementById('scriptCode').textContent=SCRIPT_CODE;
 
-// ── STARTUP ──────────────────────────────────────────────────────────────
-// Load saved URL
+// ── STARTUP ───────────────────────────────────────────────────────────────
 const _savedUrl = localStorage.getItem('sheetsUrl')||'';
 if(_savedUrl){
   document.getElementById('sheetsUrl').value = _savedUrl;
 }
 
-// Load local snapshot first so UI shows immediately
+// Local snapshot দিয়ে প্রথমে UI দেখাও (blank না থাকার জন্য)
 const _local = JSON.parse(localStorage.getItem('inv7')||'null');
 if(_local){ D = _local; _lastVersion = _local._version||0; }
 
@@ -1107,9 +1186,13 @@ setSyncIndicator('idle');
 go('manage');
 renderAll();
 
-// If URL already configured, pull latest from Sheets right away and start polling
+// URL থাকলে — Sheets থেকে latest data pull করো আগে, তারপর polling শুরু করো
 if(_savedUrl){
-  startPolling();
+  // force pull: remote data সবসময় নেব, এমনকি local-এ data থাকলেও
+  // (কারণ অন্য কেউ ইতিমধ্যে নতুন কিছু যোগ করে থাকতে পারে)
+  pullFromSheets(true).then(()=>{
+    startPolling();
+  });
 }
 </script>
 </body>
