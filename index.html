@@ -30,23 +30,23 @@
   --si-bg:rgba(26,79,160,.12); --si-tx:#1a4fa0;
   --sd-bg:rgba(0,119,182,.12);  --sd-tx:#0077b6;
   --sp-bg:rgba(239,108,0,.12); --sp-tx:#ef6c00;
+  --sidebar-w: 210px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 
-/* === BACKGROUND MESH === */
 body{
   font-family:'DM Sans',sans-serif;
   background:var(--bg);
   color:var(--text);
   min-height:100vh;
   overflow-x:hidden;
+  display:flex;
+  flex-direction:column;
   background-image:
     radial-gradient(ellipse 80% 50% at 20% 10%, rgba(59,130,246,.10) 0%, transparent 60%),
     radial-gradient(ellipse 60% 40% at 80% 80%, rgba(0,119,182,.08) 0%, transparent 55%),
     radial-gradient(ellipse 40% 30% at 60% 30%, rgba(26,79,160,.06) 0%, transparent 50%);
 }
-
-/* subtle grid overlay */
 body::before{
   content:'';position:fixed;inset:0;
   background-image:linear-gradient(rgba(59,130,246,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.025) 1px,transparent 1px);
@@ -54,96 +54,160 @@ body::before{
   pointer-events:none;z-index:0;
 }
 
-/* === NAV === */
+/* === TOP NAV === */
 .nav{
   position:sticky;top:0;z-index:100;
-  background:rgba(215,228,248,.96);
+  background:linear-gradient(135deg,rgba(18,45,100,.97) 0%,rgba(0,90,150,.95) 100%);
   backdrop-filter:blur(22px);
-  border-bottom:1.5px solid rgba(91,141,217,.55);
-  padding:0 28px;min-height:64px;
-  display:flex;align-items:center;justify-content:space-between;
-  flex-wrap:wrap;gap:6px;padding-top:10px;padding-bottom:10px;
-  box-shadow:0 2px 18px rgba(26,79,160,.08);
+  border-bottom:1.5px solid rgba(59,130,246,.35);
+  padding:0 24px;min-height:64px;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:10px;
+  box-shadow:0 4px 32px rgba(10,30,80,.45), 0 1px 0 rgba(255,255,255,.07) inset;
+  flex-shrink:0;
 }
-.nav-logo{display:flex;align-items:center;gap:11px;}
+.nav-brand{display:none;} /* logo removed */
 .nav-center{
-  position:absolute;left:50%;transform:translateX(-50%);
-  text-align:center;pointer-events:none;
-}
-.nav-icon{
-  width:36px;height:36px;border-radius:9px;
-  background:linear-gradient(135deg,#1a4fa0,#0077b6);
-  display:flex;align-items:center;justify-content:center;
-  font-size:17px;
-  box-shadow:0 0 18px rgba(26,79,160,.4),inset 0 1px 0 rgba(255,255,255,.2);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;
 }
 .nav-title{
   font-family:'Roboto Serif',serif;
-  font-size:18px;font-weight:700;letter-spacing:.3px;
-  background:linear-gradient(100deg,#1a4fa0 0%,#0077b6 100%);
+  font-size:22px;font-weight:900;letter-spacing:.6px;
+  background:linear-gradient(135deg,#ffffff 0%,#a8d4f5 60%,#60a5fa 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 18px rgba(96,165,250,.6)) drop-shadow(0 2px 8px rgba(0,0,0,.5));
   text-shadow:none;
-  filter:drop-shadow(0 2px 6px rgba(26,79,160,.35));
+  line-height:1.1;
 }
 .nav-subtitle{
-  font-family:'Roboto Serif',serif;
-  font-size:11px;font-weight:600;letter-spacing:1.5px;
-  color:var(--teal);
-  text-shadow:0 1px 4px rgba(0,119,182,.4),0 0 12px rgba(0,119,182,.2);
-  margin-top:1px;
+  font-family:'DM Sans',sans-serif;
+  font-size:10px;font-weight:600;letter-spacing:2px;
+  color:rgba(168,212,245,.7);
   text-transform:uppercase;
+  margin-top:3px;
 }
+.nav-right{display:flex;align-items:center;justify-content:flex-end;gap:10px;}
 .sw{position:relative;}
 .sw input{
   background:rgba(255,255,255,.8);
   border:1px solid var(--border);
   color:var(--text);padding:8px 14px 8px 36px;
-  border-radius:9px;font-size:13px;width:240px;outline:none;
+  border-radius:9px;font-size:13px;width:220px;outline:none;
   transition:all .2s;font-family:'DM Sans',sans-serif;
-  letter-spacing:.1px;
 }
-.sw input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow);}
-.sw input::placeholder{color:var(--muted);}
-.sw::before{content:'⌕';position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--muted);pointer-events:none;line-height:1;}
+.sw input:focus{border-color:rgba(96,165,250,.6);box-shadow:0 0 0 3px rgba(96,165,250,.15);}
+.sw input::placeholder{color:rgba(180,210,245,.55);}
+.sw::before{content:'⌕';position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:16px;color:rgba(180,210,245,.55);pointer-events:none;line-height:1;}
 
-/* === TABS === */
-.tabs{
-  background:rgba(225,236,250,.98);
-  border-bottom:1.5px solid rgba(91,141,217,.4);
-  padding:0 20px;display:flex;overflow-x:auto;scrollbar-width:none;
-  position:relative;z-index:10;
-  justify-content:flex-end;
-  box-shadow:0 2px 10px rgba(26,79,160,.05);
+/* === LAYOUT: sidebar + main === */
+.layout{
+  display:flex;
+  flex:1;
+  position:relative;
+  z-index:1;
+  min-height:0;
 }
-.tabs::-webkit-scrollbar{display:none;}
+
+/* === SIDEBAR === */
+.sidebar{
+  width:var(--sidebar-w);
+  flex-shrink:0;
+  background:linear-gradient(180deg,rgba(12,30,80,.97) 0%,rgba(8,50,110,.96) 60%,rgba(5,35,85,.97) 100%);
+  border-right:1px solid rgba(59,130,246,.2);
+  backdrop-filter:blur(14px);
+  position:sticky;
+  top:64px;
+  height:calc(100vh - 64px);
+  overflow-y:auto;
+  overflow-x:hidden;
+  padding:16px 0 24px;
+  box-shadow:4px 0 24px rgba(0,0,0,.35), inset -1px 0 0 rgba(255,255,255,.04);
+  scrollbar-width:thin;
+  z-index:50;
+}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(59,130,246,.4);border-radius:2px;}
+
+.sidebar-section{
+  font-size:9px;font-weight:800;letter-spacing:2px;
+  color:rgba(148,180,230,.5);text-transform:uppercase;
+  padding:12px 18px 6px;
+  font-family:'DM Sans',sans-serif;
+}
+.sidebar-section:first-child{padding-top:6px;}
+
 .tab{
-  padding:15px 18px;cursor:pointer;
-  font-size:11.5px;font-weight:700;color:var(--muted);
-  border-bottom:3px solid transparent;transition:all .18s;white-space:nowrap;
-  display:flex;align-items:center;gap:6px;letter-spacing:.4px;
-  font-family:'Roboto Serif',serif;text-transform:uppercase;
+  display:flex;align-items:center;gap:10px;
+  padding:11px 18px;
+  cursor:pointer;
+  font-size:12.5px;font-weight:700;
+  color:rgba(180,210,245,.75);
+  border-left:3px solid transparent;
+  transition:background .22s ease, color .22s ease, border-color .18s ease, transform .15s ease, box-shadow .22s ease;
+  white-space:nowrap;
+  font-family:'DM Sans',sans-serif;
+  letter-spacing:.3px;
+  position:relative;
+  border-radius:0 8px 8px 0;
+  margin:1px 8px 1px 0;
 }
-.tab.active{color:var(--accent2);border-bottom-color:var(--accent);background:rgba(26,79,160,.05);}
-.tab:hover:not(.active){color:var(--text2);background:rgba(26,79,160,.03);}
-.tab.deleted-tab{color:#f87171;}
-.tab.deleted-tab.active{color:#ff6b6b;border-bottom-color:#ef4444;}
+.tab:hover:not(.active){
+  background:rgba(59,130,246,.18);
+  color:#fff;
+  border-left-color:rgba(96,165,250,.6);
+  transform:translateX(3px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 2px 0 12px rgba(59,130,246,.15);
+}
+.tab.active{
+  color:#fff;
+  border-left-color:#60a5fa;
+  background:linear-gradient(90deg,rgba(59,130,246,.28) 0%,rgba(59,130,246,.08) 100%);
+  font-weight:800;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 2px 0 16px rgba(59,130,246,.2);
+}
+.tab .tab-icon{font-size:15px;width:20px;text-align:center;flex-shrink:0;filter:drop-shadow(0 0 4px rgba(96,165,250,.4));}
+.tab .tab-label{flex:1;font-weight:700;letter-spacing:.25px;}
 .badge{
-  background:var(--surface3);color:var(--muted);
-  font-size:9.5px;padding:2px 7px;border-radius:20px;
-  font-weight:800;min-width:20px;text-align:center;
+  background:rgba(255,255,255,.1);color:rgba(180,210,245,.8);
+  font-size:9px;padding:2px 7px;border-radius:20px;
+  font-weight:800;min-width:18px;text-align:center;
   font-family:'DM Mono',monospace;
+  flex-shrink:0;
+  border:1px solid rgba(255,255,255,.1);
+  transition:background .2s, color .2s;
 }
-.tab.active .badge{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(26,79,160,.3);}
-.tab.deleted-tab.active .badge{background:#ef4444;color:#fff;}
+.tab.active .badge{
+  background:rgba(96,165,250,.35);
+  color:#fff;
+  border-color:rgba(96,165,250,.4);
+  box-shadow:0 0 8px rgba(96,165,250,.3);
+}
+.tab:hover:not(.active) .badge{
+  background:rgba(96,165,250,.2);
+  color:#fff;
+}
+
+.sidebar-divider{
+  height:1px;
+  background:rgba(255,255,255,.07);
+  margin:10px 16px;
+}
+
+/* === MAIN CONTENT === */
+.main{
+  flex:1;
+  min-width:0;
+  overflow-x:hidden;
+}
 
 /* === PAGES === */
-.page{display:none;padding:24px 30px;position:relative;z-index:1;}
+.page{display:none;padding:22px 26px;position:relative;z-index:1;}
 .page.active{display:block;}
 
-/* === ENTRY CARD === */
-.entry-grid{display:grid;grid-template-columns:430px 1fr;gap:20px;align-items:start;}
-@media(max-width:920px){.entry-grid{grid-template-columns:1fr;}}
-
+/* === CARD === */
 .card{
   background:rgba(255,255,255,.92);
   border:1.5px solid rgba(91,141,217,.45);
@@ -181,33 +245,7 @@ body::before{
   background:rgba(255,255,255,1);
 }
 .fg input::placeholder,.fg textarea::placeholder{color:var(--muted);font-size:12.5px;}
-.fg .hint{font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:.1px;}
 .fg select option{background:#eef3fc;}
-
-.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
-
-/* Item Name with + button */
-.item-name-wrap{display:flex;gap:7px;align-items:flex-end;}
-.item-name-wrap .fg{flex:1;margin-bottom:0;}
-.add-item-btn{
-  height:38px;min-width:38px;padding:0 10px;
-  background:linear-gradient(135deg,#1a4fa0,#0077b6);
-  border:none;border-radius:8px;cursor:pointer;
-  color:#fff;font-size:18px;font-weight:300;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .2s;box-shadow:0 3px 10px rgba(26,79,160,.3);
-  flex-shrink:0;margin-bottom:13px;
-}
-.add-item-btn:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(26,79,160,.45);}
-.add-item-btn:active{transform:scale(.96);}
-
-.divider{
-  font-size:9.5px;color:var(--muted);
-  text-transform:uppercase;letter-spacing:.9px;font-weight:600;
-  margin:15px 0 12px;display:flex;align-items:center;gap:9px;
-  font-family:'DM Sans',sans-serif;
-}
-.divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(42,51,82,.8);}
 
 .entry-submit-btn{
   width:100%;margin-top:14px;padding:14px;
@@ -221,16 +259,6 @@ body::before{
 }
 .entry-submit-btn:hover{box-shadow:0 7px 28px rgba(26,79,160,.55);transform:translateY(-2px);}
 .entry-submit-btn:active{transform:scale(.98);}
-
-.pool-btn{
-  width:100%;margin-top:9px;padding:10px;
-  background:transparent;
-  border:1.5px dashed rgba(91,141,217,.7);
-  color:var(--muted);border-radius:8px;cursor:pointer;
-  font-size:12.5px;font-family:'DM Sans',sans-serif;
-  font-weight:500;transition:all .2s;letter-spacing:.1px;
-}
-.pool-btn:hover{border-color:var(--teal);color:var(--teal);}
 
 /* === TABLE === */
 .tbl-wrap{
@@ -287,6 +315,8 @@ tbody td{padding:11px 16px;vertical-align:middle;text-align:center;font-weight:7
 .ab.r:hover{background:var(--teal);color:#fff;border-color:var(--teal);}
 .ab.restore{color:#16a34a;border-color:rgba(22,163,74,.25);background:rgba(22,163,74,.07);}
 .ab.restore:hover{background:#16a34a;color:#fff;border-color:#16a34a;}
+.ab.danger{color:#c62828;border-color:rgba(198,40,40,.3);background:rgba(198,40,40,.08);padding:8px 18px;font-size:12.5px;}
+.ab.danger:hover{background:#c62828;color:#fff;}
 
 /* === STATS === */
 .stats{display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
@@ -312,7 +342,6 @@ tbody td{padding:11px 16px;vertical-align:middle;text-align:center;font-weight:7
 .stat.dn .vl{color:var(--sd-tx);}
 .stat.pv .vl{color:var(--sp-tx);}
 
-/* STAT DATA PANEL */
 .stat-data-panel{display:none;background:rgba(255,255,255,.9);border:1px solid var(--border);border-radius:10px;padding:15px;margin-bottom:16px;animation:fadeIn .15s ease;backdrop-filter:blur(6px);}
 .stat-data-panel.open{display:block;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
@@ -347,6 +376,8 @@ tbody td{padding:11px 16px;vertical-align:middle;text-align:center;font-weight:7
 .btn-b:hover{box-shadow:0 5px 20px rgba(26,79,160,.5);}
 .btn-g{background:rgba(221,232,248,.9);color:var(--text2);border:1px solid var(--border);}
 .btn-g:hover{color:var(--text);border-color:var(--accent);}
+.btn-red{background:linear-gradient(135deg,#c62828,#ef4444);color:#fff;box-shadow:0 3px 12px rgba(198,40,40,.25);}
+.btn-red:hover{box-shadow:0 5px 20px rgba(198,40,40,.45);}
 
 /* ITEM MANAGER MODAL */
 .item-mgr{background:rgba(255,255,255,.97);border:1px solid var(--border2);border-radius:15px;padding:26px;width:480px;max-width:95vw;animation:pop .15s ease;box-shadow:0 24px 64px rgba(26,79,160,.15);}
@@ -366,7 +397,41 @@ tbody td{padding:11px 16px;vertical-align:middle;text-align:center;font-weight:7
 
 .tag-e{display:inline-block;padding:3px 10px;border-radius:5px;font-size:10.5px;font-weight:800;letter-spacing:.4px;background:rgba(167,139,250,.14);color:var(--purple);font-family:'DM Sans',sans-serif;border:1px solid rgba(167,139,250,.2);}
 
-.deleted-banner{background:rgba(239,68,68,.07);border:1.5px solid rgba(239,68,68,.2);border-radius:12px;padding:13px 18px;margin-bottom:16px;font-size:12.5px;color:#f87171;display:flex;align-items:center;gap:10px;font-family:'DM Sans',sans-serif;font-weight:700;}
+/* Deleted panel inside manage */
+.deleted-zone{
+  background:rgba(254,226,226,.45);
+  border:1.5px solid rgba(239,68,68,.25);
+  border-radius:14px;
+  padding:20px 22px;
+  margin-top:20px;
+}
+.deleted-zone-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:14px;flex-wrap:wrap;gap:10px;
+}
+.deleted-zone-title{
+  font-family:'Roboto Serif',serif;font-size:14px;font-weight:800;
+  color:#b91c1c;display:flex;align-items:center;gap:8px;
+}
+.clear-all-btn{
+  padding:8px 18px;
+  background:linear-gradient(135deg,#b91c1c,#ef4444);
+  color:#fff;border:none;border-radius:8px;cursor:pointer;
+  font-size:12px;font-family:'Roboto Serif',serif;font-weight:700;
+  transition:all .2s;letter-spacing:.2px;
+  box-shadow:0 3px 12px rgba(185,28,28,.25);
+}
+.clear-all-btn:hover{box-shadow:0 5px 18px rgba(185,28,28,.4);transform:translateY(-1px);}
+.clear-all-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.clear-note{
+  font-size:11px;color:#ef4444;
+  font-family:'DM Sans',sans-serif;
+  background:rgba(239,68,68,.08);
+  border:1px solid rgba(239,68,68,.2);
+  border-radius:7px;padding:9px 13px;margin-bottom:14px;
+  display:flex;align-items:flex-start;gap:7px;
+  line-height:1.5;
+}
 
 #toast{display:none;position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#1a4fa0,#0077b6);color:#fff;padding:13px 28px;border-radius:12px;font-weight:800;font-size:13.5px;z-index:999;box-shadow:0 8px 32px rgba(26,79,160,.45);white-space:nowrap;opacity:1;transition:opacity .3s;font-family:'Roboto Serif',serif;letter-spacing:.2px;border:1px solid rgba(255,255,255,.2);}
 
@@ -375,150 +440,203 @@ mark{background:rgba(59,130,246,.2);color:var(--accent);border-radius:2px;paddin
 ::-webkit-scrollbar-track{background:rgba(221,232,248,.5);}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
 ::-webkit-scrollbar-thumb:hover{background:var(--accent);}
+
+/* Manage sub-tabs */
+.manage-subtabs{
+  display:flex;gap:4px;margin-bottom:20px;
+  border-bottom:2px solid rgba(91,141,217,.3);
+  padding-bottom:0;
+}
+.manage-subtab{
+  padding:10px 18px;cursor:pointer;
+  font-size:12px;font-weight:700;
+  color:var(--muted);border-bottom:3px solid transparent;
+  margin-bottom:-2px;transition:all .15s;
+  font-family:'Roboto Serif',serif;letter-spacing:.3px;
+  border-radius:6px 6px 0 0;
+}
+.manage-subtab.active{color:var(--accent2);border-bottom-color:var(--accent);background:rgba(26,79,160,.06);}
+.manage-subtab:hover:not(.active){color:var(--text2);}
+
+@media(max-width:700px){
+  .sidebar{width:54px;top:64px;height:calc(100vh - 64px);}
+  .tab .tab-label,.tab .badge,.sidebar-section{display:none;}
+  .tab{padding:12px 0;justify-content:center;margin:1px 4px 1px 0;}
+  .tab .tab-icon{width:auto;}
+  .page{padding:16px 12px;}
+}
 </style>
 </head>
 <body>
 
+<!-- TOP NAV -->
 <div class="nav">
-  <div class="nav-logo" style="visibility:hidden;pointer-events:none;">
-    <div class="nav-icon">📡</div>
-    <div class="nav-title">Inventory Dashboard</div>
-  </div>
+  <!-- left spacer (for 3-col centering) -->
+  <div></div>
+  <!-- centered title -->
   <div class="nav-center">
-    <div class="nav-title" style="font-family:'Roboto Serif',serif;font-size:26px;font-weight:900;letter-spacing:.5px;background:linear-gradient(100deg,#1a4fa0 0%,#0077b6 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 3px 10px rgba(26,79,160,.45));text-shadow:none;">Inventory Dashboard</div>
+    <div class="nav-title">Inventory Dashboard</div>
     <div class="nav-subtitle">Motijheel Zone</div>
   </div>
-  <div style="display:flex;align-items:center;gap:10px;">
+  <!-- right: sync + search -->
+  <div class="nav-right">
     <div id="syncDot" style="display:none;align-items:center;gap:5px;padding:5px 11px;border-radius:20px;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;color:#fff;transition:background .3s;"><span></span></div>
     <div class="sw">
-      <input id="sb" type="text" placeholder="Search serial / item..." oninput="renderAll()">
+      <input id="sb" type="text" placeholder="Search serial / item..." oninput="renderAll()" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);color:#fff;">
     </div>
   </div>
 </div>
 
-<div class="tabs">
-  <div class="tab active" id="tab-rupchan"    onclick="go('rupchan')">📦 Rupchan <span class="badge" id="b-rupchan">0</span></div>
-  <div class="tab"        id="tab-amit"       onclick="go('amit')">📦 Amit <span class="badge" id="b-amit">0</span></div>
-  <div class="tab"        id="tab-tamim"      onclick="go('tamim')">📦 Tamim <span class="badge" id="b-tamim">0</span></div>
-  <div class="tab"        id="tab-nazrul"     onclick="go('nazrul')">📦 Nazrul <span class="badge" id="b-nazrul">0</span></div>
-  <div class="tab"        id="tab-done"       onclick="go('done')">✅ Done <span class="badge" id="b-done">0</span></div>
-  <div class="tab"        id="tab-all"        onclick="go('all')">📋 All Equipment <span class="badge" id="b-all">0</span></div>
-  <div class="tab"        id="tab-unassigned" onclick="go('unassigned')">🔓 Unassigned <span class="badge" id="b-un">0</span></div>
-  <div class="tab deleted-tab" id="tab-deleted" onclick="go('deleted')">🗑 Deleted <span class="badge" id="b-deleted">0</span></div>
-  <div class="tab"        id="tab-manage"     onclick="go('manage')" style="margin-left:auto;">⚙️ Manage System</div>
-</div>
+<!-- MAIN LAYOUT -->
+<div class="layout">
 
-<!-- MANAGE SYSTEM PAGE -->
-<div class="page" id="page-manage">
-  <div style="margin-bottom:18px;">
-    <div style="display:flex;align-items:center;gap:12px;border-bottom:2px solid rgba(91,141,217,.4);margin-bottom:20px;padding-bottom:14px;">
-      <label style="font-family:'Roboto Serif',serif;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;white-space:nowrap;">Section:</label>
-      <div style="position:relative;">
-        <select id="manageDropdown" onchange="switchManageSub(this.value)" style="appearance:none;-webkit-appearance:none;padding:9px 38px 9px 16px;border:1.5px solid var(--border2);border-radius:9px;background:linear-gradient(135deg,#1a4fa0,#0077b6);color:#fff;font-family:'Roboto Serif',serif;font-size:13px;font-weight:700;letter-spacing:.3px;cursor:pointer;outline:none;box-shadow:0 3px 14px rgba(26,79,160,.3);transition:all .2s;min-width:180px;">
-          <option value="entry" style="background:#1a4fa0;color:#fff;">➕ Entry</option>
-          <option value="sheets" style="background:#1a4fa0;color:#fff;">📊 Google Sheets</option>
-        </select>
-        <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:#fff;font-size:12px;">▾</span>
-      </div>
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-section">Equipment</div>
+    <div class="tab active" id="tab-all"        onclick="go('all')">
+      <span class="tab-icon">📋</span><span class="tab-label">All Equipment</span><span class="badge" id="b-all">0</span>
     </div>
-    <!-- Entry Sub-panel -->
-    <div id="msub-panel-entry">
-      <div style="max-width:520px;margin:0 auto;">
-        <div class="card" style="box-shadow:0 8px 32px rgba(26,79,160,.13);">
-          <div class="card-title" style="font-size:15px;padding-bottom:16px;margin-bottom:22px;">
-            <span style="font-size:20px;">📥</span> Device Entry
-          </div>
+    <div class="tab" id="tab-unassigned" onclick="go('unassigned')">
+      <span class="tab-icon">🔓</span><span class="tab-label">Unassigned</span><span class="badge" id="b-un">0</span>
+    </div>
+    <div class="tab" id="tab-done"       onclick="go('done')">
+      <span class="tab-icon">✅</span><span class="tab-label">Done</span><span class="badge" id="b-done">0</span>
+    </div>
 
-          <!-- Item Name Row -->
-          <div class="fg" style="margin-bottom:16px;">
-            <label>Item Name</label>
-            <div style="display:flex;gap:8px;align-items:center;">
-              <input id="fn" type="text" placeholder="Select or type item name" list="ns" autocomplete="off" style="flex:1;">
-              <datalist id="ns"></datalist>
-              <button onclick="openItemMgr()" title="Add / Remove Item Names" style="height:40px;padding:0 14px;background:linear-gradient(135deg,#1a4fa0,#0077b6);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;font-family:'Roboto Serif',serif;cursor:pointer;white-space:nowrap;box-shadow:0 3px 10px rgba(26,79,160,.3);transition:all .2s;flex-shrink:0;">⚙ Manage</button>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Engineers</div>
+    <div class="tab" id="tab-rupchan"    onclick="go('rupchan')">
+      <span class="tab-icon">📦</span><span class="tab-label">Rupchan</span><span class="badge" id="b-rupchan">0</span>
+    </div>
+    <div class="tab" id="tab-amit"       onclick="go('amit')">
+      <span class="tab-icon">📦</span><span class="tab-label">Amit</span><span class="badge" id="b-amit">0</span>
+    </div>
+    <div class="tab" id="tab-tamim"      onclick="go('tamim')">
+      <span class="tab-icon">📦</span><span class="tab-label">Tamim</span><span class="badge" id="b-tamim">0</span>
+    </div>
+    <div class="tab" id="tab-nazrul"     onclick="go('nazrul')">
+      <span class="tab-icon">📦</span><span class="tab-label">Nazrul</span><span class="badge" id="b-nazrul">0</span>
+    </div>
+
+    <div class="sidebar-divider"></div>
+    <div class="tab" id="tab-manage"     onclick="go('manage')" style="margin-top:4px;">
+      <span class="tab-icon">⚙️</span><span class="tab-label">Manage System</span>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- ALL EQUIPMENT PAGE (default) -->
+    <div class="page active" id="page-all">
+      <div class="sh"><div class="st">📋 All <span>Equipment</span></div></div>
+      <div class="stats" id="allStats"></div>
+      <div class="stat-data-panel" id="allStatPanel"></div>
+      <div class="tbl-wrap" id="allWrap"></div>
+    </div>
+
+    <!-- UNASSIGNED -->
+    <div class="page" id="page-unassigned">
+      <div class="sh"><div class="st">🔓 Unassigned <span>Equipment</span></div></div>
+      <div class="tbl-wrap" id="unWrap"></div>
+    </div>
+
+    <!-- DONE -->
+    <div class="page" id="page-done">
+      <div class="sh"><div class="st">✅ Done <span>Devices</span></div></div>
+      <div class="tbl-wrap" id="doneWrap"></div>
+    </div>
+
+    <!-- ENGINEER PAGES -->
+    <div class="page" id="page-rupchan"></div>
+    <div class="page" id="page-amit"></div>
+    <div class="page" id="page-tamim"></div>
+    <div class="page" id="page-nazrul"></div>
+
+    <!-- MANAGE SYSTEM -->
+    <div class="page" id="page-manage">
+      <div class="sh"><div class="st">⚙️ Manage <span>System</span></div></div>
+
+      <div class="manage-subtabs">
+        <div class="manage-subtab active" id="msub-tab-entry"  onclick="switchManageSub('entry')">➕ Entry</div>
+        <div class="manage-subtab"        id="msub-tab-sheets" onclick="switchManageSub('sheets')">📊 Google Sheets</div>
+        <div class="manage-subtab"        id="msub-tab-deleted" onclick="switchManageSub('deleted')">🗑 Deleted <span id="b-deleted" style="background:rgba(239,68,68,.15);color:#ef4444;font-size:9px;padding:1px 6px;border-radius:10px;font-family:'DM Mono',monospace;font-weight:800;margin-left:3px;">0</span></div>
+      </div>
+
+      <!-- Entry Sub-panel -->
+      <div id="msub-panel-entry">
+        <div style="max-width:520px;">
+          <div class="card" style="box-shadow:0 8px 32px rgba(26,79,160,.13);">
+            <div class="card-title" style="font-size:15px;padding-bottom:16px;margin-bottom:22px;">
+              <span style="font-size:20px;">📥</span> Device Entry
             </div>
+            <div class="fg" style="margin-bottom:16px;">
+              <label>Item Name</label>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <input id="fn" type="text" placeholder="Select or type item name" list="ns" autocomplete="off" style="flex:1;">
+                <datalist id="ns"></datalist>
+                <button onclick="openItemMgr()" title="Add / Remove Item Names" style="height:40px;padding:0 14px;background:linear-gradient(135deg,#1a4fa0,#0077b6);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;font-family:'Roboto Serif',serif;cursor:pointer;white-space:nowrap;box-shadow:0 3px 10px rgba(26,79,160,.3);transition:all .2s;flex-shrink:0;">⚙ Manage</button>
+              </div>
+            </div>
+            <div class="fg" style="margin-bottom:16px;">
+              <label>Serial / MAC</label>
+              <textarea id="fs" rows="3" placeholder="e.g. CDTCAFC8AB57, CDTCAFC9274B"></textarea>
+            </div>
+            <div class="fg" style="margin-bottom:22px;">
+              <label>Remarks <span style="font-size:9px;opacity:.6;font-weight:400;">(optional)</span></label>
+              <input id="fr" type="text" placeholder="Any note...">
+            </div>
+            <button class="entry-submit-btn" onclick="addPool()" style="font-size:15px;padding:15px;letter-spacing:.5px;">
+              📥 &nbsp;Add to Unassigned
+            </button>
           </div>
-
-          <!-- Serial / MAC -->
-          <div class="fg" style="margin-bottom:16px;">
-            <label>Serial / MAC</label>
-            <textarea id="fs" rows="3" placeholder="e.g. CDTCAFC8AB57, CDTCAFC9274B"></textarea>
-          </div>
-
-          <!-- Remarks -->
-          <div class="fg" style="margin-bottom:22px;">
-            <label>Remarks <span style="font-size:9px;opacity:.6;font-weight:400;">(optional)</span></label>
-            <input id="fr" type="text" placeholder="Any note...">
-          </div>
-
-          <!-- Submit -->
-          <button class="entry-submit-btn" onclick="addPool()" style="font-size:15px;padding:15px;letter-spacing:.5px;">
-            📥 &nbsp;Add to Unassigned
-          </button>
         </div>
       </div>
-    </div>
-    <!-- Google Sheets Sub-panel -->
-    <div id="msub-panel-sheets" style="display:none;">
-      <div class="card" style="max-width:600px;margin:0 auto;">
-        <div class="card-title">📊 Real-Time Multi-User Sync</div>
 
-        <div style="background:rgba(26,79,160,.07);border:1px solid rgba(91,141,217,.4);border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:12.5px;color:var(--text2);line-height:1.7;font-family:'DM Sans',sans-serif;">
-          <strong style="color:var(--accent2);font-family:'Roboto Serif',serif;display:block;margin-bottom:6px;">🌐 ৪ জন একসাথে কীভাবে কাজ করবে:</strong>
-          ১. নিচের Apps Script কোডটা Google Sheet-এ deploy করুন।<br>
-          ২. Web App URL paste করে <strong>"Connect & Sync"</strong> চাপুন।<br>
-          ৩. একই URL টা বাকি ৩ জনকে দিন — তারাও paste করে Connect করবে।<br>
-          ৪. যেকোনো একজন data change করলে বাকিরা <strong>৮ সেকেন্ডের মধ্যে</strong> auto-update পাবে।<br>
-          <span style="color:var(--teal);font-size:11.5px;">💡 Google Sheets-ই shared database হিসেবে কাজ করে — কোনো server লাগবে না।</span>
-        </div>
-
-        <div class="fg">
-          <label>Google Apps Script Web App URL</label>
-          <input id="sheetsUrl" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:12px;">
-          <div class="hint">⚠️ Deploy করার সময় "Execute as: Me" এবং "Who has access: Anyone" সিলেক্ট করতে হবে।</div>
-        </div>
-
-        <div style="background:rgba(221,232,248,.7);border:1px solid var(--border);border-radius:8px;padding:12px;margin:12px 0;font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;max-height:260px;overflow-y:auto;line-height:1.6;white-space:pre-wrap;user-select:all;" id="scriptCode"></div>
-
-        <div style="display:flex;justify-content:space-between;gap:9px;margin-top:12px;flex-wrap:wrap;">
-          <button class="btn btn-g" onclick="copyScript()">📋 Script Copy করুন</button>
-          <div style="display:flex;gap:9px;">
+      <!-- Google Sheets Sub-panel -->
+      <div id="msub-panel-sheets" style="display:none;">
+        <div class="card" style="max-width:600px;">
+          <div class="card-title">📊 Real-Time Multi-User Sync</div>
+          <div style="background:rgba(26,79,160,.07);border:1px solid rgba(91,141,217,.4);border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:12.5px;color:var(--text2);line-height:1.7;font-family:'DM Sans',sans-serif;">
+            <strong style="color:var(--accent2);font-family:'Roboto Serif',serif;display:block;margin-bottom:6px;">🌐 ৪ জন একসাথে কীভাবে কাজ করবে:</strong>
+            ১. নিচের Apps Script কোডটা Google Sheet-এ deploy করুন।<br>
+            ২. Web App URL paste করে <strong>"Connect &amp; Sync"</strong> চাপুন।<br>
+            ৩. একই URL টা বাকি ৩ জনকে দিন — তারাও paste করে Connect করবে।<br>
+            ৪. যেকোনো একজন data change করলে বাকিরা <strong>৮ সেকেন্ডের মধ্যে</strong> auto-update পাবে।<br>
+            <span style="color:var(--teal);font-size:11.5px;">💡 Google Sheets-ই shared database হিসেবে কাজ করে — কোনো server লাগবে না।</span>
+          </div>
+          <div class="fg">
+            <label>Google Apps Script Web App URL</label>
+            <input id="sheetsUrl" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:12px;">
+            <div class="hint" style="font-size:11px;color:var(--muted);margin-top:4px;">⚠️ Deploy করার সময় "Execute as: Me" এবং "Who has access: Anyone" সিলেক্ট করতে হবে।</div>
+          </div>
+          <div style="background:rgba(221,232,248,.7);border:1px solid var(--border);border-radius:8px;padding:12px;margin:12px 0;font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;max-height:260px;overflow-y:auto;line-height:1.6;white-space:pre-wrap;user-select:all;" id="scriptCode"></div>
+          <div style="display:flex;justify-content:space-between;gap:9px;margin-top:12px;flex-wrap:wrap;">
+            <button class="btn btn-g" onclick="copyScript()">📋 Script Copy করুন</button>
             <button class="btn btn-b" onclick="syncToSheetsInline()">🔗 Connect &amp; Sync</button>
           </div>
+          <div id="syncStatusInline" style="margin-top:10px;font-size:12px;text-align:center;color:var(--muted);font-family:'DM Sans',sans-serif;"></div>
         </div>
-        <div id="syncStatusInline" style="margin-top:10px;font-size:12px;text-align:center;color:var(--muted);font-family:'DM Sans',sans-serif;"></div>
       </div>
-    </div>
-  </div>
-</div>
 
-<div class="page" id="page-rupchan"></div>
-<div class="page" id="page-amit"></div>
-<div class="page" id="page-tamim"></div>
-<div class="page" id="page-nazrul"></div>
+      <!-- Deleted Sub-panel -->
+      <div id="msub-panel-deleted" style="display:none;">
+        <div class="deleted-zone">
+          <div class="deleted-zone-header">
+            <div class="deleted-zone-title">🗑 Deleted Items</div>
+            <button class="clear-all-btn" id="clearAllBtn" onclick="clearAllDeleted()">🗑 Clear All from Interface</button>
+          </div>
+          <div class="clear-note">
+            ⚠️ <span><strong>"Clear All"</strong> শুধুমাত্র এই interface থেকে deleted items সরিয়ে দেবে। Google Sheets-এ Deleted sheet-এ data থেকে যাবে এবং সেখান থেকে দেখা যাবে।</span>
+          </div>
+          <div class="tbl-wrap" id="deletedWrap" style="border:none;box-shadow:none;background:transparent;"></div>
+        </div>
+      </div>
 
-<div class="page" id="page-done">
-  <div class="sh"><div class="st">✅ Done <span>Devices</span></div></div>
-  <div class="tbl-wrap" id="doneWrap"></div>
-</div>
+    </div><!-- /page-manage -->
 
-<div class="page" id="page-all">
-  <div class="sh"><div class="st">📋 All <span>Equipment</span></div></div>
-  <div class="stats" id="allStats"></div>
-  <div class="stat-data-panel" id="allStatPanel"></div>
-  <div class="tbl-wrap" id="allWrap"></div>
-</div>
-
-<div class="page" id="page-unassigned">
-  <div class="sh"><div class="st">🔓 Unassigned <span>Equipment</span></div></div>
-  <div class="tbl-wrap" id="unWrap"></div>
-</div>
-
-<div class="page" id="page-deleted">
-  <div class="sh"><div class="st">🗑 Deleted <span>Items</span></div></div>
-  <div class="deleted-banner">⚠️ Deleted items are stored here. You can Restore them back to their original location.</div>
-  <div class="tbl-wrap" id="deletedWrap"></div>
-</div>
+  </div><!-- /main -->
+</div><!-- /layout -->
 
 <!-- DONE MODAL -->
 <div class="mbg" id="doneModal">
@@ -555,186 +673,67 @@ mark{background:rgba(59,130,246,.2);color:var(--accent);border-radius:2px;paddin
   </div>
 </div>
 
-<!-- GOOGLE SHEETS modal removed - moved to Manage System tab -->
-<div class="mbg" id="sheetsModal" style="display:none!important;"></div>
-
 <div id="toast"></div>
 
 <script>
 const ENGS=['rupchan','amit','tamim','nazrul'];
 function gid(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5);}
 
-// Custom item names (persistent)
 let CUSTOM_ITEMS=JSON.parse(localStorage.getItem('customItems')||'[]');
 function saveCustomItems(){localStorage.setItem('customItems',JSON.stringify(CUSTOM_ITEMS));}
 
-let D={
-  unassigned:[],deleted:[],
-  rupchan:[],amit:[],tamim:[],nazrul:[],
-  done:[]
-};
+let D={unassigned:[],deleted:[],rupchan:[],amit:[],tamim:[],nazrul:[],done:[]};
 
-// ══════════════════════════════════════════════════════════════════════
-// REAL-TIME MULTI-USER SYNC
-// Google Sheets = shared database (single source of truth)
-//
-// KEY RULE: কখনো local empty/পুরনো data দিয়ে remote overwrite করা যাবে না।
-//   • save() → শুধুমাত্র user নিজে কিছু করলে push হবে (_userMadeChange flag)
-//   • startup → সবসময় আগে pull করো, তারপর polling শুরু করো
-//   • pull → remote version বেশি হলেই D আপডেট হবে
-//   • push → local version remote-এর চেয়ে বেশি হলেই push হবে
-// ══════════════════════════════════════════════════════════════════════
-
-let _lastVersion    = 0;     // সর্বশেষ যে version আমরা জানি (local বা remote)
-let _pushTimer      = null;  // debounce timer
-let _pollHandle     = null;  // polling interval
-let _userMadeChange = false; // শুধু user-triggered change হলে true
-
-function getUrl(){ return localStorage.getItem('sheetsUrl')||''; }
-
-function countItems(obj){
-  // data আছে কিনা বোঝার জন্য total item count
-  return (obj.rupchan||[]).length+(obj.amit||[]).length+
-         (obj.tamim||[]).length+(obj.nazrul||[]).length+
-         (obj.unassigned||[]).length+(obj.done||[]).length;
-}
-
-function save(){
-  _userMadeChange = true;
-  D._version = Date.now();
-  localStorage.setItem('inv7', JSON.stringify(D));
-  schedulePush();
-}
-
-// ── PUSH ─────────────────────────────────────────────────────────────
-function schedulePush(){
-  if(!getUrl()) return;
-  setSyncIndicator('pending');
-  clearTimeout(_pushTimer);
-  _pushTimer = setTimeout(pushNow, 2000);
-}
-
+// ── SYNC ─────────────────────────────────────────────────────────────
+let _lastVersion=0,_pushTimer=null,_pollHandle=null,_userMadeChange=false;
+function getUrl(){return localStorage.getItem('sheetsUrl')||'';}
+function countItems(obj){return(obj.rupchan||[]).length+(obj.amit||[]).length+(obj.tamim||[]).length+(obj.nazrul||[]).length+(obj.unassigned||[]).length+(obj.done||[]).length;}
+function save(){_userMadeChange=true;D._version=Date.now();localStorage.setItem('inv7',JSON.stringify(D));schedulePush();}
+function schedulePush(){if(!getUrl())return;setSyncIndicator('pending');clearTimeout(_pushTimer);_pushTimer=setTimeout(pushNow,2000);}
 async function pushNow(){
-  const url = getUrl();
-  if(!url) return;
-
-  // Safety check: remote থেকে আগে latest version নাও
-  // তারপর শুধু push করো যদি আমাদের version বেশি হয়
-  let remoteVer = 0;
-  try{
-    const chk = await fetch(url+'?action=getData', {method:'GET', cache:'no-store'});
-    const txt  = await chk.text();
-    const rem  = JSON.parse(txt);
-    if(rem && !rem.error) remoteVer = rem._version||0;
-  } catch(e){ /* ignore, proceed with push */ }
-
-  // যদি remote-এ বেশি data থাকে এবং আমরা সেটা pull না করে push করতে যাচ্ছি — বন্ধ করো
-  if(remoteVer > (D._version||0)){
-    // আমাদের কাছে পুরনো version — push করব না, pull করব
-    await pullFromSheets(true);
-    return;
-  }
-
+  const url=getUrl();if(!url)return;
+  let remoteVer=0;
+  try{const chk=await fetch(url+'?action=getData',{method:'GET',cache:'no-store'});const txt=await chk.text();const rem=JSON.parse(txt);if(rem&&!rem.error)remoteVer=rem._version||0;}catch(e){}
+  if(remoteVer>(D._version||0)){await pullFromSheets(true);return;}
   setSyncIndicator('syncing');
   try{
-    const resp = await fetch(url, {
-      method:'POST',
-      body: JSON.stringify(D),
-      headers:{'Content-Type':'text/plain'}
-    });
-    const json = await resp.json();
-    if(json.success){
-      _lastVersion    = D._version;
-      _userMadeChange = false;
-      setSyncIndicator('ok');
-      setTimeout(()=>setSyncIndicator('idle'), 4000);
-    } else {
-      setSyncIndicator('error');
-    }
-  } catch(err){
-    setSyncIndicator('error');
-  }
+    const resp=await fetch(url,{method:'POST',body:JSON.stringify(D),headers:{'Content-Type':'text/plain'}});
+    const json=await resp.json();
+    if(json.success){_lastVersion=D._version;_userMadeChange=false;setSyncIndicator('ok');setTimeout(()=>setSyncIndicator('idle'),4000);}
+    else setSyncIndicator('error');
+  }catch(err){setSyncIndicator('error');}
 }
-
-// ── PULL ─────────────────────────────────────────────────────────────
-// force=true হলে version check ছাড়াই D আপডেট করে (startup-এ ব্যবহার হয়)
 async function pullFromSheets(force){
-  const url = getUrl();
-  if(!url) return false;
+  const url=getUrl();if(!url)return false;
   try{
-    const resp   = await fetch(url+'?action=getData', {method:'GET', cache:'no-store'});
-    const text   = await resp.text();
-    let remote;
-    try{ remote = JSON.parse(text); } catch(e){ return false; }
-    if(!remote || typeof remote !== 'object' || remote.error) return false;
-
-    const remoteVer   = remote._version||0;
-    const remoteItems = countItems(remote);
-
-    // আপডেট করব যদি:
-    //   a) force=true (startup pull), অথবা
-    //   b) remote version বেশি, অথবা
-    //   c) remote-এ data আছে কিন্তু local-এ নেই (নতুন user join করেছে)
-    const localItems  = countItems(D);
-    const shouldUpdate = force
-      || remoteVer > _lastVersion
-      || (remoteItems > 0 && localItems === 0 && remoteVer > 0);
-
+    const resp=await fetch(url+'?action=getData',{method:'GET',cache:'no-store'});
+    const text=await resp.text();let remote;
+    try{remote=JSON.parse(text);}catch(e){return false;}
+    if(!remote||typeof remote!=='object'||remote.error)return false;
+    const remoteVer=remote._version||0;const remoteItems=countItems(remote);const localItems=countItems(D);
+    const shouldUpdate=force||remoteVer>_lastVersion||(remoteItems>0&&localItems===0&&remoteVer>0);
     if(shouldUpdate){
-      const wasEmpty = localItems === 0 && remoteItems > 0;
-      _lastVersion = remoteVer;
-      D = remote;
-      localStorage.setItem('inv7', JSON.stringify(D));
-      renderAll();
-      if(wasEmpty){
-        setSyncIndicator('ok');
-        toast('✅ Shared data লোড হয়েছে!');
-      } else if(!force){
-        setSyncIndicator('ok');
-      }
-      setTimeout(()=>setSyncIndicator('idle'), 3000);
-      return true;
-    }
-    return false;
-  } catch(err){
-    return false;
-  }
+      const wasEmpty=localItems===0&&remoteItems>0;
+      _lastVersion=remoteVer;D=remote;
+      localStorage.setItem('inv7',JSON.stringify(D));renderAll();
+      if(wasEmpty){setSyncIndicator('ok');toast('✅ Shared data লোড হয়েছে!');}
+      else if(!force)setSyncIndicator('ok');
+      setTimeout(()=>setSyncIndicator('idle'),3000);return true;
+    }return false;
+  }catch(err){return false;}
 }
-
-// ── POLLING ───────────────────────────────────────────────────────────
-function startPolling(){
-  if(_pollHandle) return;
-  _pollHandle = setInterval(pullFromSheets, 8000);
-}
-function stopPolling(){
-  clearInterval(_pollHandle);
-  _pollHandle = null;
-}
-
+function startPolling(){if(_pollHandle)return;_pollHandle=setInterval(pullFromSheets,8000);}
+function stopPolling(){clearInterval(_pollHandle);_pollHandle=null;}
 function setSyncIndicator(state){
-  const el=document.getElementById('syncDot');
-  if(!el) return;
-  const url=getUrl();
-  if(!url){ el.style.display='none'; stopPolling(); return; }
-  el.style.display='flex';
-  if(!_pollHandle) startPolling();
-  const cfg={
-    idle:   {bg:'#5b8dd9', text:'🟢 Live Sync'},
-    pending:{bg:'#f9a825', text:'⏳ Saving...'},
-    syncing:{bg:'#3b82f6', text:'🔄 Syncing...'},
-    ok:     {bg:'#1a4fa0', text:'✅ Updated'},
-    error:  {bg:'#c62828', text:'❌ Sync Error'},
-  }[state]||{bg:'#5b8dd9',text:''};
-  el.style.background=cfg.bg;
-  el.querySelector('span').textContent=cfg.text;
+  const el=document.getElementById('syncDot');if(!el)return;
+  const url=getUrl();if(!url){el.style.display='none';stopPolling();return;}
+  el.style.display='flex';if(!_pollHandle)startPolling();
+  const cfg={idle:{bg:'#5b8dd9',text:'🟢 Live Sync'},pending:{bg:'#f9a825',text:'⏳ Saving...'},syncing:{bg:'#3b82f6',text:'🔄 Syncing...'},ok:{bg:'#1a4fa0',text:'✅ Updated'},error:{bg:'#c62828',text:'❌ Sync Error'}}[state]||{bg:'#5b8dd9',text:''};
+  el.style.background=cfg.bg;el.querySelector('span').textContent=cfg.text;
 }
 
-// ---- ITEM NAME MANAGER ----
-function openItemMgr(){
-  renderItemList();
-  document.getElementById('itemMgrModal').classList.add('open');
-  setTimeout(()=>document.getElementById('newItemInput').focus(),80);
-}
+// ── ITEM NAME MANAGER ────────────────────────────────────────────────
+function openItemMgr(){renderItemList();document.getElementById('itemMgrModal').classList.add('open');setTimeout(()=>document.getElementById('newItemInput').focus(),80);}
 function closeItemMgr(){document.getElementById('itemMgrModal').classList.remove('open');renderAll();}
 function renderItemList(){
   const ul=document.getElementById('itemListUI');
@@ -742,25 +741,16 @@ function renderItemList(){
   ul.innerHTML=CUSTOM_ITEMS.map((nm,i)=>`<div class="item-list-row"><span class="iname">${e(nm)}</span><button class="idel" onclick="deleteCustomItem(${i})">✕ Remove</button></div>`).join('');
 }
 function saveNewItem(){
-  const val=document.getElementById('newItemInput').value.trim();
-  if(!val)return;
+  const val=document.getElementById('newItemInput').value.trim();if(!val)return;
   if(CUSTOM_ITEMS.includes(val)){toast('⚠️ This item already exists');return;}
-  CUSTOM_ITEMS.push(val);
-  saveCustomItems();
-  document.getElementById('newItemInput').value='';
-  renderItemList();
-  toast(`✅ "${val}" added to item list`);
+  CUSTOM_ITEMS.push(val);saveCustomItems();document.getElementById('newItemInput').value='';renderItemList();toast(`✅ "${val}" added to item list`);
 }
 function deleteCustomItem(i){
-  const nm=CUSTOM_ITEMS[i];
-  if(!confirm(`Remove "${nm}"?`))return;
-  CUSTOM_ITEMS.splice(i,1);
-  saveCustomItems();
-  renderItemList();
-  toast(`🗑 "${nm}" removed`);
+  const nm=CUSTOM_ITEMS[i];if(!confirm(`Remove "${nm}"?`))return;
+  CUSTOM_ITEMS.splice(i,1);saveCustomItems();renderItemList();toast(`🗑 "${nm}" removed`);
 }
 
-// ---- CORE ----
+// ── NAVIGATION ────────────────────────────────────────────────────────
 function go(name){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -770,10 +760,10 @@ function go(name){
 }
 
 function switchManageSub(sub){
-  document.getElementById('msub-panel-entry').style.display=sub==='entry'?'':'none';
-  document.getElementById('msub-panel-sheets').style.display=sub==='sheets'?'':'none';
-  const dd=document.getElementById('manageDropdown');
-  if(dd&&dd.value!==sub)dd.value=sub;
+  ['entry','sheets','deleted'].forEach(s=>{
+    document.getElementById('msub-panel-'+s).style.display=s===sub?'':'none';
+    document.getElementById('msub-tab-'+s).classList.toggle('active',s===sub);
+  });
   if(sub==='sheets'){
     document.getElementById('scriptCode').textContent=SCRIPT_CODE;
     const saved=localStorage.getItem('sheetsUrl')||'';
@@ -782,38 +772,27 @@ function switchManageSub(sub){
   }
 }
 
+// ── CLEAR ALL DELETED (interface only) ──────────────────────────────
+function clearAllDeleted(){
+  const count=(D.deleted||[]).length;
+  if(!count){toast('⚠️ No deleted items to clear');return;}
+  if(!confirm(`Interface থেকে ${count}টি deleted item সরিয়ে দেবেন?\n\nNote: Google Sheets-এ data থেকে যাবে।`))return;
+  D.deleted=[];
+  save();renderAll();
+  toast(`🗑 ${count}টি item interface থেকে cleared — Sheets-এ আছে`);
+}
+
+// ── HELPERS ──────────────────────────────────────────────────────────
 function sq(){return document.getElementById('sb').value.trim().toLowerCase();}
 function e(t){return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function hl(t,q){if(!q)return e(t);return e(t).replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>');}
 function fd(iso){if(!iso)return '';const d=new Date(iso);return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true});}
 function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
 
-// ---- STAT PANEL ----
+// ── STAT PANEL ────────────────────────────────────────────────────────
 let activeStatFilter=null,activeStatEng=null;
-function toggleStatPanel(eng,filter,label){
-  const panelId=eng?'statPanel-'+eng:'allStatPanel';
-  const panel=document.getElementById(panelId);
-  if(!panel)return;
-  if(activeStatFilter===filter&&activeStatEng===eng){panel.classList.remove('open');panel.innerHTML='';activeStatFilter=null;activeStatEng=null;return;}
-  activeStatFilter=filter;activeStatEng=eng;
-  const q=sq();
-  let rows=[];
-  if(eng){
-    rows=D[eng].filter(i=>filter==='total'?true:filter==='ih'?i.status==='IN-Hand':i.status==='Provided');
-  } else {
-    ENGS.forEach(en=>D[en].forEach(it=>rows.push({...it,_eng:en})));
-    D.done.forEach(it=>rows.push({...it,_eng:it.engineer||'—',status:'Done'}));
-    D.unassigned.forEach(it=>rows.push({...it,_eng:'—',status:'Unassigned'}));
-    if(filter==='ih')rows=rows.filter(r=>r.status==='IN-Hand');
-    else if(filter==='dn')rows=rows.filter(r=>r.status==='Done');
-    else if(filter==='pv')rows=rows.filter(r=>r.status==='Provided');
-  }
-  if(q)rows=rows.filter(r=>r.name.toLowerCase().includes(q)||r.serial.toLowerCase().includes(q));
-  const tbl=rows.length?`<div style="overflow-x:auto"><table><thead><tr><th>#</th><th>Item</th><th>Serial/MAC</th><th>Status</th><th>Engineer</th><th>Date</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td class="tm">${i+1}</td><td class="tn">${e(r.name)}</td><td class="ts">${e(r.serial)}</td><td><span class="status ${r.status==='IN-Hand'?'si':r.status==='Done'?'sd':r.status==='Provided'?'sp':'si'}">${r.status}</span></td><td><span class="tag-e">${e(r._eng||r.engineer||'—')}</span></td><td class="tt">${fd(r.date||'')}</td></tr>`).join('')}</tbody></table></div>`:`<div class="empty"><div class="ico">📭</div>No data found.</div>`;
-  panel.innerHTML=`<div class="sdp-title"><span>${label} — ${rows.length}টি item</span><span class="sdp-close" onclick="closeStatPanel('${panelId}')">✕</span></div>${tbl}`;
-  panel.classList.add('open');
-  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
+function closeStatPanel(id){const p=document.getElementById(id);if(p){p.classList.remove('open');p.innerHTML='';}activeStatFilter=null;activeStatEng=null;}
+
 function renderAllTable(rows){
   const q=sq();
   const aw=document.getElementById('allWrap');
@@ -823,13 +802,7 @@ function renderAllTable(rows){
 let _activeAllFilter=null;
 function filterAllTable(filter,label,el){
   const allRows=window._allRows||[];
-  if(_activeAllFilter===filter){
-    // toggle off - show all
-    _activeAllFilter=null;
-    document.querySelectorAll('#allStats .stat').forEach(s=>s.style.outline='');
-    renderAllTable(allRows);
-    return;
-  }
+  if(_activeAllFilter===filter){_activeAllFilter=null;document.querySelectorAll('#allStats .stat').forEach(s=>s.style.outline='');renderAllTable(allRows);return;}
   _activeAllFilter=filter;
   document.querySelectorAll('#allStats .stat').forEach(s=>s.style.outline='');
   el.style.outline='2px solid var(--accent2)';
@@ -840,9 +813,7 @@ function filterAllTable(filter,label,el){
   renderAllTable(filtered);
 }
 
-function closeStatPanel(id){const p=document.getElementById(id);if(p){p.classList.remove('open');p.innerHTML='';}activeStatFilter=null;activeStatEng=null;}
-
-// ---- RENDER ----
+// ── RENDER ────────────────────────────────────────────────────────────
 function renderAll(){
   const tot=ENGS.reduce((s,eng)=>s+D[eng].length,0)+D.unassigned.length+D.done.length;
   ENGS.forEach(eng=>document.getElementById('b-'+eng).textContent=D[eng].length);
@@ -851,7 +822,6 @@ function renderAll(){
   document.getElementById('b-un').textContent=D.unassigned.length;
   document.getElementById('b-deleted').textContent=(D.deleted||[]).length;
 
-  // suggestions: merge data names + custom names
   const all=[...D.unassigned,...D.done,...ENGS.flatMap(eng=>D[eng])];
   const dataNms=[...new Set(all.map(i=>i.name).filter(Boolean))];
   const allNms=[...new Set([...CUSTOM_ITEMS,...dataNms])];
@@ -860,26 +830,20 @@ function renderAll(){
 
   const q=sq();
 
-  // engineers
+  // Engineers
   ENGS.forEach(eng=>{
     let items=D[eng];
     if(q)items=items.filter(i=>i.name.toLowerCase().includes(q)||i.serial.toLowerCase().includes(q));
-    const ih=D[eng].filter(i=>i.status==='IN-Hand').length;
-    const pv=D[eng].filter(i=>i.status==='Provided').length;
     document.getElementById('page-'+eng).innerHTML=`
       <div class="stat-data-panel" id="statPanel-${eng}"></div>
+      <div class="sh"><div class="st">📦 ${cap(eng)}'s <span>Devices</span></div></div>
       <div class="tbl-wrap">${items.length===0?`<div class="empty"><div class="ico">📭</div>No devices assigned.</div>`:`
       <table><thead><tr><th>#</th><th>Item Name</th><th>Serial/MAC</th><th>Client ID</th><th>Ticket ID</th><th>Status</th><th>Technician</th><th>Date</th><th>Remarks</th><th>Actions</th></tr></thead>
       <tbody>${items.map((it,i)=>`<tr>
-        <td class="tm">${i+1}</td>
-        <td class="tn">${hl(it.name,q)}</td>
-        <td class="ts">${hl(it.serial,q)}</td>
-        <td class="tm">${e(it.client||'')}</td>
-        <td class="tm">${e(it.ticket||'')}</td>
+        <td class="tm">${i+1}</td><td class="tn">${hl(it.name,q)}</td><td class="ts">${hl(it.serial,q)}</td>
+        <td class="tm">${e(it.client||'')}</td><td class="tm">${e(it.ticket||'')}</td>
         <td><span class="status ${it.status==='IN-Hand'?'si':it.status==='Done'?'sd':'sp'}">${it.status}</span></td>
-        <td class="tm">${e(it.tech||'')}</td>
-        <td class="tt">${fd(it.date)}</td>
-        <td class="tm">${e(it.remarks||'')}</td>
+        <td class="tm">${e(it.tech||'')}</td><td class="tt">${fd(it.date)}</td><td class="tm">${e(it.remarks||'')}</td>
         <td><div class="ar">
           ${it.status!=='Done'?`<button class="ab d" onclick="openDM('${eng}','${it.id}')">✅ Done</button>`:''}
           ${it.status==='IN-Hand'?`<button class="ab p" onclick="markProv('${eng}','${it.id}')">↗ Provided</button>`:''}
@@ -889,14 +853,14 @@ function renderAll(){
       </tr>`).join('')}</tbody></table>`}</div>`;
   });
 
-  // done
+  // Done
   let di=D.done;
   if(q)di=di.filter(i=>i.name.toLowerCase().includes(q)||i.serial.toLowerCase().includes(q));
   const dw=document.getElementById('doneWrap');
-  if(!di.length){dw.innerHTML=`<div class="empty"><div class="ico">✅</div>No done records yet.</div>`;}
+  if(!di.length)dw.innerHTML=`<div class="empty"><div class="ico">✅</div>No done records yet.</div>`;
   else dw.innerHTML=`<table><thead><tr><th>#</th><th>Item Name</th><th>Serial/MAC</th><th>Client ID</th><th>Ticket ID</th><th>Technician</th><th>Engineer</th><th>Date</th><th>Remarks</th><th></th></tr></thead><tbody>${di.map((it,i)=>`<tr><td class="tm">${i+1}</td><td class="tn">${hl(it.name,q)}</td><td class="ts">${hl(it.serial,q)}</td><td class="tm">${e(it.client||'')}</td><td class="tm">${e(it.ticket||'')}</td><td class="tm">${e(it.tech||'')}</td><td class="tm">${e(it.engineer||'')}</td><td class="tt">${fd(it.date)}</td><td class="tm">${e(it.remarks||'')}</td><td><button class="ab x" onclick="delDone('${it.id}')">🗑</button></td></tr>`).join('')}</tbody></table>`;
 
-  // all
+  // All
   let rows=[];
   ENGS.forEach(eng=>D[eng].forEach(it=>rows.push({...it,_eng:eng})));
   D.done.forEach(it=>rows.push({...it,_eng:it.engineer||'—',status:'Done'}));
@@ -908,25 +872,29 @@ function renderAll(){
     <div class="stat dn" onclick="filterAllTable('dn','Done',this)"><div class="lb">Done</div><div class="vl">${rows.filter(r=>r.status==='Done').length}</div></div>
     <div class="stat pv" onclick="filterAllTable('pv','Provided',this)"><div class="lb">Provided</div><div class="vl">${rows.filter(r=>r.status==='Provided').length}</div></div>`;
   window._allRows=rows;
-  const aw=document.getElementById('allWrap');
-  if(!rows.length){aw.innerHTML=`<div class="empty"><div class="ico">📋</div>No equipment found.</div>`;}
+  if(!rows.length)document.getElementById('allWrap').innerHTML=`<div class="empty"><div class="ico">📋</div>No equipment found.</div>`;
   else renderAllTable(rows);
 
-  // unassigned
+  // Unassigned
   let un=D.unassigned;
   if(q)un=un.filter(i=>i.name.toLowerCase().includes(q)||i.serial.toLowerCase().includes(q));
   const uw=document.getElementById('unWrap');
-  if(!un.length){uw.innerHTML=`<div class="empty"><div class="ico">🔓</div><div>No unassigned devices.</div><div class="sub">Add devices from Entry to see them here.</div></div>`;}
+  if(!un.length)uw.innerHTML=`<div class="empty"><div class="ico">🔓</div><div>No unassigned devices.</div><div class="sub">Add devices from Entry to see them here.</div></div>`;
   else uw.innerHTML=`<table><thead><tr><th>#</th><th>Item Name</th><th>Serial/MAC</th><th>Remarks</th><th>Assign To →</th><th></th></tr></thead><tbody>${un.map((it,i)=>`<tr><td class="tm">${i+1}</td><td class="tn">${hl(it.name,q)}</td><td class="ts">${hl(it.serial,q)}</td><td class="tm">${e(it.remarks||'')}</td><td><div class="ar">${ENGS.map(eng=>`<button class="ab" onclick="assignPool('${it.id}','${eng}')">${cap(eng)}</button>`).join('')}</div></td><td><button class="ab x" onclick="delPool('${it.id}')">🗑</button></td></tr>`).join('')}</tbody></table>`;
 
-  // deleted
+  // Deleted (inside manage panel)
   let del=D.deleted||[];
   if(q)del=del.filter(i=>i.name.toLowerCase().includes(q)||i.serial.toLowerCase().includes(q));
   const delW=document.getElementById('deletedWrap');
-  if(!del.length){delW.innerHTML=`<div class="empty"><div class="ico">🗑</div>No deleted items.</div>`;}
-  else delW.innerHTML=`<table><thead><tr><th>#</th><th>Item Name</th><th>Serial/MAC</th><th>Was Assigned To</th><th>Status</th><th>Deleted At</th><th>Restore</th></tr></thead><tbody>${del.map((it,i)=>`<tr><td class="tm">${i+1}</td><td class="tn">${hl(it.name,q)}</td><td class="ts">${hl(it.serial,q)}</td><td><span class="tag-e">${e(it._deletedFrom||'—')}</span></td><td><span class="status ${it.status==='IN-Hand'?'si':it.status==='Done'?'sd':it.status==='Provided'?'sp':'si'}">${it.status||'—'}</span></td><td class="tt">${fd(it._deletedAt)}</td><td><button class="ab restore" onclick="restoreDeleted('${it.id}')">↩ Restore</button></td></tr>`).join('')}</tbody></table>`;
+  if(delW){
+    const btn=document.getElementById('clearAllBtn');
+    if(btn)btn.disabled=(D.deleted||[]).length===0;
+    if(!del.length)delW.innerHTML=`<div class="empty" style="background:transparent;"><div class="ico">🗑</div>No deleted items.</div>`;
+    else delW.innerHTML=`<table><thead><tr><th>#</th><th>Item Name</th><th>Serial/MAC</th><th>Was Assigned To</th><th>Status</th><th>Deleted At</th><th>Restore</th></tr></thead><tbody>${del.map((it,i)=>`<tr><td class="tm">${i+1}</td><td class="tn">${hl(it.name,q)}</td><td class="ts">${hl(it.serial,q)}</td><td><span class="tag-e">${e(it._deletedFrom||'—')}</span></td><td><span class="status ${it.status==='IN-Hand'?'si':it.status==='Done'?'sd':it.status==='Provided'?'sp':'si'}">${it.status||'—'}</span></td><td class="tt">${fd(it._deletedAt)}</td><td><button class="ab restore" onclick="restoreDeleted('${it.id}')">↩ Restore</button></td></tr>`).join('')}</tbody></table>`;
+  }
 }
 
+// ── CORE ACTIONS ─────────────────────────────────────────────────────
 function getForm(){return{name:document.getElementById('fn').value.trim(),brand:'',serials:document.getElementById('fs').value.split(',').map(s=>s.trim()).filter(Boolean),remarks:document.getElementById('fr').value.trim()};}
 function clearForm(){['fn','fs','fr'].forEach(id=>document.getElementById(id).value='');document.getElementById('fn').focus();}
 
@@ -934,8 +902,7 @@ function addPool(){
   const{name,brand,serials,remarks}=getForm();
   if(!name||!serials.length){alert('Please enter Item Name and at least one Serial!');return;}
   serials.forEach(serial=>D.unassigned.unshift({id:gid(),name,brand,serial,remarks}));
-  save();clearForm();renderAll();
-  toast(`📋 ${serials.length} device(s) added to Unassigned`);
+  save();clearForm();renderAll();toast(`📋 ${serials.length} device(s) added to Unassigned`);
 }
 function assignPool(itemId,eng){
   const idx=D.unassigned.findIndex(x=>x.id===itemId);if(idx===-1)return;
@@ -976,9 +943,9 @@ function confirmDone(){
 }
 
 function sendToDeleted(item,from){if(!D.deleted)D.deleted=[];D.deleted.unshift({...item,_deletedFrom:from,_deletedAt:new Date().toISOString()});}
-function delPool(id){if(!confirm('Delete this item?'))return;const it=D.unassigned.find(x=>x.id===id);if(it)sendToDeleted({...it,status:'Unassigned'},'Unassigned');D.unassigned=D.unassigned.filter(x=>x.id!==id);save();renderAll();toast('🗑 Item deleted — can restore from Deleted tab');}
-function delDev(eng,id){if(!confirm('Delete this item?'))return;const it=D[eng].find(x=>x.id===id);if(it)sendToDeleted(it,cap(eng));D[eng]=D[eng].filter(x=>x.id!==id);save();renderAll();toast('🗑 Item deleted — can restore from Deleted tab');}
-function delDone(id){if(!confirm('Delete this item?'))return;const it=D.done.find(x=>x.id===id);if(it)sendToDeleted({...it,status:'Done'},'Done');D.done=D.done.filter(x=>x.id!==id);save();renderAll();toast('🗑 Item deleted — can restore from Deleted tab');}
+function delPool(id){if(!confirm('Delete this item?'))return;const it=D.unassigned.find(x=>x.id===id);if(it)sendToDeleted({...it,status:'Unassigned'},'Unassigned');D.unassigned=D.unassigned.filter(x=>x.id!==id);save();renderAll();toast('🗑 Item deleted — restore from Manage → Deleted');}
+function delDev(eng,id){if(!confirm('Delete this item?'))return;const it=D[eng].find(x=>x.id===id);if(it)sendToDeleted(it,cap(eng));D[eng]=D[eng].filter(x=>x.id!==id);save();renderAll();toast('🗑 Item deleted — restore from Manage → Deleted');}
+function delDone(id){if(!confirm('Delete this item?'))return;const it=D.done.find(x=>x.id===id);if(it)sendToDeleted({...it,status:'Done'},'Done');D.done=D.done.filter(x=>x.id!==id);save();renderAll();toast('🗑 Item deleted — restore from Manage → Deleted');}
 
 function restoreDeleted(id){
   if(!D.deleted)return;
@@ -996,7 +963,7 @@ function restoreDeleted(id){
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>{t.style.opacity='0';setTimeout(()=>{t.style.display='none';},300);},2800);}
 
-// ---- GOOGLE SHEETS ----
+// ── GOOGLE SHEETS ─────────────────────────────────────────────────────
 const SCRIPT_CODE = `// ════════════════════════════════════════════════════════════════════
 // Inventory Dashboard — Real-Time Multi-User Apps Script
 // Deploy as: Web App → Execute as ME → Access: ANYONE (even anonymous)
@@ -1005,7 +972,6 @@ const SCRIPT_CODE = `// ══════════════════�
 var STORE_SHEET = "JSON_STORE";
 var STORE_CELL  = "A1";
 
-// ── doGet: clients pull latest data ──────────────────────────────────
 function doGet(e) {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -1019,23 +985,19 @@ function doGet(e) {
   }
 }
 
-// ── doPost: clients push updated data ────────────────────────────────
 function doPost(e) {
   try {
     var raw  = e.postData.contents;
     var data = JSON.parse(raw);
     var ss   = SpreadsheetApp.getActiveSpreadsheet();
 
-    // 1. Save full JSON to hidden store sheet
     var storeSh = ss.getSheetByName(STORE_SHEET) || ss.insertSheet(STORE_SHEET);
     storeSh.getRange(STORE_CELL).setValue(raw);
     storeSh.hideSheet();
 
-    // 2. Header definitions
     var mainHeaders    = ["Sheet","#","Item Name","Serial/MAC","Status","Technician","Client ID","Ticket ID","Engineer","Remarks","Date"];
     var deletedHeaders = ["#","Item Name","Serial/MAC","Was In","Status","Deleted At","Remarks"];
 
-    // 3. Create/clear all sheets
     var sheetNames = ["Rupchan","Amit","Tamim","Nazrul","Done","Unassigned","All Equipment","Deleted"];
     sheetNames.forEach(function(name) {
       var sh = ss.getSheetByName(name) || ss.insertSheet(name);
@@ -1044,26 +1006,16 @@ function doPost(e) {
       var hdr = isDeleted ? deletedHeaders : mainHeaders;
       var hdrRange = sh.getRange(1,1,1,hdr.length);
       hdrRange.setValues([hdr]);
-      hdrRange.setFontWeight("bold")
-              .setHorizontalAlignment("center")
-              .setFontSize(10);
-      if(isDeleted){
-        hdrRange.setBackground("#7f1d1d").setFontColor("#ffffff");
-      } else {
-        hdrRange.setBackground("#1a4fa0").setFontColor("#ffffff");
-      }
+      hdrRange.setFontWeight("bold").setHorizontalAlignment("center").setFontSize(10);
+      if(isDeleted){hdrRange.setBackground("#7f1d1d").setFontColor("#ffffff");}
+      else{hdrRange.setBackground("#1a4fa0").setFontColor("#ffffff");}
     });
 
-    // Helper to bold+center a data range
     function styleData(sh, numRows, numCols) {
       if(numRows < 1) return;
-      sh.getRange(2,1,numRows,numCols)
-        .setFontWeight("bold")
-        .setHorizontalAlignment("center")
-        .setFontSize(11);
+      sh.getRange(2,1,numRows,numCols).setFontWeight("bold").setHorizontalAlignment("center").setFontSize(11);
     }
 
-    // 4. Engineer sheets
     ["rupchan","amit","tamim","nazrul"].forEach(function(eng) {
       var sh = ss.getSheetByName(eng.charAt(0).toUpperCase()+eng.slice(1));
       var rows = (data[eng]||[]).map(function(it,i) {
@@ -1072,30 +1024,25 @@ function doPost(e) {
       if(rows.length){ sh.getRange(2,1,rows.length,mainHeaders.length).setValues(rows); styleData(sh,rows.length,mainHeaders.length); }
     });
 
-    // 5. Done sheet
     var doneSh = ss.getSheetByName("Done");
     var doneRows = (data.done||[]).map(function(it,i) {
       return ["Done",i+1,it.name,it.serial,"Done",it.tech||"",it.client||"",it.ticket||"",it.engineer||"",it.remarks||"",it.date?new Date(it.date).toLocaleString():""];
     });
     if(doneRows.length){ doneSh.getRange(2,1,doneRows.length,mainHeaders.length).setValues(doneRows); styleData(doneSh,doneRows.length,mainHeaders.length); }
 
-    // 6. Unassigned sheet
     var unSh = ss.getSheetByName("Unassigned");
     var unRows = (data.unassigned||[]).map(function(it,i) {
       return ["Unassigned",i+1,it.name,it.serial,"Unassigned","","","","",it.remarks||"",""];
     });
     if(unRows.length){ unSh.getRange(2,1,unRows.length,mainHeaders.length).setValues(unRows); styleData(unSh,unRows.length,mainHeaders.length); }
 
-    // 7. Deleted sheet ← NEW
     var delSh = ss.getSheetByName("Deleted");
     var delRows = (data.deleted||[]).map(function(it,i) {
       return [i+1, it.name, it.serial, it._deletedFrom||"—", it.status||"—",
-              it._deletedAt ? new Date(it._deletedAt).toLocaleString() : "",
-              it.remarks||""];
+              it._deletedAt ? new Date(it._deletedAt).toLocaleString() : "", it.remarks||""];
     });
     if(delRows.length){ delSh.getRange(2,1,delRows.length,deletedHeaders.length).setValues(delRows); styleData(delSh,delRows.length,deletedHeaders.length); }
 
-    // 8. All Equipment sheet
     var allSh = ss.getSheetByName("All Equipment");
     var allRows = [];
     ["rupchan","amit","tamim","nazrul"].forEach(function(eng) {
@@ -1111,116 +1058,59 @@ function doPost(e) {
     });
     if(allRows.length){ allSh.getRange(2,1,allRows.length,mainHeaders.length).setValues(allRows); styleData(allSh,allRows.length,mainHeaders.length); }
 
-    return ContentService.createTextOutput(JSON.stringify({success:true,rows:allRows.length,version:data._version||0}))
-      .setMimeType(ContentService.MimeType.JSON);
-
+    return ContentService.createTextOutput(JSON.stringify({success:true,rows:allRows.length,version:data._version||0})).setMimeType(ContentService.MimeType.JSON);
   } catch(err) {
-    return ContentService.createTextOutput(JSON.stringify({success:false,error:err.message}))
-      .setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({success:false,error:err.message})).setMimeType(ContentService.MimeType.JSON);
   }
 }`;
 
-function openSheetsModal(){go('manage');switchManageSub('sheets');}
-function closeSheetsModal(){}
 function copyScript(){
-  navigator.clipboard.writeText(SCRIPT_CODE).then(()=>toast('📋 Script copied! Paste it into Google Apps Script')).catch(()=>{
-    toast('⚠️ Please copy manually from the code box above');
-  });
+  navigator.clipboard.writeText(SCRIPT_CODE).then(()=>toast('📋 Script copied!')).catch(()=>toast('⚠️ Please copy manually from the code box'));
 }
+
 async function syncToSheetsInline(){
   const url=document.getElementById('sheetsUrl').value.trim();
   const statusEl=document.getElementById('syncStatusInline');
   if(!url){statusEl.textContent='⚠️ Please enter Web App URL first.';return;}
   localStorage.setItem('sheetsUrl',url);
-  setSyncIndicator('syncing');
-  statusEl.textContent='⏳ Connecting...';
-
-  // ১. আগে remote থেকে pull করো
-  let remoteData = null;
-  let remoteVer  = 0;
-  try{
-    const chk  = await fetch(url+'?action=getData',{method:'GET',cache:'no-store'});
-    const txt  = await chk.text();
-    const rem  = JSON.parse(txt);
-    if(rem && !rem.error){ remoteData=rem; remoteVer=rem._version||0; }
-  } catch(e){}
-
-  const localItems  = countItems(D);
-  const remoteItems = remoteData ? countItems(remoteData) : 0;
-
-  // ২. সিদ্ধান্ত নাও — কার data রাখব?
-  if(remoteItems > 0 && remoteVer >= (D._version||0)){
-    // Remote-এ data আছে এবং সেটা newer/same → remote data নাও
-    D = remoteData;
-    _lastVersion = remoteVer;
-    localStorage.setItem('inv7', JSON.stringify(D));
-    renderAll();
-    statusEl.innerHTML='<span style="color:var(--green)">✅ Connected! Shared data লোড হয়েছে। Live sync চালু।</span>';
-    toast('✅ Connected — shared data লোড হয়েছে!');
-    setSyncIndicator('ok');
-    setTimeout(()=>setSyncIndicator('idle'),4000);
-    startPolling();
-    return;
+  setSyncIndicator('syncing');statusEl.textContent='⏳ Connecting...';
+  let remoteData=null,remoteVer=0;
+  try{const chk=await fetch(url+'?action=getData',{method:'GET',cache:'no-store'});const txt=await chk.text();const rem=JSON.parse(txt);if(rem&&!rem.error){remoteData=rem;remoteVer=rem._version||0;}}catch(e){}
+  const localItems=countItems(D);const remoteItems=remoteData?countItems(remoteData):0;
+  if(remoteItems>0&&remoteVer>=(D._version||0)){
+    D=remoteData;_lastVersion=remoteVer;localStorage.setItem('inv7',JSON.stringify(D));renderAll();
+    statusEl.innerHTML='<span style="color:var(--green)">✅ Connected! Shared data লোড হয়েছে।</span>';
+    toast('✅ Connected — shared data লোড হয়েছে!');setSyncIndicator('ok');setTimeout(()=>setSyncIndicator('idle'),4000);startPolling();return;
   }
-
-  // ৩. Local-এ data আছে এবং remote-এ নেই বা পুরনো → push করো
-  if(localItems > 0){
-    D._version = Date.now();
-    localStorage.setItem('inv7', JSON.stringify(D));
+  if(localItems>0){
+    D._version=Date.now();localStorage.setItem('inv7',JSON.stringify(D));
     try{
       const resp=await fetch(url,{method:'POST',body:JSON.stringify(D),headers:{'Content-Type':'text/plain'}});
       const json=await resp.json();
-      if(json.success){
-        _lastVersion=D._version;
-        setSyncIndicator('ok');setTimeout(()=>setSyncIndicator('idle'),4000);
-        statusEl.innerHTML='<span style="color:var(--green)">✅ Sync successful! '+json.rows+' rows written. Live sync চালু।</span>';
-        toast('✅ Synced! Live sync চালু — সব user একই data দেখবে।');
-        startPolling();
-      } else {
-        setSyncIndicator('error');
-        statusEl.innerHTML='<span style="color:var(--red)">❌ Sync ব্যর্থ। Apps Script deploy ঠিকভাবে হয়েছে কি?</span>';
-      }
-    }catch(err){
-      setSyncIndicator('error');
-      statusEl.innerHTML='<span style="color:var(--red)">❌ Error: '+err.message+'</span>';
-    }
-  } else {
-    // দুটোতেই data নেই
-    statusEl.innerHTML='<span style="color:var(--teal)">✅ Connected. Data entry শুরু করুন।</span>';
-    setSyncIndicator('idle');
-    startPolling();
-  }
+      if(json.success){_lastVersion=D._version;setSyncIndicator('ok');setTimeout(()=>setSyncIndicator('idle'),4000);statusEl.innerHTML='<span style="color:var(--green)">✅ Sync successful!</span>';toast('✅ Synced!');startPolling();}
+      else{setSyncIndicator('error');statusEl.innerHTML='<span style="color:var(--red)">❌ Sync ব্যর্থ।</span>';}
+    }catch(err){setSyncIndicator('error');statusEl.innerHTML='<span style="color:var(--red)">❌ Error: '+err.message+'</span>';}
+  }else{statusEl.innerHTML='<span style="color:var(--teal)">✅ Connected. Data entry শুরু করুন।</span>';setSyncIndicator('idle');startPolling();}
 }
-async function syncToSheets(){return syncToSheetsInline();}
-document.getElementById('sheetsModal').addEventListener('click',ev=>{});
 
+// ── MODAL CLOSE ─────────────────────────────────────────────────────
 document.getElementById('doneModal').addEventListener('click',ev=>{if(ev.target===document.getElementById('doneModal'))closeDM();});
 document.getElementById('itemMgrModal').addEventListener('click',ev=>{if(ev.target===document.getElementById('itemMgrModal'))closeItemMgr();});
 
-// init scriptCode for when sheets panel opens
-document.getElementById('scriptCode').textContent=SCRIPT_CODE;
+// ── STARTUP ──────────────────────────────────────────────────────────
+const _savedUrl=localStorage.getItem('sheetsUrl')||'';
+if(_savedUrl)document.getElementById('sheetsUrl').value=_savedUrl;
 
-// ── STARTUP ───────────────────────────────────────────────────────────────
-const _savedUrl = localStorage.getItem('sheetsUrl')||'';
-if(_savedUrl){
-  document.getElementById('sheetsUrl').value = _savedUrl;
-}
-
-// Local snapshot দিয়ে প্রথমে UI দেখাও (blank না থাকার জন্য)
-const _local = JSON.parse(localStorage.getItem('inv7')||'null');
-if(_local){ D = _local; _lastVersion = _local._version||0; }
+const _local=JSON.parse(localStorage.getItem('inv7')||'null');
+if(_local){D=_local;_lastVersion=_local._version||0;}
 
 setSyncIndicator('idle');
-go('manage');
-renderAll();
 
-// URL থাকলে — Sheets থেকে latest data pull করো আগে, তারপর polling শুরু করো
+// Default: All Equipment page
+go('all');
+
 if(_savedUrl){
-  // force pull: remote data সবসময় নেব, এমনকি local-এ data থাকলেও
-  // (কারণ অন্য কেউ ইতিমধ্যে নতুন কিছু যোগ করে থাকতে পারে)
-  pullFromSheets(true).then(()=>{
-    startPolling();
-  });
+  pullFromSheets(true).then(()=>{startPolling();});
 }
 </script>
 </body>
