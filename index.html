@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Inventory Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Serif:wght@400;500;600;700;800;900&family=Playfair+Display:wght@500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231a4fa0'/><rect x='12' y='52' width='76' height='36' rx='5' fill='%23fff' opacity='.95'/><polygon points='8,54 50,18 92,54' fill='%2360a5fa'/><rect x='38' y='62' width='24' height='26' rx='3' fill='%231a4fa0'/><rect x='20' y='60' width='14' height='12' rx='2' fill='%23bfdbfe'/><rect x='66' y='60' width='14' height='12' rx='2' fill='%23bfdbfe'/></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&family=Roboto+Serif:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg:#dde8f8;
@@ -35,7 +36,7 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 
 body{
-  font-family:'DM Sans',sans-serif;
+  font-family:'Plus Jakarta Sans',sans-serif;
   background:var(--bg);
   color:var(--text);
   min-height:100vh;
@@ -60,7 +61,7 @@ body::before{
   background:linear-gradient(135deg,rgba(18,45,100,.97) 0%,rgba(0,90,150,.95) 100%);
   backdrop-filter:blur(22px);
   border-bottom:1.5px solid rgba(59,130,246,.35);
-  padding:0 24px;min-height:64px;
+  padding:0 20px;min-height:72px;
   display:grid;
   grid-template-columns:1fr auto 1fr;
   align-items:center;
@@ -68,14 +69,13 @@ body::before{
   box-shadow:0 4px 32px rgba(10,30,80,.45), 0 1px 0 rgba(255,255,255,.07) inset;
   flex-shrink:0;
 }
-.nav-brand{display:none;} /* logo removed */
 .nav-center{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   text-align:center;
 }
 .nav-title{
-  font-family:'Roboto Serif',serif;
-  font-size:22px;font-weight:900;letter-spacing:.6px;
+  font-family:'Syne',sans-serif;
+  font-size:26px;font-weight:800;letter-spacing:.8px;
   background:linear-gradient(135deg,#ffffff 0%,#a8d4f5 60%,#60a5fa 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
   filter:drop-shadow(0 0 18px rgba(96,165,250,.6)) drop-shadow(0 2px 8px rgba(0,0,0,.5));
@@ -83,26 +83,64 @@ body::before{
   line-height:1.1;
 }
 .nav-subtitle{
-  font-family:'DM Sans',sans-serif;
-  font-size:10px;font-weight:600;letter-spacing:2px;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:11px;font-weight:700;letter-spacing:2.5px;
   color:rgba(168,212,245,.7);
   text-transform:uppercase;
   margin-top:3px;
 }
+.nav-left{display:flex;align-items:center;justify-content:flex-start;}
+
+/* --- REPLACED LOGO: text-based brand "Link3" + "THE Service Company" --- */
+.link3-logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.45));
+}
+.text-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  line-height: 1.2;
+}
+.main-logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  background: linear-gradient(135deg, #FFFFFF 0%, #A8D4F5 40%, #60A5FA 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 8px rgba(96,165,250,0.4);
+}
+.sub-logo {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  color: rgba(168,212,245,0.9);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+/* end replaced logo */
+
 .nav-right{display:flex;align-items:center;justify-content:flex-end;gap:10px;}
 .sw{position:relative;}
 .sw input{
-  background:rgba(255,255,255,.8);
-  border:1px solid var(--border);
-  color:var(--text);padding:8px 14px 8px 36px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.18);
+  color:#fff;padding:8px 14px 8px 36px;
   border-radius:9px;font-size:13px;width:220px;outline:none;
-  transition:all .2s;font-family:'DM Sans',sans-serif;
+  transition:all .2s;font-family:'Plus Jakarta Sans',sans-serif;
 }
 .sw input:focus{border-color:rgba(96,165,250,.6);box-shadow:0 0 0 3px rgba(96,165,250,.15);}
 .sw input::placeholder{color:rgba(180,210,245,.55);}
 .sw::before{content:'⌕';position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:16px;color:rgba(180,210,245,.55);pointer-events:none;line-height:1;}
 
-/* === LAYOUT: sidebar + main === */
+/* === LAYOUT === */
 .layout{
   display:flex;
   flex:1;
@@ -119,23 +157,53 @@ body::before{
   border-right:1px solid rgba(59,130,246,.2);
   backdrop-filter:blur(14px);
   position:sticky;
-  top:64px;
-  height:calc(100vh - 64px);
+  top:72px;
+  height:calc(100vh - 72px);
   overflow-y:auto;
   overflow-x:hidden;
-  padding:16px 0 24px;
+  padding:16px 0 0;
   box-shadow:4px 0 24px rgba(0,0,0,.35), inset -1px 0 0 rgba(255,255,255,.04);
   scrollbar-width:thin;
   z-index:50;
+  display:flex;
+  flex-direction:column;
 }
 .sidebar::-webkit-scrollbar{width:3px;}
 .sidebar::-webkit-scrollbar-thumb{background:rgba(59,130,246,.4);border-radius:2px;}
+
+.sidebar-nav-items{flex:1;}
+
+.sidebar-prepared{
+  padding:12px 14px 16px;
+  border-top:1px solid rgba(59,130,246,.18);
+  margin-top:auto;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:3px;
+  background:linear-gradient(180deg, transparent 0%, rgba(26,79,160,.18) 100%);
+}
+.sidebar-prepared-text{
+  font-size:7.5px;font-weight:800;letter-spacing:2px;
+  color:rgba(148,180,230,.45);text-transform:uppercase;
+  font-family:'Syne',sans-serif;
+}
+.sidebar-prepared-name{
+  font-size:12px;font-weight:700;letter-spacing:.5px;
+  color:#fff;
+  font-family:'Syne',sans-serif;
+  background:linear-gradient(90deg,#60a5fa,#a5d8ff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 6px rgba(96,165,250,.5));
+  line-height:1.3;
+}
 
 .sidebar-section{
   font-size:9px;font-weight:800;letter-spacing:2px;
   color:rgba(148,180,230,.5);text-transform:uppercase;
   padding:12px 18px 6px;
-  font-family:'DM Sans',sans-serif;
+  font-family:'Syne',sans-serif;
 }
 .sidebar-section:first-child{padding-top:6px;}
 
@@ -148,7 +216,7 @@ body::before{
   border-left:3px solid transparent;
   transition:background .22s ease, color .22s ease, border-color .18s ease, transform .15s ease, box-shadow .22s ease;
   white-space:nowrap;
-  font-family:'DM Sans',sans-serif;
+  font-family:'Plus Jakarta Sans',sans-serif;
   letter-spacing:.3px;
   position:relative;
   border-radius:0 8px 8px 0;
@@ -174,7 +242,7 @@ body::before{
   background:rgba(255,255,255,.1);color:rgba(180,210,245,.8);
   font-size:9px;padding:2px 7px;border-radius:20px;
   font-weight:800;min-width:18px;text-align:center;
-  font-family:'DM Mono',monospace;
+  font-family:'JetBrains Mono',monospace;
   flex-shrink:0;
   border:1px solid rgba(255,255,255,.1);
   transition:background .2s, color .2s;
@@ -205,7 +273,8 @@ body::before{
 
 /* === PAGES === */
 .page{display:none;padding:22px 26px;position:relative;z-index:1;}
-.page.active{display:block;}
+.page.active{display:block;animation:pageIn .22s ease both;}
+@keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 /* === CARD === */
 .card{
@@ -216,8 +285,8 @@ body::before{
   backdrop-filter:blur(6px);
 }
 .card-title{
-  font-family:'Roboto Serif',serif;
-  font-size:14px;font-weight:800;letter-spacing:.5px;
+  font-family:'Syne',sans-serif;
+  font-size:15px;font-weight:800;letter-spacing:.5px;
   color:var(--accent2);margin-bottom:20px;
   display:flex;align-items:center;gap:9px;
   padding-bottom:14px;border-bottom:2px solid rgba(91,141,217,.25);
@@ -227,8 +296,8 @@ body::before{
 .fg label{
   font-size:10px;color:var(--muted);
   text-transform:uppercase;letter-spacing:.9px;
-  display:block;margin-bottom:5px;font-weight:600;
-  font-family:'DM Sans',sans-serif;
+  display:block;margin-bottom:5px;font-weight:700;
+  font-family:'Syne',sans-serif;
 }
 .fg input,.fg textarea,.fg select{
   width:100%;
@@ -236,7 +305,7 @@ body::before{
   border:1.5px solid var(--border);
   color:var(--text);padding:10px 14px;
   border-radius:9px;font-size:13.5px;
-  font-family:'DM Sans',sans-serif;
+  font-family:'Plus Jakarta Sans',sans-serif;
   outline:none;transition:all .2s;resize:none;
   letter-spacing:.1px;font-weight:600;
 }
@@ -252,7 +321,7 @@ body::before{
   background:linear-gradient(135deg,#1a4fa0,#0077b6);
   color:#fff;border:none;border-radius:10px;
   cursor:pointer;font-size:14.5px;
-  font-family:'Roboto Serif',serif;
+  font-family:'Syne',sans-serif;
   font-weight:700;letter-spacing:.3px;
   transition:all .22s;
   box-shadow:0 4px 20px rgba(26,79,160,.3),inset 0 1px 0 rgba(255,255,255,.15);
@@ -267,44 +336,47 @@ body::before{
   border-radius:14px;overflow:hidden;overflow-x:auto;
   backdrop-filter:blur(6px);
   box-shadow:0 4px 24px rgba(26,79,160,.07);
+  animation:fadeUp .25s ease both;
 }
-table{width:100%;border-collapse:collapse;font-size:13px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+table{width:100%;border-collapse:collapse;font-size:11.5px;table-layout:auto;}
 thead tr{background:linear-gradient(135deg,rgba(26,79,160,.13) 0%,rgba(0,119,182,.09) 100%);}
 thead th{
-  padding:13px 16px;text-align:center;
-  font-size:10px;font-weight:800;letter-spacing:1.2px;
+  padding:8px 8px;text-align:center;
+  font-size:9px;font-weight:800;letter-spacing:.8px;
   text-transform:uppercase;color:var(--accent2);
   border-bottom:2px solid rgba(91,141,217,.35);white-space:nowrap;
-  font-family:'Roboto Serif',serif;
+  font-family:'Syne',sans-serif;
 }
-tbody tr{border-bottom:1px solid rgba(91,141,217,.15);transition:background .14s;}
+tbody tr{border-bottom:1px solid rgba(91,141,217,.15);transition:background .14s,transform .12s;}
 tbody tr:last-child{border-bottom:none;}
-tbody tr:hover{background:rgba(59,130,246,.06);}
+tbody tr:hover{background:rgba(59,130,246,.07);}
 tbody tr:nth-child(even){background:rgba(221,232,248,.18);}
 tbody tr:nth-child(even):hover{background:rgba(59,130,246,.07);}
-tbody td{padding:11px 16px;vertical-align:middle;text-align:center;font-weight:700;font-size:12.5px;font-family:'DM Sans',sans-serif;color:var(--text);}
-.ts{font-family:'DM Mono',monospace;color:var(--teal);font-size:12.5px;font-weight:700;white-space:nowrap;letter-spacing:.3px;}
-.tn{font-weight:800;color:var(--text);max-width:200px;font-size:13px;font-family:'Roboto Serif',serif;}
-.tbr{font-size:11px;color:var(--purple);font-weight:700;white-space:nowrap;font-family:'DM Mono',monospace;}
-.tm{color:var(--text2);font-size:12.5px;font-weight:700;max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.tt{font-size:11.5px;color:var(--accent2);white-space:nowrap;font-family:'DM Mono',monospace;font-weight:700;}
+tbody td{padding:6px 8px;vertical-align:middle;text-align:center;font-weight:600;font-size:11.5px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);}
+.ts{font-family:'JetBrains Mono',monospace;color:var(--teal);font-size:11px;font-weight:600;white-space:nowrap;letter-spacing:.2px;}
+.tn{font-weight:800;color:var(--text);max-width:150px;font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;white-space:normal;word-break:break-word;line-height:1.35;}
+.tbr{font-size:10px;color:var(--purple);font-weight:700;white-space:nowrap;font-family:'JetBrains Mono',monospace;}
+.tm{color:var(--text2);font-size:11px;font-weight:600;max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tt{font-size:12px;color:var(--accent2);white-space:nowrap;font-family:'Roboto Serif',serif;font-weight:700;letter-spacing:.2px;}
 
-.status{display:inline-block;padding:4px 12px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.6px;white-space:nowrap;font-family:'DM Sans',sans-serif;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.status{display:inline-block;padding:2px 7px;border-radius:20px;font-size:9px;font-weight:800;letter-spacing:.4px;white-space:nowrap;font-family:'Plus Jakarta Sans',sans-serif;box-shadow:0 1px 3px rgba(0,0,0,.07);}
 .si{background:var(--si-bg);color:var(--si-tx);border:1px solid rgba(26,79,160,.2);}
 .sd{background:var(--sd-bg);color:var(--sd-tx);border:1px solid rgba(0,119,182,.2);}
 .sp{background:var(--sp-bg);color:var(--sp-tx);border:1px solid rgba(239,108,0,.2);}
 
-.ar{display:flex;gap:5px;flex-wrap:wrap;align-items:center;justify-content:center;}
+.ar{display:flex;gap:4px;flex-wrap:wrap;align-items:center;justify-content:center;}
 .ab{
-  padding:4px 11px;border-radius:6px;
-  border:1.5px solid var(--border);
+  padding:2px 8px;border-radius:5px;
+  border:1px solid var(--border);
   background:rgba(255,255,255,.9);
-  color:var(--text2);font-size:11.5px;font-weight:700;
-  cursor:pointer;transition:all .14s;
-  font-family:'DM Sans',sans-serif;white-space:nowrap;
-  box-shadow:0 1px 4px rgba(26,79,160,.07);
+  color:var(--text2);font-size:10.5px;font-weight:700;
+  cursor:pointer;transition:background .15s,color .15s,border-color .15s,box-shadow .15s,transform .12s;
+  font-family:'Plus Jakarta Sans',sans-serif;white-space:nowrap;
+  box-shadow:0 1px 3px rgba(26,79,160,.06);
 }
-.ab:hover{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 3px 10px rgba(26,79,160,.3);}
+.ab:hover{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 3px 10px rgba(26,79,160,.3);transform:translateY(-1px);}
+.ab:active{transform:scale(.95);}
 .ab.d{background:rgba(0,119,182,.08);color:var(--sd-tx);border-color:rgba(0,119,182,.25);}
 .ab.d:hover{background:var(--teal);color:#fff;}
 .ab.x{color:var(--red);border-color:rgba(198,40,40,.2);background:rgba(198,40,40,.05);}
@@ -315,8 +387,6 @@ tbody td{padding:11px 16px;vertical-align:middle;text-align:center;font-weight:7
 .ab.r:hover{background:var(--teal);color:#fff;border-color:var(--teal);}
 .ab.restore{color:#16a34a;border-color:rgba(22,163,74,.25);background:rgba(22,163,74,.07);}
 .ab.restore:hover{background:#16a34a;color:#fff;border-color:#16a34a;}
-.ab.danger{color:#c62828;border-color:rgba(198,40,40,.3);background:rgba(198,40,40,.08);padding:8px 18px;font-size:12.5px;}
-.ab.danger:hover{background:#c62828;color:#fff;}
 
 /* === STATS === */
 .stats{display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
@@ -325,18 +395,25 @@ tbody td{padding:11px 16px;vertical-align:middle;text-align:center;font-weight:7
   border:1.5px solid rgba(91,141,217,.4);
   border-radius:12px;padding:12px 18px;
   flex:1;min-width:90px;position:relative;overflow:hidden;
-  cursor:pointer;transition:all .2s;
+  cursor:pointer;
+  transition:border-color .2s,transform .2s,box-shadow .2s;
   backdrop-filter:blur(6px);
   box-shadow:0 2px 12px rgba(26,79,160,.07);
+  animation:statIn .3s ease both;
 }
+@keyframes statIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.stat:nth-child(1){animation-delay:.04s}
+.stat:nth-child(2){animation-delay:.08s}
+.stat:nth-child(3){animation-delay:.12s}
+.stat:nth-child(4){animation-delay:.16s}
 .stat:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:0 8px 24px rgba(26,79,160,.14);}
 .stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
 .stat.t::before{background:linear-gradient(90deg,var(--accent),var(--teal));}
 .stat.ih::before{background:var(--accent);}
 .stat.dn::before{background:var(--teal);}
 .stat.pv::before{background:var(--orange);}
-.stat .lb{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;font-weight:800;font-family:'Roboto Serif',serif;}
-.stat .vl{font-family:'Roboto Serif',serif;font-size:24px;font-weight:900;margin-top:3px;}
+.stat .lb{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;font-weight:800;font-family:'Syne',sans-serif;}
+.stat .vl{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-top:3px;}
 .stat.t .vl{color:var(--accent2);}
 .stat.ih .vl{color:var(--si-tx);}
 .stat.dn .vl{color:var(--sd-tx);}
@@ -345,16 +422,13 @@ tbody td{padding:11px 16px;vertical-align:middle;text-align:center;font-weight:7
 .stat-data-panel{display:none;background:rgba(255,255,255,.9);border:1px solid var(--border);border-radius:10px;padding:15px;margin-bottom:16px;animation:fadeIn .15s ease;backdrop-filter:blur(6px);}
 .stat-data-panel.open{display:block;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
-.sdp-title{font-family:'Roboto Serif',serif;font-size:12px;color:var(--accent2);font-weight:700;margin-bottom:11px;display:flex;align-items:center;justify-content:space-between;}
-.sdp-close{font-size:15px;cursor:pointer;color:var(--muted);padding:2px 7px;border-radius:4px;font-family:'DM Sans',sans-serif;}
-.sdp-close:hover{color:var(--red);}
 
-.empty{text-align:center;padding:44px;color:var(--muted);font-size:13px;font-family:'DM Sans',sans-serif;}
+.empty{text-align:center;padding:44px;color:var(--muted);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;}
 .empty .ico{font-size:36px;margin-bottom:9px;}
 .empty .sub{font-size:11px;margin-top:5px;color:var(--border2);}
 
 .sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px;}
-.st{font-family:'Roboto Serif',serif;font-size:18px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:8px;letter-spacing:.2px;}
+.st{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px;letter-spacing:.2px;}
 .st span{color:var(--accent2);}
 
 /* === MODAL === */
@@ -367,10 +441,10 @@ tbody td{padding:11px 16px;vertical-align:middle;text-align:center;font-weight:7
   box-shadow:0 24px 64px rgba(26,79,160,.15),inset 0 1px 0 rgba(255,255,255,.8);
 }
 @keyframes pop{from{transform:scale(.93);opacity:0}to{transform:scale(1);opacity:1}}
-.modal h3{font-family:'Roboto Serif',serif;font-size:17px;font-weight:700;color:var(--accent2);margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+.modal h3{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--accent2);margin-bottom:20px;display:flex;align-items:center;gap:8px;}
 .mrow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .mbtns{display:flex;gap:9px;justify-content:flex-end;margin-top:22px;}
-.btn{padding:9px 20px;border-radius:8px;border:none;cursor:pointer;font-family:'Roboto Serif',serif;font-size:13px;font-weight:700;transition:all .15s;letter-spacing:.1px;}
+.btn{padding:9px 20px;border-radius:8px;border:none;cursor:pointer;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;transition:all .15s;letter-spacing:.1px;}
 .btn:active{transform:scale(.97);}
 .btn-b{background:linear-gradient(135deg,#1a4fa0,#0077b6);color:#fff;box-shadow:0 3px 12px rgba(26,79,160,.3);}
 .btn-b:hover{box-shadow:0 5px 20px rgba(26,79,160,.5);}
@@ -381,59 +455,56 @@ tbody td{padding:11px 16px;vertical-align:middle;text-align:center;font-weight:7
 
 /* ITEM MANAGER MODAL */
 .item-mgr{background:rgba(255,255,255,.97);border:1px solid var(--border2);border-radius:15px;padding:26px;width:480px;max-width:95vw;animation:pop .15s ease;box-shadow:0 24px 64px rgba(26,79,160,.15);}
-.item-mgr h3{font-family:'Roboto Serif',serif;font-size:16px;font-weight:700;color:var(--accent2);margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+.item-mgr h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--accent2);margin-bottom:18px;display:flex;align-items:center;gap:8px;}
 .item-add-row{display:flex;gap:8px;margin-bottom:14px;}
-.item-add-row input{flex:1;background:rgba(255,255,255,.9);border:1px solid var(--border);color:var(--text);padding:9px 13px;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:all .2s;}
+.item-add-row input{flex:1;background:rgba(255,255,255,.9);border:1px solid var(--border);color:var(--text);padding:9px 13px;border-radius:8px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:all .2s;}
 .item-add-row input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow);}
-.item-add-row button{padding:9px 16px;background:linear-gradient(135deg,#1a4fa0,#0077b6);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;transition:all .15s;white-space:nowrap;}
+.item-add-row button{padding:9px 16px;background:linear-gradient(135deg,#1a4fa0,#0077b6);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:13px;transition:all .15s;white-space:nowrap;}
 .item-add-row button:hover{box-shadow:0 4px 14px rgba(26,79,160,.4);}
 .item-list{max-height:260px;overflow-y:auto;}
 .item-list-row{display:flex;align-items:center;justify-content:space-between;padding:8px 11px;border-radius:7px;transition:background .12s;gap:8px;}
 .item-list-row:hover{background:rgba(91,141,238,.07);}
-.item-list-row .iname{font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif;flex:1;}
-.item-list-row .idel{padding:2px 8px;border-radius:5px;border:1px solid transparent;background:transparent;color:var(--muted);cursor:pointer;font-size:11px;font-family:'DM Sans',sans-serif;transition:all .13s;}
+.item-list-row .iname{font-size:13px;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;flex:1;}
+.item-list-row .idel{padding:2px 8px;border-radius:5px;border:1px solid transparent;background:transparent;color:var(--muted);cursor:pointer;font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;transition:all .13s;}
 .item-list-row .idel:hover{color:var(--red);border-color:rgba(248,113,113,.3);background:rgba(248,113,113,.06);}
-.item-empty-hint{color:var(--muted);font-size:12px;text-align:center;padding:20px 0;font-family:'DM Sans',sans-serif;}
+.item-empty-hint{color:var(--muted);font-size:12px;text-align:center;padding:20px 0;font-family:'Plus Jakarta Sans',sans-serif;}
 
-.tag-e{display:inline-block;padding:3px 10px;border-radius:5px;font-size:10.5px;font-weight:800;letter-spacing:.4px;background:rgba(167,139,250,.14);color:var(--purple);font-family:'DM Sans',sans-serif;border:1px solid rgba(167,139,250,.2);}
+.tag-e{display:inline-block;padding:3px 10px;border-radius:5px;font-size:10.5px;font-weight:800;letter-spacing:.4px;background:rgba(167,139,250,.14);color:var(--purple);font-family:'Plus Jakarta Sans',sans-serif;border:1px solid rgba(167,139,250,.2);}
 
-/* Deleted panel inside manage */
+/* Deleted panel */
 .deleted-zone{
   background:rgba(254,226,226,.45);
   border:1.5px solid rgba(239,68,68,.25);
   border-radius:14px;
   padding:20px 22px;
   margin-top:20px;
+  position:relative;
 }
 .deleted-zone-header{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:14px;flex-wrap:wrap;gap:10px;
+  display:flex;align-items:center;
+  margin-bottom:14px;
 }
 .deleted-zone-title{
-  font-family:'Roboto Serif',serif;font-size:14px;font-weight:800;
+  font-family:'Syne',sans-serif;font-size:14px;font-weight:800;
   color:#b91c1c;display:flex;align-items:center;gap:8px;
 }
-.clear-all-btn{
-  padding:8px 18px;
+/* Clear all — small icon button, bottom-right */
+.clear-all-fab{
+  position:absolute;
+  bottom:16px;
+  right:16px;
+  padding:6px 14px;
   background:linear-gradient(135deg,#b91c1c,#ef4444);
   color:#fff;border:none;border-radius:8px;cursor:pointer;
-  font-size:12px;font-family:'Roboto Serif',serif;font-weight:700;
+  font-size:12px;font-family:'Syne',sans-serif;font-weight:700;
   transition:all .2s;letter-spacing:.2px;
   box-shadow:0 3px 12px rgba(185,28,28,.25);
+  display:flex;align-items:center;gap:6px;
 }
-.clear-all-btn:hover{box-shadow:0 5px 18px rgba(185,28,28,.4);transform:translateY(-1px);}
-.clear-all-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
-.clear-note{
-  font-size:11px;color:#ef4444;
-  font-family:'DM Sans',sans-serif;
-  background:rgba(239,68,68,.08);
-  border:1px solid rgba(239,68,68,.2);
-  border-radius:7px;padding:9px 13px;margin-bottom:14px;
-  display:flex;align-items:flex-start;gap:7px;
-  line-height:1.5;
-}
+.clear-all-fab:hover{box-shadow:0 5px 18px rgba(185,28,28,.4);transform:translateY(-1px);}
+.clear-all-fab:disabled{opacity:.5;cursor:not-allowed;transform:none;}
 
-#toast{display:none;position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#1a4fa0,#0077b6);color:#fff;padding:13px 28px;border-radius:12px;font-weight:800;font-size:13.5px;z-index:999;box-shadow:0 8px 32px rgba(26,79,160,.45);white-space:nowrap;opacity:1;transition:opacity .3s;font-family:'Roboto Serif',serif;letter-spacing:.2px;border:1px solid rgba(255,255,255,.2);}
+#toast{display:none;position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#1a4fa0,#0077b6);color:#fff;padding:13px 28px;border-radius:12px;font-weight:800;font-size:13.5px;z-index:999;box-shadow:0 8px 32px rgba(26,79,160,.45);white-space:nowrap;opacity:1;transition:opacity .3s;font-family:'Syne',sans-serif;letter-spacing:.2px;border:1px solid rgba(255,255,255,.2);}
 
 mark{background:rgba(59,130,246,.2);color:var(--accent);border-radius:2px;padding:0 1px;}
 ::-webkit-scrollbar{width:5px;height:5px;}
@@ -441,7 +512,170 @@ mark{background:rgba(59,130,246,.2);color:var(--accent);border-radius:2px;paddin
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
 ::-webkit-scrollbar-thumb:hover{background:var(--accent);}
 
-/* Manage sub-tabs */
+/* === MANAGE LOCK SCREEN === */
+#manageLockScreen{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:340px;padding:40px 20px;
+  animation:pageIn .22s ease both;
+}
+.lock-card{
+  background:rgba(255,255,255,.97);
+  border:1.5px solid rgba(91,141,217,.45);
+  border-radius:18px;padding:36px 38px;
+  max-width:380px;width:100%;text-align:center;
+  box-shadow:0 8px 40px rgba(26,79,160,.13),inset 0 1px 0 rgba(255,255,255,.8);
+  backdrop-filter:blur(8px);
+}
+.lock-icon{font-size:40px;margin-bottom:12px;filter:drop-shadow(0 2px 8px rgba(26,79,160,.25));}
+.lock-title{
+  font-family:'Syne',sans-serif;font-size:18px;font-weight:800;
+  color:var(--accent2);margin-bottom:4px;letter-spacing:.3px;
+}
+.lock-sub{font-size:12px;color:var(--muted);margin-bottom:22px;font-family:'Plus Jakarta Sans',sans-serif;}
+.lock-input-wrap{position:relative;margin-bottom:14px;}
+.lock-input-wrap input{
+  width:100%;padding:12px 44px 12px 16px;
+  border:1.5px solid var(--border);border-radius:10px;
+  font-size:15px;font-family:'Plus Jakarta Sans',sans-serif;
+  color:var(--text);font-weight:600;
+  background:rgba(255,255,255,.95);outline:none;
+  transition:all .2s;letter-spacing:2px;
+}
+.lock-input-wrap input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow);}
+.lock-toggle-pw{
+  position:absolute;right:13px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;font-size:17px;opacity:.5;
+  transition:opacity .15s;padding:0;line-height:1;
+}
+.lock-toggle-pw:hover{opacity:.9;}
+.lock-btn{
+  width:100%;padding:13px;
+  background:linear-gradient(135deg,#1a4fa0,#0077b6);
+  color:#fff;border:none;border-radius:10px;
+  font-family:'Syne',sans-serif;font-size:15px;font-weight:700;
+  cursor:pointer;transition:all .22s;letter-spacing:.3px;
+  box-shadow:0 4px 20px rgba(26,79,160,.3),inset 0 1px 0 rgba(255,255,255,.15);
+}
+.lock-btn:hover{box-shadow:0 7px 28px rgba(26,79,160,.55);transform:translateY(-2px);}
+.lock-btn:active{transform:scale(.98);}
+.lock-error{
+  color:var(--red);font-size:12px;font-weight:700;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  margin-top:10px;min-height:18px;
+  animation:shake .3s ease;
+}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* === LOGIN OVERLAY === */
+#loginOverlay{
+  position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(135deg,rgba(12,28,70,.97) 0%,rgba(0,70,130,.95) 100%);
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(8px);
+}
+.login-box{
+  background:rgba(255,255,255,.97);
+  border-radius:22px;padding:44px 42px 36px;
+  max-width:400px;width:92%;text-align:center;
+  box-shadow:0 16px 60px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.9);
+  animation:pageIn .3s ease both;
+}
+.login-logo{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent);letter-spacing:.5px;margin-bottom:3px;}
+.login-logo-sub{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:22px;}
+.login-icon{font-size:44px;margin-bottom:10px;filter:drop-shadow(0 2px 8px rgba(26,79,160,.3));}
+.login-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--accent2);margin-bottom:4px;}
+.login-sub{font-size:12px;color:var(--muted);margin-bottom:24px;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.5;}
+.login-fg{margin-bottom:13px;text-align:left;}
+.login-fg label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;display:block;margin-bottom:5px;font-weight:700;font-family:'Syne',sans-serif;}
+.login-fg input{
+  width:100%;padding:11px 44px 11px 14px;
+  border:1.5px solid var(--border);border-radius:10px;
+  font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;
+  color:var(--text);font-weight:600;background:rgba(255,255,255,.95);
+  outline:none;transition:all .2s;
+}
+.login-fg input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow);}
+.login-pw-wrap{position:relative;}
+.login-pw-toggle{position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:17px;opacity:.45;transition:opacity .15s;padding:0;}
+.login-pw-toggle:hover{opacity:.9;}
+.login-btn{
+  width:100%;padding:14px;margin-top:6px;
+  background:linear-gradient(135deg,#1a4fa0,#0077b6);
+  color:#fff;border:none;border-radius:11px;
+  font-family:'Syne',sans-serif;font-size:15px;font-weight:700;
+  cursor:pointer;transition:all .22s;letter-spacing:.3px;
+  box-shadow:0 4px 20px rgba(26,79,160,.3),inset 0 1px 0 rgba(255,255,255,.15);
+}
+.login-btn:hover{box-shadow:0 7px 28px rgba(26,79,160,.55);transform:translateY(-2px);}
+.login-btn:active{transform:scale(.98);}
+.login-err{color:var(--red);font-size:12px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;margin-top:10px;min-height:18px;animation:shake .3s ease;}
+.login-chpw-link{font-size:11.5px;color:var(--accent3);font-weight:700;cursor:pointer;margin-top:14px;display:inline-block;font-family:'Plus Jakarta Sans',sans-serif;text-decoration:underline;text-underline-offset:2px;}
+.login-chpw-link:hover{color:var(--accent2);}
+
+/* === CHANGE PASSWORD MODAL === */
+#chpwModal{
+  position:fixed;inset:0;z-index:10000;
+  background:rgba(10,25,60,.6);
+  display:none;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);
+}
+#chpwModal.open{display:flex;}
+.chpw-box{
+  background:#fff;border-radius:18px;padding:36px 34px 28px;
+  max-width:380px;width:92%;text-align:center;
+  box-shadow:0 12px 50px rgba(0,0,0,.3);
+  animation:pageIn .25s ease both;
+}
+.chpw-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--accent2);margin-bottom:18px;}
+.chpw-fg{margin-bottom:11px;text-align:left;}
+.chpw-fg label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;display:block;margin-bottom:4px;font-weight:700;font-family:'Syne',sans-serif;}
+.chpw-fg .pw-wrap{position:relative;}
+.chpw-fg input{width:100%;padding:10px 40px 10px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:13.5px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);font-weight:600;background:#fff;outline:none;transition:all .2s;}
+.chpw-fg input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow);}
+.chpw-toggle{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:15px;opacity:.45;transition:opacity .15s;padding:0;}
+.chpw-toggle:hover{opacity:.9;}
+.chpw-btns{display:flex;gap:9px;margin-top:16px;}
+.chpw-save{flex:1;padding:12px;background:linear-gradient(135deg,#1a4fa0,#0077b6);color:#fff;border:none;border-radius:9px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 3px 14px rgba(26,79,160,.3);}
+.chpw-save:hover{transform:translateY(-1px);box-shadow:0 5px 20px rgba(26,79,160,.5);}
+.chpw-cancel{flex:1;padding:12px;background:rgba(198,40,40,.08);color:var(--red);border:1px solid rgba(198,40,40,.2);border-radius:9px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;}
+.chpw-cancel:hover{background:rgba(198,40,40,.15);}
+.chpw-err{color:var(--red);font-size:12px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;margin-top:8px;min-height:16px;}
+.chpw-ok{color:#1a7a3c;font-size:12px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;margin-top:8px;min-height:16px;}
+
+/* === USER BADGE IN NAV === */
+#userBadge{
+  display:flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2);
+  border-radius:10px;padding:6px 13px;cursor:pointer;
+  font-size:12px;font-weight:700;color:#fff;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  transition:background .2s;
+}
+#userBadge:hover{background:rgba(255,255,255,.2);}
+#userBadge .ub-icon{font-size:16px;}
+
+/* === AUTH ERROR OVERLAY === */
+#authErrorToast{
+  position:fixed;top:80px;left:50%;transform:translateX(-50%);
+  background:#c62828;color:#fff;border-radius:10px;padding:11px 22px;
+  font-size:13px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;
+  z-index:8000;display:none;box-shadow:0 4px 20px rgba(198,40,40,.4);
+  animation:pageIn .2s ease both;
+}
+
+/* === GOOGLE SHEETS ICON BUTTON === */
+.sheets-icon-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:30px;height:30px;border-radius:7px;
+  background:rgba(26,79,160,.1);border:1.5px solid rgba(26,79,160,.2);
+  cursor:pointer;transition:all .18s;vertical-align:middle;margin-left:8px;
+  text-decoration:none;
+  flex-shrink:0;
+}
+.sheets-icon-btn:hover{background:rgba(26,79,160,.2);transform:scale(1.1);box-shadow:0 2px 10px rgba(26,79,160,.2);}
+.sheets-icon-btn svg{display:block;}
+
+/* === MANAGE sub-tabs */
 .manage-subtabs{
   display:flex;gap:4px;margin-bottom:20px;
   border-bottom:2px solid rgba(91,141,217,.3);
@@ -452,18 +686,22 @@ mark{background:rgba(59,130,246,.2);color:var(--accent);border-radius:2px;paddin
   font-size:12px;font-weight:700;
   color:var(--muted);border-bottom:3px solid transparent;
   margin-bottom:-2px;transition:all .15s;
-  font-family:'Roboto Serif',serif;letter-spacing:.3px;
+  font-family:'Syne',sans-serif;letter-spacing:.3px;
   border-radius:6px 6px 0 0;
 }
 .manage-subtab.active{color:var(--accent2);border-bottom-color:var(--accent);background:rgba(26,79,160,.06);}
 .manage-subtab:hover:not(.active){color:var(--text2);}
 
+/* Sync indicator */
+#syncDot{display:none;align-items:center;gap:5px;padding:5px 11px;border-radius:20px;font-size:11px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;color:#fff;transition:background .3s;}
+
 @media(max-width:700px){
-  .sidebar{width:54px;top:64px;height:calc(100vh - 64px);}
+  .sidebar{width:54px;top:72px;height:calc(100vh - 72px);}
   .tab .tab-label,.tab .badge,.sidebar-section{display:none;}
   .tab{padding:12px 0;justify-content:center;margin:1px 4px 1px 0;}
   .tab .tab-icon{width:auto;}
   .page{padding:16px 12px;}
+  .sidebar-prepared-name{display:none;}
 }
 </style>
 </head>
@@ -471,79 +709,93 @@ mark{background:rgba(59,130,246,.2);color:var(--accent);border-radius:2px;paddin
 
 <!-- TOP NAV -->
 <div class="nav">
-  <!-- left spacer (for 3-col centering) -->
-  <div></div>
-  <!-- centered title -->
+  <div class="nav-left">
+    <div class="link3-logo-wrap">
+      <!-- REPLACED LOGO: text brand instead of image -->
+      <div class="text-logo">
+        <div class="main-logo">Link3</div>
+        <div class="sub-logo">THE Service Company</div>
+      </div>
+    </div>
+  </div>
   <div class="nav-center">
     <div class="nav-title">Inventory Dashboard</div>
     <div class="nav-subtitle">Motijheel Zone</div>
   </div>
-  <!-- right: sync + search -->
   <div class="nav-right">
-    <div id="syncDot" style="display:none;align-items:center;gap:5px;padding:5px 11px;border-radius:20px;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;color:#fff;transition:background .3s;"><span></span></div>
+    <div id="syncDot"><span></span></div>
+    <div id="userBadge" title="Logout করুন" onclick="doLogout()">
+      <span class="ub-icon">👤</span>
+      <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.2;">
+        <span class="ub-name" style="font-size:13px;font-weight:800;"></span>
+        <span class="ub-role" style="font-size:9px;font-weight:600;opacity:.7;text-transform:uppercase;letter-spacing:1px;"></span>
+      </span>
+      <span style="font-size:10px;opacity:.55;margin-left:2px;">⏻</span>
+    </div>
     <div class="sw">
-      <input id="sb" type="text" placeholder="Search serial / item..." oninput="renderAll()" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);color:#fff;">
+      <input id="sb" type="text" placeholder="Search serial / item..." oninput="renderAll()">
     </div>
   </div>
 </div>
+
+
 
 <!-- MAIN LAYOUT -->
 <div class="layout">
 
   <!-- SIDEBAR -->
   <nav class="sidebar">
+    <div class="sidebar-nav-items">
     <div class="sidebar-section">Equipment</div>
-    <div class="tab active" id="tab-all"        onclick="go('all')">
-      <span class="tab-icon">📋</span><span class="tab-label">All Equipment</span><span class="badge" id="b-all">0</span>
+    <div class="tab active" id="tab-all" onclick="go('all')">
+      <span class="tab-icon">🗂️</span><span class="tab-label">All Equipment</span><span class="badge" id="b-all">0</span>
     </div>
-    <div class="tab" id="tab-unassigned" onclick="go('unassigned')">
-      <span class="tab-icon">🔓</span><span class="tab-label">Unassigned</span><span class="badge" id="b-un">0</span>
-    </div>
-    <div class="tab" id="tab-done"       onclick="go('done')">
-      <span class="tab-icon">✅</span><span class="tab-label">Done</span><span class="badge" id="b-done">0</span>
+    <div class="tab" id="tab-done" onclick="go('done')">
+      <span class="tab-icon">☑️</span><span class="tab-label">Done</span><span class="badge" id="b-done">0</span>
     </div>
 
     <div class="sidebar-divider"></div>
     <div class="sidebar-section">Engineers</div>
-    <div class="tab" id="tab-rupchan"    onclick="go('rupchan')">
-      <span class="tab-icon">📦</span><span class="tab-label">Rupchan</span><span class="badge" id="b-rupchan">0</span>
+    <div class="tab" id="tab-rupchan" onclick="go('rupchan')">
+      <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M15.5 6.5 C16.5 5 18 5.5 18.5 7"/></svg></span><span class="tab-label">Rupchan</span><span class="badge" id="b-rupchan">0</span>
     </div>
-    <div class="tab" id="tab-amit"       onclick="go('amit')">
-      <span class="tab-icon">📦</span><span class="tab-label">Amit</span><span class="badge" id="b-amit">0</span>
+    <div class="tab" id="tab-amit" onclick="go('amit')">
+      <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M15.5 6.5 C16.5 5 18 5.5 18.5 7"/></svg></span><span class="tab-label">Amit</span><span class="badge" id="b-amit">0</span>
     </div>
-    <div class="tab" id="tab-tamim"      onclick="go('tamim')">
-      <span class="tab-icon">📦</span><span class="tab-label">Tamim</span><span class="badge" id="b-tamim">0</span>
+    <div class="tab" id="tab-tamim" onclick="go('tamim')">
+      <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M15.5 6.5 C16.5 5 18 5.5 18.5 7"/></svg></span><span class="tab-label">Tamim</span><span class="badge" id="b-tamim">0</span>
     </div>
-    <div class="tab" id="tab-nazrul"     onclick="go('nazrul')">
-      <span class="tab-icon">📦</span><span class="tab-label">Nazrul</span><span class="badge" id="b-nazrul">0</span>
+    <div class="tab" id="tab-nazrul" onclick="go('nazrul')">
+      <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M15.5 6.5 C16.5 5 18 5.5 18.5 7"/></svg></span><span class="tab-label">Nazrul</span><span class="badge" id="b-nazrul">0</span>
     </div>
 
     <div class="sidebar-divider"></div>
-    <div class="tab" id="tab-manage"     onclick="go('manage')" style="margin-top:4px;">
-      <span class="tab-icon">⚙️</span><span class="tab-label">Manage System</span>
+    <div class="tab" id="tab-manage" onclick="go('manage')" style="margin-top:4px;">
+      <span class="tab-icon">🛠️</span><span class="tab-label">Manage System</span>
+    </div>
+
+    <!-- Prepared by at bottom of sidebar -->
+    </div><!-- /sidebar-nav-items -->
+    <div class="sidebar-prepared">
+      <span class="sidebar-prepared-text">Prepared by</span>
+      <span class="sidebar-prepared-name">Ahsanul Kabir</span>
     </div>
   </nav>
 
   <!-- MAIN CONTENT -->
   <div class="main">
 
-    <!-- ALL EQUIPMENT PAGE (default) -->
+    <!-- ALL EQUIPMENT PAGE -->
     <div class="page active" id="page-all">
-      <div class="sh"><div class="st">📋 All <span>Equipment</span></div></div>
+      <div class="sh"><div class="st">🗂️ All <span>Equipment</span></div></div>
       <div class="stats" id="allStats"></div>
       <div class="stat-data-panel" id="allStatPanel"></div>
       <div class="tbl-wrap" id="allWrap"></div>
     </div>
 
-    <!-- UNASSIGNED -->
-    <div class="page" id="page-unassigned">
-      <div class="sh"><div class="st">🔓 Unassigned <span>Equipment</span></div></div>
-      <div class="tbl-wrap" id="unWrap"></div>
-    </div>
-
     <!-- DONE -->
     <div class="page" id="page-done">
-      <div class="sh"><div class="st">✅ Done <span>Devices</span></div></div>
+      <div class="sh"><div class="st">☑️ Done <span>Devices</span></div></div>
       <div class="tbl-wrap" id="doneWrap"></div>
     </div>
 
@@ -555,67 +807,103 @@ mark{background:rgba(59,130,246,.2);color:var(--accent);border-radius:2px;paddin
 
     <!-- MANAGE SYSTEM -->
     <div class="page" id="page-manage">
-      <div class="sh"><div class="st">⚙️ Manage <span>System</span></div></div>
+
+      <!-- LOCK SCREEN -->
+      <div id="manageLockScreen">
+        <div class="lock-card">
+          <div class="lock-icon">🔐</div>
+          <div class="lock-title">Manage System</div>
+          <div class="lock-sub">এই section টি শুধুমাত্র Admin এর জন্য। Password দিন।</div>
+          <div class="lock-input-wrap">
+            <input type="password" id="managePwInput" placeholder="Password" maxlength="30"
+              onkeydown="if(event.key==='Enter')checkManagePass()">
+            <button class="lock-toggle-pw" tabindex="-1" onclick="toggleManagePwVis(this)" title="Show/Hide">👁</button>
+          </div>
+          <button class="lock-btn" onclick="checkManagePass()">🔓 Unlock</button>
+          <div class="lock-error" id="lockError"></div>
+        </div>
+      </div>
+
+      <!-- ACTUAL MANAGE CONTENT (hidden until unlocked) -->
+      <div id="manageContent" style="display:none;">
+      <div class="sh"><div class="st">🛠️ Manage <span>System</span></div>
+        <button onclick="lockManage()" style="padding:7px 16px;background:rgba(198,40,40,.1);color:#c62828;border:1px solid rgba(198,40,40,.25);border-radius:8px;cursor:pointer;font-size:12px;font-family:'Syne',sans-serif;font-weight:700;transition:all .15s;" onmouseover="this.style.background='#c62828';this.style.color='#fff';" onmouseout="this.style.background='rgba(198,40,40,.1)';this.style.color='#c62828';">🔒 Lock</button>
+      </div>
 
       <div class="manage-subtabs">
-        <div class="manage-subtab active" id="msub-tab-entry"  onclick="switchManageSub('entry')">➕ Entry</div>
-        <div class="manage-subtab"        id="msub-tab-sheets" onclick="switchManageSub('sheets')">📊 Google Sheets</div>
-        <div class="manage-subtab"        id="msub-tab-deleted" onclick="switchManageSub('deleted')">🗑 Deleted <span id="b-deleted" style="background:rgba(239,68,68,.15);color:#ef4444;font-size:9px;padding:1px 6px;border-radius:10px;font-family:'DM Mono',monospace;font-weight:800;margin-left:3px;">0</span></div>
+        <div class="manage-subtab active" id="msub-tab-entry"   onclick="switchManageSub('entry')">＋ Entry</div>
+        <div class="manage-subtab"        id="msub-tab-unassigned" onclick="switchManageSub('unassigned')">📤 Unassigned <span id="b-un" style="background:rgba(26,79,160,.15);color:#1a4fa0;font-size:9px;padding:1px 6px;border-radius:10px;font-family:'JetBrains Mono',monospace;font-weight:800;margin-left:3px;">0</span></div>
+        <div class="manage-subtab"        id="msub-tab-sheets"  onclick="switchManageSub('sheets')">📡 Google Sheets</div>
+        <div class="manage-subtab"        id="msub-tab-deleted" onclick="switchManageSub('deleted')">🗑 Deleted <span id="b-deleted" style="background:rgba(239,68,68,.15);color:#ef4444;font-size:9px;padding:1px 6px;border-radius:10px;font-family:'JetBrains Mono',monospace;font-weight:800;margin-left:3px;">0</span></div>
       </div>
 
       <!-- Entry Sub-panel -->
       <div id="msub-panel-entry">
-        <div style="max-width:520px;">
-          <div class="card" style="box-shadow:0 8px 32px rgba(26,79,160,.13);">
-            <div class="card-title" style="font-size:15px;padding-bottom:16px;margin-bottom:22px;">
-              <span style="font-size:20px;">📥</span> Device Entry
+        <div style="max-width:660px;margin:0 auto;">
+          <div class="card" style="box-shadow:0 8px 32px rgba(26,79,160,.13);padding:16px 20px;">
+            <div class="card-title" style="font-size:14px;margin-bottom:14px;padding-bottom:10px;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Device Entry
             </div>
-            <div class="fg" style="margin-bottom:16px;">
+            <div class="fg" style="margin-bottom:9px;">
               <label>Item Name</label>
-              <div style="display:flex;gap:8px;align-items:center;">
-                <input id="fn" type="text" placeholder="Select or type item name" list="ns" autocomplete="off" style="flex:1;">
+              <div style="display:flex;gap:7px;align-items:center;">
+                <input id="fn" type="text" placeholder="Select or type item name" list="ns" autocomplete="off" style="flex:1;padding:8px 12px;font-size:13px;">
                 <datalist id="ns"></datalist>
-                <button onclick="openItemMgr()" title="Add / Remove Item Names" style="height:40px;padding:0 14px;background:linear-gradient(135deg,#1a4fa0,#0077b6);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;font-family:'Roboto Serif',serif;cursor:pointer;white-space:nowrap;box-shadow:0 3px 10px rgba(26,79,160,.3);transition:all .2s;flex-shrink:0;">⚙ Manage</button>
+                <button onclick="openItemMgr()" title="Add / Remove Item Names" style="height:38px;padding:0 13px;background:linear-gradient(135deg,#1a4fa0,#0077b6);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer;white-space:nowrap;box-shadow:0 3px 10px rgba(26,79,160,.3);transition:all .2s;flex-shrink:0;">⚙ Manage</button>
               </div>
             </div>
-            <div class="fg" style="margin-bottom:16px;">
-              <label>Serial / MAC</label>
-              <textarea id="fs" rows="3" placeholder="e.g. CDTCAFC8AB57, CDTCAFC9274B"></textarea>
+            <div class="fg" style="margin-bottom:9px;">
+              <label>Serial / MAC <span style="font-size:9px;opacity:.55;font-weight:400;text-transform:none;letter-spacing:0;">— comma, space, or newline separated</span></label>
+              <textarea id="fs" rows="4" placeholder="CDTCAFC92765, CDTCAFC92761&#10;or one per line" style="font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.6;padding:8px 12px;" oninput="updatePreview()"></textarea>
             </div>
-            <div class="fg" style="margin-bottom:22px;">
-              <label>Remarks <span style="font-size:9px;opacity:.6;font-weight:400;">(optional)</span></label>
-              <input id="fr" type="text" placeholder="Any note...">
+            <div class="fg" style="margin-bottom:9px;">
+              <label>Remarks <span style="font-size:9px;opacity:.5;font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label>
+              <input id="fr" type="text" placeholder="Any note..." style="padding:8px 12px;font-size:13px;">
             </div>
-            <button class="entry-submit-btn" onclick="addPool()" style="font-size:15px;padding:15px;letter-spacing:.5px;">
-              📥 &nbsp;Add to Unassigned
+            <div id="entryPreviewCard" style="display:none;margin-bottom:10px;background:rgba(0,119,182,.05);border:1px solid rgba(91,141,217,.3);border-radius:10px;padding:10px 13px;">
+              <div style="font-size:11px;font-weight:800;color:var(--accent2);font-family:'Syne',sans-serif;margin-bottom:6px;">Preview — <span id="previewCount" style="font-family:'JetBrains Mono',monospace;color:var(--teal);"></span></div>
+              <div id="previewList" style="max-height:110px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:4px;"></div>
+            </div>
+            <button class="entry-submit-btn" onclick="addPool()" style="margin-top:10px;font-size:14px;padding:13px;letter-spacing:.3px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Add to Unassigned
             </button>
           </div>
         </div>
+      </div>
+
+      <!-- Unassigned Sub-panel -->
+      <div id="msub-panel-unassigned" style="display:none;">
+        <div class="sh" style="margin-bottom:14px;">
+          <div class="st" style="font-size:16px;">🔓 Unassigned <span>Equipment</span></div>
+        </div>
+        <div class="tbl-wrap" id="unWrap"></div>
       </div>
 
       <!-- Google Sheets Sub-panel -->
       <div id="msub-panel-sheets" style="display:none;">
         <div class="card" style="max-width:600px;">
           <div class="card-title">📊 Real-Time Multi-User Sync</div>
-          <div style="background:rgba(26,79,160,.07);border:1px solid rgba(91,141,217,.4);border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:12.5px;color:var(--text2);line-height:1.7;font-family:'DM Sans',sans-serif;">
-            <strong style="color:var(--accent2);font-family:'Roboto Serif',serif;display:block;margin-bottom:6px;">🌐 ৪ জন একসাথে কীভাবে কাজ করবে:</strong>
-            ১. নিচের Apps Script কোডটা Google Sheet-এ deploy করুন।<br>
-            ২. Web App URL paste করে <strong>"Connect &amp; Sync"</strong> চাপুন।<br>
-            ৩. একই URL টা বাকি ৩ জনকে দিন — তারাও paste করে Connect করবে।<br>
-            ৪. যেকোনো একজন data change করলে বাকিরা <strong>৮ সেকেন্ডের মধ্যে</strong> auto-update পাবে।<br>
-            <span style="color:var(--teal);font-size:11.5px;">💡 Google Sheets-ই shared database হিসেবে কাজ করে — কোনো server লাগবে না।</span>
+          <div style="background:rgba(26,79,160,.07);border:1px solid rgba(91,141,217,.4);border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:12.5px;color:var(--text2);line-height:1.7;font-family:'Plus Jakarta Sans',sans-serif;">
+            <strong style="color:var(--accent2);font-family:'Syne',sans-serif;display:block;margin-bottom:6px;">🌐 How to sync with 4 users:</strong>
+            1. Deploy the Apps Script code below in your Google Sheet.<br>
+            2. Paste the Web App URL and click <strong>"Connect &amp; Sync"</strong>.<br>
+            3. Share the same URL with the other 3 users — they paste and connect too.<br>
+            4. Any change by one user will <strong>auto-update others within 8 seconds</strong>.<br>
+            <span style="color:var(--teal);font-size:11.5px;">💡 Google Sheets acts as the shared database — no server needed.</span>
           </div>
           <div class="fg">
             <label>Google Apps Script Web App URL</label>
             <input id="sheetsUrl" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:12px;">
-            <div class="hint" style="font-size:11px;color:var(--muted);margin-top:4px;">⚠️ Deploy করার সময় "Execute as: Me" এবং "Who has access: Anyone" সিলেক্ট করতে হবে।</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px;">⚠️ When deploying: set "Execute as: Me" and "Who has access: Anyone".</div>
           </div>
-          <div style="background:rgba(221,232,248,.7);border:1px solid var(--border);border-radius:8px;padding:12px;margin:12px 0;font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;max-height:260px;overflow-y:auto;line-height:1.6;white-space:pre-wrap;user-select:all;" id="scriptCode"></div>
+          <div style="background:rgba(221,232,248,.7);border:1px solid var(--border);border-radius:8px;padding:12px;margin:12px 0;font-size:11px;color:var(--text2);font-family:'JetBrains Mono',monospace;max-height:260px;overflow-y:auto;line-height:1.6;white-space:pre-wrap;user-select:all;" id="scriptCode"></div>
           <div style="display:flex;justify-content:space-between;gap:9px;margin-top:12px;flex-wrap:wrap;">
-            <button class="btn btn-g" onclick="copyScript()">📋 Script Copy করুন</button>
+            <button class="btn btn-g" onclick="copyScript()">📋 Copy Script</button>
             <button class="btn btn-b" onclick="syncToSheetsInline()">🔗 Connect &amp; Sync</button>
           </div>
-          <div id="syncStatusInline" style="margin-top:10px;font-size:12px;text-align:center;color:var(--muted);font-family:'DM Sans',sans-serif;"></div>
+          <div id="syncStatusInline" style="margin-top:10px;font-size:12px;text-align:center;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;"></div>
         </div>
       </div>
 
@@ -623,16 +911,14 @@ mark{background:rgba(59,130,246,.2);color:var(--accent);border-radius:2px;paddin
       <div id="msub-panel-deleted" style="display:none;">
         <div class="deleted-zone">
           <div class="deleted-zone-header">
-            <div class="deleted-zone-title">🗑 Deleted Items</div>
-            <button class="clear-all-btn" id="clearAllBtn" onclick="clearAllDeleted()">🗑 Clear All from Interface</button>
+            <div class="deleted-zone-title">🗂 Deleted Items</div>
           </div>
-          <div class="clear-note">
-            ⚠️ <span><strong>"Clear All"</strong> শুধুমাত্র এই interface থেকে deleted items সরিয়ে দেবে। Google Sheets-এ Deleted sheet-এ data থেকে যাবে এবং সেখান থেকে দেখা যাবে।</span>
-          </div>
-          <div class="tbl-wrap" id="deletedWrap" style="border:none;box-shadow:none;background:transparent;"></div>
+          <div class="tbl-wrap" id="deletedWrap" style="border:none;box-shadow:none;background:transparent;padding-bottom:48px;"></div>
+          <button class="clear-all-fab" id="clearAllBtn" onclick="clearAllDeleted()">🗑 Clear All</button>
         </div>
       </div>
 
+      </div><!-- /manageContent -->
     </div><!-- /page-manage -->
 
   </div><!-- /main -->
@@ -641,7 +927,7 @@ mark{background:rgba(59,130,246,.2);color:var(--accent);border-radius:2px;paddin
 <!-- DONE MODAL -->
 <div class="mbg" id="doneModal">
   <div class="modal">
-    <h3>✅ Mark as Done</h3>
+    <h3>☑️ Mark as Done</h3>
     <div class="mrow">
       <div class="fg"><label>Client ID</label><input id="dc" placeholder="Client ID"></div>
       <div class="fg"><label>Ticket ID</label><input id="dt" placeholder="Ticket ID"></div>
@@ -653,7 +939,7 @@ mark{background:rgba(59,130,246,.2);color:var(--accent);border-radius:2px;paddin
     <div class="fg"><label>Remarks</label><input id="drm" placeholder="optional"></div>
     <div class="mbtns">
       <button class="btn btn-g" onclick="closeDM()">Cancel</button>
-      <button class="btn btn-b" onclick="confirmDone()">✅ Confirm Done</button>
+      <button class="btn btn-b" onclick="confirmDone()">☑️ Confirm Done</button>
     </div>
   </div>
 </div>
@@ -673,6 +959,29 @@ mark{background:rgba(59,130,246,.2);color:var(--accent);border-radius:2px;paddin
   </div>
 </div>
 
+<!-- PROVIDED MODAL -->
+<div class="mbg" id="provModal">
+  <div class="modal" style="max-width:360px;">
+    <h3>↗ Mark as Provided</h3>
+    <input type="hidden" id="provEng">
+    <input type="hidden" id="provId">
+    <div class="fg" style="margin-top:10px;">
+      <label>Select Technician</label>
+      <select id="provTechSel" style="background:rgba(255,255,255,.95);border:1.5px solid var(--border);color:var(--text);padding:10px 14px;border-radius:9px;font-size:13.5px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;width:100%;outline:none;">
+        <option value="">— Select Technician —</option>
+        <option value="Sumon">Sumon</option>
+        <option value="Alamin">Alamin</option>
+        <option value="Nahid">Nahid</option>
+        <option value="Fahim">Fahim</option>
+      </select>
+    </div>
+    <div class="mbtns">
+      <button class="btn btn-g" onclick="closeProvModal()">Cancel</button>
+      <button class="btn btn-b" onclick="confirmProv()">↗ Confirm Provided</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -683,6 +992,13 @@ let CUSTOM_ITEMS=JSON.parse(localStorage.getItem('customItems')||'[]');
 function saveCustomItems(){localStorage.setItem('customItems',JSON.stringify(CUSTOM_ITEMS));}
 
 let D={unassigned:[],deleted:[],rupchan:[],amit:[],tamim:[],nazrul:[],done:[]};
+
+// ── DATE ONLY ─────────────────────────────────────────────────────────
+function fd(iso){
+  if(!iso)return '';
+  const d=new Date(iso);
+  return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+}
 
 // ── SYNC ─────────────────────────────────────────────────────────────
 let _lastVersion=0,_pushTimer=null,_pollHandle=null,_userMadeChange=false;
@@ -716,7 +1032,7 @@ async function pullFromSheets(force){
       const wasEmpty=localItems===0&&remoteItems>0;
       _lastVersion=remoteVer;D=remote;
       localStorage.setItem('inv7',JSON.stringify(D));renderAll();
-      if(wasEmpty){setSyncIndicator('ok');toast('✅ Shared data লোড হয়েছে!');}
+      if(wasEmpty){setSyncIndicator('ok');toast('✅ Shared data loaded!');}
       else if(!force)setSyncIndicator('ok');
       setTimeout(()=>setSyncIndicator('idle'),3000);return true;
     }return false;
@@ -750,17 +1066,65 @@ function deleteCustomItem(i){
   CUSTOM_ITEMS.splice(i,1);saveCustomItems();renderItemList();toast(`🗑 "${nm}" removed`);
 }
 
+// ── MANAGE SYSTEM PASSWORD ────────────────────────────────────────────
+const MANAGE_PASS = 'Link3@Motijheel';
+let _manageUnlocked = false;
+
+function checkManagePass(){
+  const inp = document.getElementById('managePwInput');
+  const err = document.getElementById('lockError');
+  if(inp.value === MANAGE_PASS){
+    _manageUnlocked = true;
+    document.getElementById('manageLockScreen').style.display = 'none';
+    document.getElementById('manageContent').style.display = 'block';
+    inp.value = '';
+    err.textContent = '';
+  } else {
+    err.textContent = '❌ Password ভুল হয়েছে। আবার চেষ্টা করুন।';
+    err.style.animation = 'none';
+    requestAnimationFrame(()=>{ err.style.animation = ''; err.style.animation = 'shake .3s ease'; });
+    inp.value = '';
+    inp.focus();
+  }
+}
+
+function lockManage(){
+  _manageUnlocked = false;
+  document.getElementById('manageLockScreen').style.display = 'flex';
+  document.getElementById('manageContent').style.display = 'none';
+  document.getElementById('lockError').textContent = '';
+  document.getElementById('managePwInput').value = '';
+}
+
+function toggleManagePwVis(btn){
+  const inp = document.getElementById('managePwInput');
+  if(inp.type === 'password'){ inp.type = 'text'; btn.textContent = '🙈'; }
+  else { inp.type = 'password'; btn.textContent = '👁'; }
+}
+
 // ── NAVIGATION ────────────────────────────────────────────────────────
 function go(name){
+  // Block non-admin from manage
+  if(name==='manage' && _currentUser !== 'admin'){
+    authError();
+    return;
+  }
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
   document.getElementById('page-'+name).classList.add('active');
+  if(name==='manage'){
+    if(!_manageUnlocked){
+      document.getElementById('manageLockScreen').style.display='flex';
+      document.getElementById('manageContent').style.display='none';
+      setTimeout(()=>{ const i=document.getElementById('managePwInput'); if(i) i.focus(); },80);
+    }
+  }
   renderAll();
 }
 
 function switchManageSub(sub){
-  ['entry','sheets','deleted'].forEach(s=>{
+  ['entry','unassigned','sheets','deleted'].forEach(s=>{
     document.getElementById('msub-panel-'+s).style.display=s===sub?'':'none';
     document.getElementById('msub-tab-'+s).classList.toggle('active',s===sub);
   });
@@ -772,46 +1136,21 @@ function switchManageSub(sub){
   }
 }
 
-// ── CLEAR ALL DELETED (interface only) ──────────────────────────────
+// ── CLEAR ALL DELETED ────────────────────────────────────────────────
 function clearAllDeleted(){
   const count=(D.deleted||[]).length;
   if(!count){toast('⚠️ No deleted items to clear');return;}
-  if(!confirm(`Interface থেকে ${count}টি deleted item সরিয়ে দেবেন?\n\nNote: Google Sheets-এ data থেকে যাবে।`))return;
+  if(!confirm(`Remove ${count} deleted item(s) from interface?\n\nNote: Data remains in Google Sheets.`))return;
   D.deleted=[];
   save();renderAll();
-  toast(`🗑 ${count}টি item interface থেকে cleared — Sheets-এ আছে`);
+  toast(`🗑 ${count} item(s) cleared — still in Sheets`);
 }
 
 // ── HELPERS ──────────────────────────────────────────────────────────
 function sq(){return document.getElementById('sb').value.trim().toLowerCase();}
 function e(t){return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function hl(t,q){if(!q)return e(t);return e(t).replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>');}
-function fd(iso){if(!iso)return '';const d=new Date(iso);return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true});}
 function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
-
-// ── STAT PANEL ────────────────────────────────────────────────────────
-let activeStatFilter=null,activeStatEng=null;
-function closeStatPanel(id){const p=document.getElementById(id);if(p){p.classList.remove('open');p.innerHTML='';}activeStatFilter=null;activeStatEng=null;}
-
-function renderAllTable(rows){
-  const q=sq();
-  const aw=document.getElementById('allWrap');
-  if(!rows.length){aw.innerHTML=`<div class="empty"><div class="ico">📭</div>No data found.</div>`;return;}
-  aw.innerHTML=`<table><thead><tr><th>#</th><th>Item Name</th><th>Serial/MAC</th><th>Assigned To</th><th>Status</th><th>Client ID</th><th>Ticket ID</th><th>Technician</th><th>Date</th><th>Remarks</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td class="tm">${i+1}</td><td class="tn">${hl(r.name,q)}</td><td class="ts">${hl(r.serial,q)}</td><td><span class="tag-e">${e(r._eng)}</span></td><td><span class="status ${r.status==='IN-Hand'?'si':r.status==='Done'?'sd':r.status==='Provided'?'sp':'si'}">${r.status}</span></td><td class="tm">${e(r.client||'')}</td><td class="tm">${e(r.ticket||'')}</td><td class="tm">${e(r.tech||'')}</td><td class="tt">${fd(r.date||'')}</td><td class="tm">${e(r.remarks||'')}</td></tr>`).join('')}</tbody></table>`;
-}
-let _activeAllFilter=null;
-function filterAllTable(filter,label,el){
-  const allRows=window._allRows||[];
-  if(_activeAllFilter===filter){_activeAllFilter=null;document.querySelectorAll('#allStats .stat').forEach(s=>s.style.outline='');renderAllTable(allRows);return;}
-  _activeAllFilter=filter;
-  document.querySelectorAll('#allStats .stat').forEach(s=>s.style.outline='');
-  el.style.outline='2px solid var(--accent2)';
-  let filtered=allRows;
-  if(filter==='ih')filtered=allRows.filter(r=>r.status==='IN-Hand');
-  else if(filter==='dn')filtered=allRows.filter(r=>r.status==='Done');
-  else if(filter==='pv')filtered=allRows.filter(r=>r.status==='Provided');
-  renderAllTable(filtered);
-}
 
 // ── RENDER ────────────────────────────────────────────────────────────
 function renderAll(){
@@ -830,25 +1169,40 @@ function renderAll(){
 
   const q=sq();
 
-  // Engineers
+  const ENG_ICON=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M15.5 6.5 C16.5 5 18 5.5 18.5 7"/></svg>`;
+  // Engineers — compact table, no Client/Ticket ID columns
   ENGS.forEach(eng=>{
     let items=D[eng];
     if(q)items=items.filter(i=>i.name.toLowerCase().includes(q)||i.serial.toLowerCase().includes(q));
+    // Google Sheets icon — small, in table header area
+    const sheetsIconHtml = `<a class="sheets-icon-btn" title="Google Sheets এ দেখুন" onclick="switchToSheets()" href="javascript:void(0)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="2" width="18" height="20" rx="2" fill="#1a4fa0" opacity=".13"/>
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#1a4fa0" stroke-width="1.5" fill="none"/>
+        <polyline points="14 2 14 8 20 8" stroke="#1a4fa0" stroke-width="1.5" fill="none"/>
+        <line x1="8" y1="13" x2="16" y2="13" stroke="#1a4fa0" stroke-width="1.5"/>
+        <line x1="8" y1="17" x2="13" y2="17" stroke="#1a4fa0" stroke-width="1.5"/>
+        <line x1="8" y1="9" x2="10" y2="9" stroke="#1a4fa0" stroke-width="1.5"/>
+      </svg>
+    </a>`;
+    const canDoActions = canAct('provide', eng);
     document.getElementById('page-'+eng).innerHTML=`
-      <div class="stat-data-panel" id="statPanel-${eng}"></div>
-      <div class="sh"><div class="st">📦 ${cap(eng)}'s <span>Devices</span></div></div>
+      <div class="sh"><div class="st">${ENG_ICON} ${cap(eng)}'s <span>Devices</span>${sheetsIconHtml}</div></div>
       <div class="tbl-wrap">${items.length===0?`<div class="empty"><div class="ico">📭</div>No devices assigned.</div>`:`
-      <table><thead><tr><th>#</th><th>Item Name</th><th>Serial/MAC</th><th>Client ID</th><th>Ticket ID</th><th>Status</th><th>Technician</th><th>Date</th><th>Remarks</th><th>Actions</th></tr></thead>
+      <table><thead><tr><th>#</th><th>Item Name</th><th>Serial / MAC</th><th>Status</th><th>Technician</th><th>Date</th><th>Remarks</th><th>Actions</th></tr></thead>
       <tbody>${items.map((it,i)=>`<tr>
-        <td class="tm">${i+1}</td><td class="tn">${hl(it.name,q)}</td><td class="ts">${hl(it.serial,q)}</td>
-        <td class="tm">${e(it.client||'')}</td><td class="tm">${e(it.ticket||'')}</td>
+        <td class="tm">${i+1}</td>
+        <td class="tn">${hl(it.name,q)}</td>
+        <td class="ts">${hl(it.serial,q)}</td>
         <td><span class="status ${it.status==='IN-Hand'?'si':it.status==='Done'?'sd':'sp'}">${it.status}</span></td>
-        <td class="tm">${e(it.tech||'')}</td><td class="tt">${fd(it.date)}</td><td class="tm">${e(it.remarks||'')}</td>
+        <td class="tm">${e(it.tech||'—')}</td>
+        <td class="tt">${fd(it.date)}</td>
+        <td class="tm">${e(it.remarks||'')}</td>
         <td><div class="ar">
-          ${it.status!=='Done'?`<button class="ab d" onclick="openDM('${eng}','${it.id}')">✅ Done</button>`:''}
-          ${it.status==='IN-Hand'?`<button class="ab p" onclick="markProv('${eng}','${it.id}')">↗ Provided</button>`:''}
-          ${it.status!=='IN-Hand'?`<button class="ab r" onclick="returnIH('${eng}','${it.id}')">↩ Return</button>`:''}
-          <button class="ab x" onclick="delDev('${eng}','${it.id}')">🗑</button>
+          ${canDoActions&&it.status==='IN-Hand'?`<button class="ab p" onclick="authGuard('provide','${eng}',()=>openProvModal('${eng}','${it.id}'))">↗ Provided</button>`:''}
+          ${canDoActions&&it.status!=='Done'?`<button class="ab d" onclick="authGuard('done','${eng}',()=>openDM('${eng}','${it.id}'))">✅ Done</button>`:''}
+          ${canDoActions&&it.status!=='IN-Hand'?`<button class="ab r" onclick="authGuard('return','${eng}',()=>returnIH('${eng}','${it.id}'))">↩ Return</button>`:''}
+          ${canDoActions?`<button class="ab x" onclick="authGuard('delete','${eng}',()=>delDev('${eng}','${it.id}'))">🗑</button>`:''}
         </div></td>
       </tr>`).join('')}</tbody></table>`}</div>`;
   });
@@ -858,12 +1212,23 @@ function renderAll(){
   if(q)di=di.filter(i=>i.name.toLowerCase().includes(q)||i.serial.toLowerCase().includes(q));
   const dw=document.getElementById('doneWrap');
   if(!di.length)dw.innerHTML=`<div class="empty"><div class="ico">✅</div>No done records yet.</div>`;
-  else dw.innerHTML=`<table><thead><tr><th>#</th><th>Item Name</th><th>Serial/MAC</th><th>Client ID</th><th>Ticket ID</th><th>Technician</th><th>Engineer</th><th>Date</th><th>Remarks</th><th></th></tr></thead><tbody>${di.map((it,i)=>`<tr><td class="tm">${i+1}</td><td class="tn">${hl(it.name,q)}</td><td class="ts">${hl(it.serial,q)}</td><td class="tm">${e(it.client||'')}</td><td class="tm">${e(it.ticket||'')}</td><td class="tm">${e(it.tech||'')}</td><td class="tm">${e(it.engineer||'')}</td><td class="tt">${fd(it.date)}</td><td class="tm">${e(it.remarks||'')}</td><td><button class="ab x" onclick="delDone('${it.id}')">🗑</button></td></tr>`).join('')}</tbody></table>`;
+  else dw.innerHTML=`</table><thead><tr><th>#</th><th>Item Name</th><th>Serial / MAC</th><th>Client ID</th><th>Ticket ID</th><th>Technician</th><th>Engineer</th><th>Date</th><th>Remarks</th><th></th></tr></thead><tbody>${di.map((it,i)=>`<tr>
+    <td class="tm">${i+1}</td>
+    <td class="tn">${hl(it.name,q)}</td>
+    <td class="ts">${hl(it.serial,q)}</td>
+    <td class="tm">${e(it.client||'')}</td>
+    <td class="tm">${e(it.ticket||'')}</td>
+    <td class="tm">${e(it.tech||'')}</td>
+    <td><span class="tag-e">${e(it.engineer||'')}</span></td>
+    <td class="tt">${fd(it.date)}</td>
+    <td class="tm">${e(it.remarks||'')}</td>
+    <td><button class="ab x" onclick="delDone('${it.id}')">🗑</button></td>
+  </tr>`).join('')}</tbody></table>`;
 
-  // All
+  // All Equipment
   let rows=[];
-  ENGS.forEach(eng=>D[eng].forEach(it=>rows.push({...it,_eng:eng})));
-  D.done.forEach(it=>rows.push({...it,_eng:it.engineer||'—',status:'Done'}));
+  ENGS.forEach(eng=>D[eng].forEach(it=>rows.push({...it,_eng:cap(eng)})));
+  D.done.forEach(it=>rows.push({...it,_eng:cap(it.engineer||'—'),status:'Done'}));
   D.unassigned.forEach(it=>rows.push({...it,_eng:'—',status:'Unassigned'}));
   if(q)rows=rows.filter(r=>r.name.toLowerCase().includes(q)||r.serial.toLowerCase().includes(q));
   document.getElementById('allStats').innerHTML=`
@@ -875,14 +1240,23 @@ function renderAll(){
   if(!rows.length)document.getElementById('allWrap').innerHTML=`<div class="empty"><div class="ico">📋</div>No equipment found.</div>`;
   else renderAllTable(rows);
 
-  // Unassigned
+  // Unassigned (inside manage panel)
   let un=D.unassigned;
   if(q)un=un.filter(i=>i.name.toLowerCase().includes(q)||i.serial.toLowerCase().includes(q));
   const uw=document.getElementById('unWrap');
-  if(!un.length)uw.innerHTML=`<div class="empty"><div class="ico">🔓</div><div>No unassigned devices.</div><div class="sub">Add devices from Entry to see them here.</div></div>`;
-  else uw.innerHTML=`<table><thead><tr><th>#</th><th>Item Name</th><th>Serial/MAC</th><th>Remarks</th><th>Assign To →</th><th></th></tr></thead><tbody>${un.map((it,i)=>`<tr><td class="tm">${i+1}</td><td class="tn">${hl(it.name,q)}</td><td class="ts">${hl(it.serial,q)}</td><td class="tm">${e(it.remarks||'')}</td><td><div class="ar">${ENGS.map(eng=>`<button class="ab" onclick="assignPool('${it.id}','${eng}')">${cap(eng)}</button>`).join('')}</div></td><td><button class="ab x" onclick="delPool('${it.id}')">🗑</button></td></tr>`).join('')}</tbody></table>`;
+  if(uw){
+    if(!un.length)uw.innerHTML=`<div class="empty"><div class="ico">🔓</div><div>No unassigned devices.</div><div class="sub">Add devices from Entry to see them here.</div></div>`;
+    else uw.innerHTML=`<table><thead><tr><th>#</th><th>Item Name</th><th>Serial / MAC</th><th>Remarks</th><th>Assign To →</th><th></th></tr></thead><tbody>${un.map((it,i)=>`<tr>
+      <td class="tm">${i+1}</td>
+      <td class="tn">${hl(it.name,q)}</td>
+      <td class="ts">${hl(it.serial,q)}</td>
+      <td class="tm">${e(it.remarks||'')}</td>
+      <td><div class="ar">${ENGS.map(eng=>`<button class="ab" onclick="authGuard('assign','${eng}',()=>assignPool('${it.id}','${eng}'))">${cap(eng)}</button>`).join('')}</div></td>
+      <td><button class="ab x" onclick="authGuard('delete',null,()=>delPool('${it.id}'))">🗑</button></td>
+    </tr>`).join('')}</tbody></table>`;
+  }
 
-  // Deleted (inside manage panel)
+  // Deleted
   let del=D.deleted||[];
   if(q)del=del.filter(i=>i.name.toLowerCase().includes(q)||i.serial.toLowerCase().includes(q));
   const delW=document.getElementById('deletedWrap');
@@ -890,19 +1264,84 @@ function renderAll(){
     const btn=document.getElementById('clearAllBtn');
     if(btn)btn.disabled=(D.deleted||[]).length===0;
     if(!del.length)delW.innerHTML=`<div class="empty" style="background:transparent;"><div class="ico">🗑</div>No deleted items.</div>`;
-    else delW.innerHTML=`<table><thead><tr><th>#</th><th>Item Name</th><th>Serial/MAC</th><th>Was Assigned To</th><th>Status</th><th>Deleted At</th><th>Restore</th></tr></thead><tbody>${del.map((it,i)=>`<tr><td class="tm">${i+1}</td><td class="tn">${hl(it.name,q)}</td><td class="ts">${hl(it.serial,q)}</td><td><span class="tag-e">${e(it._deletedFrom||'—')}</span></td><td><span class="status ${it.status==='IN-Hand'?'si':it.status==='Done'?'sd':it.status==='Provided'?'sp':'si'}">${it.status||'—'}</span></td><td class="tt">${fd(it._deletedAt)}</td><td><button class="ab restore" onclick="restoreDeleted('${it.id}')">↩ Restore</button></td></tr>`).join('')}</tbody></table>`;
+    else delW.innerHTML=`<table style="width:100%"><thead><tr><th>#</th><th>Item Name</th><th>Serial / MAC</th><th>Was Assigned To</th><th>Status</th><th>Deleted On</th><th>Restore</th></tr></thead><tbody>${del.map((it,i)=>`<tr>
+      <td class="tm">${i+1}</td>
+      <td class="tn">${hl(it.name,q)}</td>
+      <td class="ts">${hl(it.serial,q)}</td>
+      <td><span class="tag-e">${e(it._deletedFrom||'—')}</span></td>
+      <td><span class="status ${it.status==='IN-Hand'?'si':it.status==='Done'?'sd':it.status==='Provided'?'sp':'si'}">${it.status||'—'}</span></td>
+      <td class="tt">${fd(it._deletedAt)}</td>
+      <td><button class="ab restore" onclick="restoreDeleted('${it.id}')">↩ Restore</button></td>
+    </tr>`).join('')}</tbody></table>`;
   }
 }
 
+function renderAllTable(rows){
+  const q=sq();
+  const aw=document.getElementById('allWrap');
+  if(!rows.length){aw.innerHTML=`<div class="empty"><div class="ico">📭</div>No data found.</div>`;return;}
+  aw.innerHTML=`<table style="table-layout:fixed;width:100%;"><colgroup>
+    <col style="width:36px"><col style="width:130px"><col style="width:130px">
+    <col style="width:80px"><col style="width:72px"><col style="width:70px">
+    <col style="width:70px"><col style="width:80px"><col style="width:88px"><col style="width:90px">
+  </colgroup>
+  <thead><tr><th>#</th><th>Item Name</th><th>Serial / MAC</th><th>Assigned To</th><th>Status</th><th>Client</th><th>Ticket</th><th>Technician</th><th>Date</th><th>Remarks</th></tr></thead>
+  <tbody>${rows.map((r,i)=>`<tr>
+    <td class="tm" style="width:36px;">${i+1}</td>
+    <td class="tn">${hl(r.name,q)}</td>
+    <td class="ts">${hl(r.serial,q)}</td>
+    <td style="width:80px;"><span class="tag-e" style="font-size:9.5px;padding:2px 7px;">${e(r._eng)}</span></td>
+    <td><span class="status ${r.status==='IN-Hand'?'si':r.status==='Done'?'sd':r.status==='Provided'?'sp':'si'}">${r.status==='IN-Hand'?'In Hand':r.status}</span></td>
+    <td class="tm">${e(r.client||'—')}</td>
+    <td class="tm">${e(r.ticket||'—')}</td>
+    <td class="tm">${e(r.tech||'—')}</td>
+    <td class="tt">${fd(r.date||'')}</td>
+    <td class="tm">${e(r.remarks||'')}</td>
+   </tr>`).join('')}</tbody></table>`;
+}
+let _activeAllFilter=null;
+function filterAllTable(filter,label,el){
+  const allRows=window._allRows||[];
+  if(_activeAllFilter===filter){_activeAllFilter=null;document.querySelectorAll('#allStats .stat').forEach(s=>s.style.outline='');renderAllTable(allRows);return;}
+  _activeAllFilter=filter;
+  document.querySelectorAll('#allStats .stat').forEach(s=>s.style.outline='');
+  el.style.outline='2px solid var(--accent2)';
+  let filtered=allRows;
+  if(filter==='ih')filtered=allRows.filter(r=>r.status==='IN-Hand');
+  else if(filter==='dn')filtered=allRows.filter(r=>r.status==='Done');
+  else if(filter==='pv')filtered=allRows.filter(r=>r.status==='Provided');
+  renderAllTable(filtered);
+}
+
 // ── CORE ACTIONS ─────────────────────────────────────────────────────
-function getForm(){return{name:document.getElementById('fn').value.trim(),brand:'',serials:document.getElementById('fs').value.split(',').map(s=>s.trim()).filter(Boolean),remarks:document.getElementById('fr').value.trim()};}
-function clearForm(){['fn','fs','fr'].forEach(id=>document.getElementById(id).value='');document.getElementById('fn').focus();}
+function parseSerials(raw){
+  // split on comma, newline, or one-or-more spaces; filter blanks; max 100
+  return raw.split(/[\,\n\r]+|(?<=[A-Za-z0-9])\s+(?=[A-Za-z0-9])|\s*,\s*/)
+    .map(s=>s.trim()).filter(Boolean).slice(0,100);
+}
+function getForm(){
+  const raw=document.getElementById('fs').value;
+  return{name:document.getElementById('fn').value.trim(),brand:'',serials:parseSerials(raw),remarks:document.getElementById('fr').value.trim()};
+}
+function clearForm(){['fn','fs','fr'].forEach(id=>document.getElementById(id).value='');updatePreview();document.getElementById('fn').focus();}
+function updatePreview(){
+  const raw=document.getElementById('fs').value;
+  const serials=parseSerials(raw);
+  const card=document.getElementById('entryPreviewCard');
+  const list=document.getElementById('previewList');
+  const cnt=document.getElementById('previewCount');
+  if(!card)return;
+  if(!serials.length){card.style.display='none';return;}
+  card.style.display='';
+  cnt.textContent=serials.length+' serial'+(serials.length>1?'s':'');
+  list.innerHTML=serials.map(s=>`<div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);background:rgba(0,119,182,.07);padding:4px 10px;border-radius:6px;">${e(s)}</div>`).join('');
+}
 
 function addPool(){
   const{name,brand,serials,remarks}=getForm();
   if(!name||!serials.length){alert('Please enter Item Name and at least one Serial!');return;}
   serials.forEach(serial=>D.unassigned.unshift({id:gid(),name,brand,serial,remarks}));
-  save();clearForm();renderAll();toast(`📋 ${serials.length} device(s) added to Unassigned`);
+  save();clearForm();renderAll();toast(`📤 ${serials.length} device(s) added to Unassigned`);
 }
 function assignPool(itemId,eng){
   const idx=D.unassigned.findIndex(x=>x.id===itemId);if(idx===-1)return;
@@ -915,11 +1354,21 @@ function returnIH(eng,id){
   it.status='IN-Hand';it.tech='';it.date=new Date().toISOString();
   save();renderAll();toast(`↩ "${it.serial}" returned to IN-Hand`);
 }
-function markProv(eng,id){
+function openProvModal(eng,id){
   const it=D[eng].find(x=>x.id===id);if(!it)return;
-  const tech=prompt('Technician name:',it.tech||'');if(tech===null)return;
+  document.getElementById('provEng').value=eng;
+  document.getElementById('provId').value=id;
+  document.getElementById('provModal').classList.add('open');
+}
+function closeProvModal(){document.getElementById('provModal').classList.remove('open');}
+function confirmProv(){
+  const eng=document.getElementById('provEng').value;
+  const id=document.getElementById('provId').value;
+  const tech=document.getElementById('provTechSel').value;
+  if(!tech){alert('Please select a technician!');return;}
+  const it=D[eng].find(x=>x.id===id);if(!it)return;
   it.status='Provided';it.tech=tech;it.date=new Date().toISOString();
-  save();renderAll();
+  save();renderAll();closeProvModal();toast(`↗ "${it.serial}" provided via ${tech}`);
 }
 
 let _de=null,_di=null;
@@ -943,9 +1392,9 @@ function confirmDone(){
 }
 
 function sendToDeleted(item,from){if(!D.deleted)D.deleted=[];D.deleted.unshift({...item,_deletedFrom:from,_deletedAt:new Date().toISOString()});}
-function delPool(id){if(!confirm('Delete this item?'))return;const it=D.unassigned.find(x=>x.id===id);if(it)sendToDeleted({...it,status:'Unassigned'},'Unassigned');D.unassigned=D.unassigned.filter(x=>x.id!==id);save();renderAll();toast('🗑 Item deleted — restore from Manage → Deleted');}
-function delDev(eng,id){if(!confirm('Delete this item?'))return;const it=D[eng].find(x=>x.id===id);if(it)sendToDeleted(it,cap(eng));D[eng]=D[eng].filter(x=>x.id!==id);save();renderAll();toast('🗑 Item deleted — restore from Manage → Deleted');}
-function delDone(id){if(!confirm('Delete this item?'))return;const it=D.done.find(x=>x.id===id);if(it)sendToDeleted({...it,status:'Done'},'Done');D.done=D.done.filter(x=>x.id!==id);save();renderAll();toast('🗑 Item deleted — restore from Manage → Deleted');}
+function delPool(id){if(!confirm('Delete this item?'))return;const it=D.unassigned.find(x=>x.id===id);if(it)sendToDeleted({...it,status:'Unassigned'},'Unassigned');D.unassigned=D.unassigned.filter(x=>x.id!==id);save();renderAll();toast('🗑 Deleted — restore from Manage → Deleted');}
+function delDev(eng,id){if(!confirm('Delete this item?'))return;const it=D[eng].find(x=>x.id===id);if(it)sendToDeleted(it,cap(eng));D[eng]=D[eng].filter(x=>x.id!==id);save();renderAll();toast('🗑 Deleted — restore from Manage → Deleted');}
+function delDone(id){if(!confirm('Delete this item?'))return;const it=D.done.find(x=>x.id===id);if(it)sendToDeleted({...it,status:'Done'},'Done');D.done=D.done.filter(x=>x.id!==id);save();renderAll();toast('🗑 Deleted — restore from Manage → Deleted');}
 
 function restoreDeleted(id){
   if(!D.deleted)return;
@@ -962,6 +1411,21 @@ function restoreDeleted(id){
 }
 
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>{t.style.opacity='0';setTimeout(()=>{t.style.display='none';},300);},2800);}
+
+// Permission guard wrapper
+function authGuard(action, engKey, fn){
+  if(canAct(action, engKey)){ fn(); }
+  else { authError(); }
+}
+
+function switchToSheets(){
+  if(_currentUser==='admin'){
+    go('manage');
+    setTimeout(()=>switchManageSub('sheets'),80);
+  } else {
+    toast('📡 Google Sheets sync শুধু Admin পারবেন।');
+  }
+}
 
 // ── GOOGLE SHEETS ─────────────────────────────────────────────────────
 const SCRIPT_CODE = `// ════════════════════════════════════════════════════════════════════
@@ -1019,14 +1483,14 @@ function doPost(e) {
     ["rupchan","amit","tamim","nazrul"].forEach(function(eng) {
       var sh = ss.getSheetByName(eng.charAt(0).toUpperCase()+eng.slice(1));
       var rows = (data[eng]||[]).map(function(it,i) {
-        return [eng,i+1,it.name,it.serial,it.status,it.tech||"",it.client||"",it.ticket||"",eng,it.remarks||"",it.date?new Date(it.date).toLocaleString():""];
+        return [eng,i+1,it.name,it.serial,it.status,it.tech||"",it.client||"",it.ticket||"",eng,it.remarks||"",it.date?new Date(it.date).toLocaleDateString():""];
       });
       if(rows.length){ sh.getRange(2,1,rows.length,mainHeaders.length).setValues(rows); styleData(sh,rows.length,mainHeaders.length); }
     });
 
     var doneSh = ss.getSheetByName("Done");
     var doneRows = (data.done||[]).map(function(it,i) {
-      return ["Done",i+1,it.name,it.serial,"Done",it.tech||"",it.client||"",it.ticket||"",it.engineer||"",it.remarks||"",it.date?new Date(it.date).toLocaleString():""];
+      return ["Done",i+1,it.name,it.serial,"Done",it.tech||"",it.client||"",it.ticket||"",it.engineer||"",it.remarks||"",it.date?new Date(it.date).toLocaleDateString():""];
     });
     if(doneRows.length){ doneSh.getRange(2,1,doneRows.length,mainHeaders.length).setValues(doneRows); styleData(doneSh,doneRows.length,mainHeaders.length); }
 
@@ -1039,7 +1503,7 @@ function doPost(e) {
     var delSh = ss.getSheetByName("Deleted");
     var delRows = (data.deleted||[]).map(function(it,i) {
       return [i+1, it.name, it.serial, it._deletedFrom||"—", it.status||"—",
-              it._deletedAt ? new Date(it._deletedAt).toLocaleString() : "", it.remarks||""];
+              it._deletedAt ? new Date(it._deletedAt).toLocaleDateString() : "", it.remarks||""];
     });
     if(delRows.length){ delSh.getRange(2,1,delRows.length,deletedHeaders.length).setValues(delRows); styleData(delSh,delRows.length,deletedHeaders.length); }
 
@@ -1047,11 +1511,11 @@ function doPost(e) {
     var allRows = [];
     ["rupchan","amit","tamim","nazrul"].forEach(function(eng) {
       (data[eng]||[]).forEach(function(it) {
-        allRows.push([eng,allRows.length+1,it.name,it.serial,it.status,it.tech||"",it.client||"",it.ticket||"",eng,it.remarks||"",it.date?new Date(it.date).toLocaleString():""]);
+        allRows.push([eng,allRows.length+1,it.name,it.serial,it.status,it.tech||"",it.client||"",it.ticket||"",eng,it.remarks||"",it.date?new Date(it.date).toLocaleDateString():""]);
       });
     });
     (data.done||[]).forEach(function(it) {
-      allRows.push(["Done",allRows.length+1,it.name,it.serial,"Done",it.tech||"",it.client||"",it.ticket||"",it.engineer||"",it.remarks||"",it.date?new Date(it.date).toLocaleString():""]);
+      allRows.push(["Done",allRows.length+1,it.name,it.serial,"Done",it.tech||"",it.client||"",it.ticket||"",it.engineer||"",it.remarks||"",it.date?new Date(it.date).toLocaleDateString():""]);
     });
     (data.unassigned||[]).forEach(function(it) {
       allRows.push(["Unassigned",allRows.length+1,it.name,it.serial,"Unassigned","","","","",it.remarks||"",""]);
@@ -1079,8 +1543,8 @@ async function syncToSheetsInline(){
   const localItems=countItems(D);const remoteItems=remoteData?countItems(remoteData):0;
   if(remoteItems>0&&remoteVer>=(D._version||0)){
     D=remoteData;_lastVersion=remoteVer;localStorage.setItem('inv7',JSON.stringify(D));renderAll();
-    statusEl.innerHTML='<span style="color:var(--green)">✅ Connected! Shared data লোড হয়েছে।</span>';
-    toast('✅ Connected — shared data লোড হয়েছে!');setSyncIndicator('ok');setTimeout(()=>setSyncIndicator('idle'),4000);startPolling();return;
+    statusEl.innerHTML='<span style="color:var(--green)">✅ Connected! Shared data loaded.</span>';
+    toast('✅ Connected — shared data loaded!');setSyncIndicator('ok');setTimeout(()=>setSyncIndicator('idle'),4000);startPolling();return;
   }
   if(localItems>0){
     D._version=Date.now();localStorage.setItem('inv7',JSON.stringify(D));
@@ -1088,14 +1552,15 @@ async function syncToSheetsInline(){
       const resp=await fetch(url,{method:'POST',body:JSON.stringify(D),headers:{'Content-Type':'text/plain'}});
       const json=await resp.json();
       if(json.success){_lastVersion=D._version;setSyncIndicator('ok');setTimeout(()=>setSyncIndicator('idle'),4000);statusEl.innerHTML='<span style="color:var(--green)">✅ Sync successful!</span>';toast('✅ Synced!');startPolling();}
-      else{setSyncIndicator('error');statusEl.innerHTML='<span style="color:var(--red)">❌ Sync ব্যর্থ।</span>';}
+      else{setSyncIndicator('error');statusEl.innerHTML='<span style="color:var(--red)">❌ Sync failed.</span>';}
     }catch(err){setSyncIndicator('error');statusEl.innerHTML='<span style="color:var(--red)">❌ Error: '+err.message+'</span>';}
-  }else{statusEl.innerHTML='<span style="color:var(--teal)">✅ Connected. Data entry শুরু করুন।</span>';setSyncIndicator('idle');startPolling();}
+  }else{statusEl.innerHTML='<span style="color:var(--teal)">✅ Connected. Start adding data.</span>';setSyncIndicator('idle');startPolling();}
 }
 
 // ── MODAL CLOSE ─────────────────────────────────────────────────────
 document.getElementById('doneModal').addEventListener('click',ev=>{if(ev.target===document.getElementById('doneModal'))closeDM();});
 document.getElementById('itemMgrModal').addEventListener('click',ev=>{if(ev.target===document.getElementById('itemMgrModal'))closeItemMgr();});
+document.getElementById('provModal').addEventListener('click',ev=>{if(ev.target===document.getElementById('provModal'))closeProvModal();});
 
 // ── STARTUP ──────────────────────────────────────────────────────────
 const _savedUrl=localStorage.getItem('sheetsUrl')||'';
@@ -1106,11 +1571,229 @@ if(_local){D=_local;_lastVersion=_local._version||0;}
 
 setSyncIndicator('idle');
 
-// Default: All Equipment page
+// Hide manage tab until logged in
+document.getElementById('tab-manage').style.display='none';
+
+// Show login overlay on start — do NOT call go() until logged in
+// go('all') will be called after login via applyRoleUI
 go('all');
 
 if(_savedUrl){
   pullFromSheets(true).then(()=>{startPolling();});
+}
+</script>
+<!-- LOGIN OVERLAY -->
+<div id="loginOverlay">
+  <div class="login-box">
+    <div class="login-logo">Link3</div>
+    <div class="login-logo-sub">The Service Company</div>
+    <div class="login-icon">🔐</div>
+    <div class="login-title">Inventory Dashboard</div>
+    <div class="login-sub">আপনার Username ও Password দিয়ে লগইন করুন।</div>
+    <div class="login-fg">
+      <label>Username</label>
+      <input type="text" id="loginUser" placeholder="Username" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('loginPass').focus()">
+    </div>
+    <div class="login-fg">
+      <label>Password</label>
+      <div class="login-pw-wrap">
+        <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+        <button class="login-pw-toggle" tabindex="-1" onclick="toggleVis('loginPass',this)">👁</button>
+      </div>
+    </div>
+    <button class="login-btn" onclick="doLogin()">🔓 Login</button>
+    <div class="login-err" id="loginErr"></div>
+    <div><span class="login-chpw-link" onclick="openChPw()">🔑 Password পরিবর্তন করুন</span></div>
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div id="chpwModal">
+  <div class="chpw-box">
+    <div class="chpw-title">🔑 Password পরিবর্তন</div>
+    <div class="chpw-fg">
+      <label>Username</label>
+      <input type="text" id="chpwUser" placeholder="Username">
+    </div>
+    <div class="chpw-fg">
+      <label>পুরনো Password</label>
+      <div class="pw-wrap">
+        <input type="password" id="chpwOld" placeholder="Current Password">
+        <button class="chpw-toggle" tabindex="-1" onclick="toggleVis('chpwOld',this)">👁</button>
+      </div>
+    </div>
+    <div class="chpw-fg">
+      <label>নতুন Password</label>
+      <div class="pw-wrap">
+        <input type="password" id="chpwNew" placeholder="New Password">
+        <button class="chpw-toggle" tabindex="-1" onclick="toggleVis('chpwNew',this)">👁</button>
+      </div>
+    </div>
+    <div class="chpw-fg">
+      <label>নতুন Password নিশ্চিত করুন</label>
+      <div class="pw-wrap">
+        <input type="password" id="chpwConf" placeholder="Confirm New Password">
+        <button class="chpw-toggle" tabindex="-1" onclick="toggleVis('chpwConf',this)">👁</button>
+      </div>
+    </div>
+    <div class="chpw-err" id="chpwErr"></div>
+    <div class="chpw-ok" id="chpwOk"></div>
+    <div class="chpw-btns">
+      <button class="chpw-cancel" onclick="closeChPw()">বাতিল</button>
+      <button class="chpw-save" onclick="saveChPw()">✅ Save করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH ERROR TOAST -->
+<div id="authErrorToast"></div>
+
+<script>
+// ── AUTH SYSTEM ────────────────────────────────────────────────────────────
+// Default passwords stored in localStorage (key: 'inv_passwords')
+const DEFAULT_PASSWORDS = {
+  admin:   '78773597in',
+  rupchan: 'Rupchan@123',
+  amit:    'Amit@123',
+  tamim:   'Tamim@123',
+  nazrul:  'Nazrul@123'
+};
+
+// Roles & permissions
+// admin: full access to everything
+// rupchan: read-only view of all engineers' tabs, full CRUD only on rupchan tab
+// amit/tamim/nazrul: full CRUD only on their own tab
+const USER_ROLES = {
+  admin:   'admin',
+  rupchan: 'rupchan',
+  amit:    'amit',
+  tamim:   'tamim',
+  nazrul:  'nazrul'
+};
+
+let _currentUser = null; // logged in username
+
+function getPasswords(){
+  try{
+    const saved = localStorage.getItem('inv_passwords');
+    if(saved) return {...DEFAULT_PASSWORDS,...JSON.parse(saved)};
+  }catch(e){}
+  return {...DEFAULT_PASSWORDS};
+}
+
+function savePasswords(pwObj){
+  localStorage.setItem('inv_passwords', JSON.stringify(pwObj));
+}
+
+function toggleVis(inputId, btn){
+  const inp = document.getElementById(inputId);
+  if(!inp) return;
+  if(inp.type==='password'){inp.type='text';btn.textContent='🙈';}
+  else{inp.type='password';btn.textContent='👁';}
+}
+
+function doLogin(){
+  const uname = document.getElementById('loginUser').value.trim().toLowerCase();
+  const pass   = document.getElementById('loginPass').value;
+  const err    = document.getElementById('loginErr');
+  const pws    = getPasswords();
+  if(!uname||!pass){err.textContent='⚠️ Username ও Password দিন।';return;}
+  if(!pws.hasOwnProperty(uname)||pws[uname]!==pass){
+    err.textContent='❌ Username বা Password ভুল।';
+    err.style.animation='none';
+    requestAnimationFrame(()=>{err.style.animation='';err.style.animation='shake .3s ease';});
+    document.getElementById('loginPass').value='';
+    document.getElementById('loginPass').focus();
+    return;
+  }
+  _currentUser = uname;
+  document.getElementById('loginOverlay').style.display='none';
+  document.getElementById('loginErr').textContent='';
+  document.getElementById('loginUser').value='';
+  document.getElementById('loginPass').value='';
+  applyRoleUI();
+  toast(`👋 স্বাগতম, ${uname.charAt(0).toUpperCase()+uname.slice(1)}!`);
+}
+
+function doLogout(){
+  _currentUser = null;
+  document.getElementById('loginOverlay').style.display='flex';
+  document.getElementById('loginUser').value='';
+  document.getElementById('loginPass').value='';
+  document.getElementById('loginErr').textContent='';
+  // go back to all tab
+  go('all');
+}
+
+function applyRoleUI(){
+  const u = _currentUser;
+  // Update user badge in nav
+  const badge = document.getElementById('userBadge');
+  if(badge){
+    badge.querySelector('.ub-name').textContent = u.charAt(0).toUpperCase()+u.slice(1);
+    badge.querySelector('.ub-role').textContent = u==='admin'?'Admin':'Engineer';
+  }
+  // Show/hide manage tab
+  const manageTab = document.getElementById('tab-manage');
+  if(manageTab) manageTab.style.display = (u==='admin'?'':'none');
+  // If non-admin on manage page, redirect
+  if(u!=='admin' && document.querySelector('#page-manage.active')){go('all');}
+  renderAll();
+}
+
+// Permission checker
+// Returns true if action is allowed for current user
+function canAct(action, engKey){
+  // action: 'provide'|'done'|'return'|'delete'|'assign'|'entry'|'manage'
+  const u = _currentUser;
+  if(!u) return false;
+  if(u==='admin') return true;
+  if(u==='rupchan'){
+    // rupchan: read-only on others' tabs, full on own tab
+    if(!engKey || engKey==='rupchan') return true;
+    return false;
+  }
+  // other engineers: only their own tab
+  return engKey===u;
+}
+
+function authError(){
+  const t = document.getElementById('authErrorToast');
+  t.textContent='🚫 আপনার এই কাজ করার অনুমতি নেই! (Unauthorized)';
+  t.style.display='block';
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>{t.style.display='none';},2800);
+}
+
+// ── CHANGE PASSWORD ────────────────────────────────────────────────────────
+function openChPw(){
+  document.getElementById('chpwUser').value = '';
+  document.getElementById('chpwOld').value = '';
+  document.getElementById('chpwNew').value = '';
+  document.getElementById('chpwConf').value = '';
+  document.getElementById('chpwErr').textContent = '';
+  document.getElementById('chpwOk').textContent = '';
+  document.getElementById('chpwModal').classList.add('open');
+  setTimeout(()=>document.getElementById('chpwUser').focus(),80);
+}
+function closeChPw(){document.getElementById('chpwModal').classList.remove('open');}
+function saveChPw(){
+  const uname  = document.getElementById('chpwUser').value.trim().toLowerCase();
+  const oldPw  = document.getElementById('chpwOld').value;
+  const newPw  = document.getElementById('chpwNew').value;
+  const confPw = document.getElementById('chpwConf').value;
+  const err    = document.getElementById('chpwErr');
+  const ok     = document.getElementById('chpwOk');
+  err.textContent=''; ok.textContent='';
+  const pws = getPasswords();
+  if(!uname||!oldPw||!newPw||!confPw){err.textContent='⚠️ সব ঘর পূরণ করুন।';return;}
+  if(!pws.hasOwnProperty(uname)||pws[uname]!==oldPw){err.textContent='❌ Username বা পুরনো Password ভুল।';return;}
+  if(newPw.length<6){err.textContent='⚠️ নতুন Password কমপক্ষে ৬ অক্ষর হতে হবে।';return;}
+  if(newPw!==confPw){err.textContent='❌ নতুন Password মিলছে না।';return;}
+  pws[uname]=newPw;
+  savePasswords(pws);
+  ok.textContent='✅ Password সফলভাবে পরিবর্তন হয়েছে!';
+  setTimeout(()=>closeChPw(),1600);
 }
 </script>
 </body>
