@@ -1743,21 +1743,63 @@ function delPool(id){openDelReason('pool',null,id);}
 function delDev(eng,id){openDelReason('dev',eng,id);}
 function delDone(id){openDelReason('done',null,id);}
 
+let _restorePendingId = null;
+let _restorePendingEngKey = null;
+
 function restoreDeleted(id){
   if(!D.deleted)return;
   const idx=D.deleted.findIndex(x=>x.id===id);if(idx===-1)return;
-  const it=D.deleted.splice(idx,1)[0];
+  const it=D.deleted[idx];
   const from=it._deletedFrom||'';
-  const engKey=ENGS.find(en=>cap(en)===from||en===from.toLowerCase());
-  const item={...it};delete item._deletedFrom;delete item._deletedAt;
-  if(engKey){D[engKey].unshift({...item,id:gid()});toast(`↩ "${item.serial}" restored to ${cap(engKey)}`);}
-  else if(from==='Unassigned'){D.unassigned.unshift({...item,id:gid()});toast(`↩ "${item.serial}" restored to Unassigned`);}
-  else if(from==='Done'){D.done.unshift({...item,id:gid()});toast(`↩ "${item.serial}" restored to Done`);}
+  const engKey=ENGS.find(en=>
+  cap(en)===from ||
+  en===from.toLowerCase() ||
+  en.toLowerCase()===from.toLowerCase()
+);
+
+  if(engKey){
+    _restorePendingId = id;
+    _restorePendingEngKey = engKey;
+    document.getElementById('restoreDestSub').textContent = `"${it.serial}" (${it.name}) — where should it go?`;
+    document.getElementById('restoreOptEngLabel').textContent = `Restore to ${cap(engKey)}`;
+    document.getElementById('restoreDestModal').style.display='flex';
+    return;
+  }
+
+  // Non-engineer items — restore directly
+  D.deleted.splice(idx,1);
+  const item={...it};
+  delete item._deletedFrom;delete item._deletedAt;delete item._deletedBy;delete item._deleteReason;
+  if(from==='Done'){D.done.unshift({...item,id:gid()});toast(`↩ "${item.serial}" restored to Done`);}
   else{D.unassigned.unshift({...item,id:gid()});toast(`↩ "${item.serial}" restored to Unassigned`);}
   save();renderAll();
 }
 
-function toast(msg){
+function closeRestoreDestModal(){
+  document.getElementById('restoreDestModal').style.display='none';
+  _restorePendingId=null;_restorePendingEngKey=null;
+}
+
+function confirmRestoreDest(dest){
+  if(!_restorePendingId)return;
+  const idx=D.deleted.findIndex(x=>x.id===_restorePendingId);if(idx===-1){closeRestoreDestModal();return;}
+  const it=D.deleted.splice(idx,1)[0];
+  const item={...it};
+  delete item._deletedFrom;delete item._deletedAt;delete item._deletedBy;delete item._deleteReason;
+  
+  // Save engKey before closing modal (closeRestoreDestModal sets it to null)
+  const engKey = _restorePendingEngKey;
+  closeRestoreDestModal();
+  
+  if(dest==='eng' && engKey){
+  console.log('engKey:', engKey, 'D keys:', Object.keys(D));
+  D[engKey].unshift({...item,id:gid()});
+  save();renderAll();toast(`↩ "${item.serial}" restored to ${cap(engKey)}`);
+} else {
+    D.unassigned.unshift({...item,id:gid()});
+    save();renderAll();toast(`↩ "${item.serial}" sent to Unassigned`);
+  }
+}function toast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;
   t.style.display='block';
@@ -2560,6 +2602,33 @@ function closeLanHistModal(){ document.getElementById('lanHistModal').classList.
     <div id="sheetsUrlMiniStatus" style="margin-top:9px;font-size:12px;text-align:center;font-family:'Plus Jakarta Sans',sans-serif;min-height:16px;"></div>
   </div>
 </div>
+<!-- RESTORE DESTINATION MODAL -->
+<div id="restoreDestModal" style="position:fixed;inset:0;z-index:5000;background:rgba(10,25,60,.55);display:none;align-items:center;justify-content:center;backdrop-filter:blur(5px);">
+  <div style="background:#fff;border-radius:18px;padding:30px 28px 24px;max-width:400px;width:92%;box-shadow:0 16px 56px rgba(0,0,0,.28);animation:pop .18s ease both;">
+    <div style="font-family:'outfit',sans-serif;font-size:16px;font-weight:800;color:#1e5bb8;margin-bottom:6px;display:flex;align-items:center;gap:8px;">↩ Restore Item</div>
+    <div id="restoreDestSub" style="font-size:12px;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:18px;line-height:1.5;"></div>
+    <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:6px;">
+      <div id="restoreOptEng" onclick="confirmRestoreDest('eng')" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;cursor:pointer;border:2px solid rgba(26,79,160,.25);background:rgba(230,240,255,.4);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;color:var(--text);transition:all .15s;user-select:none;" onmouseover="this.style.borderColor='#1a4fa0';this.style.background='rgba(26,79,160,.1)'" onmouseout="this.style.borderColor='rgba(26,79,160,.25)';this.style.background='rgba(230,240,255,.4)'">
+        <span style="font-size:20px;">👤</span>
+        <div>
+          <div id="restoreOptEngLabel" style="font-weight:800;color:#1a4fa0;font-family:'outfit',sans-serif;font-size:13px;"></div>
+          <div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:1px;">Restore to original engineer's list</div>
+        </div>
+      </div>
+      <div onclick="confirmRestoreDest('unassigned')" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;cursor:pointer;border:2px solid rgba(91,141,217,.25);background:rgba(240,245,255,.4);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;color:var(--text);transition:all .15s;user-select:none;" onmouseover="this.style.borderColor='#5b8dd9';this.style.background='rgba(91,141,217,.12)'" onmouseout="this.style.borderColor='rgba(91,141,217,.25)';this.style.background='rgba(240,245,255,.4)'">
+        <span style="font-size:20px;">🔓</span>
+        <div>
+          <div style="font-weight:800;color:#5b8dd9;font-family:'outfit',sans-serif;font-size:13px;">Send to Unassigned</div>
+          <div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:1px;">Move to unassigned pool instead</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:9px;margin-top:16px;">
+      <button onclick="closeRestoreDestModal()" style="flex:1;padding:11px;background:rgba(221,232,248,.9);color:var(--text2);border:1px solid var(--border);border-radius:9px;font-family:'outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <!-- DELETE REASON MODAL -->
 <div id="delReasonModal">
   <div class="del-reason-box">
@@ -2579,7 +2648,6 @@ function closeLanHistModal(){ document.getElementById('lanHistModal').classList.
     </div>
   </div>
 </div>
-
 
 <!-- LAN ENTRY MODAL (admin only) -->
 <div class="mbg" id="lanEntryModal">
