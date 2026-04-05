@@ -1245,7 +1245,11 @@ async function pushNow(){
   if(remoteVer>(D._version||0)){await pullFromSheets(true);return;}
   setSyncIndicator('syncing');
   try{
-    const resp=await fetch(url,{method:'POST',body:JSON.stringify(D),headers:{'Content-Type':'text/plain'}});
+    const lanRaw=localStorage.getItem('lan_data')||'{}';
+    let lanParsed={};
+    try{lanParsed=JSON.parse(lanRaw);}catch(e){}
+    const payload={...D, lan_data: lanParsed};
+    const resp=await fetch(url,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain'}});
     const json=await resp.json();
     if(json.success){_lastVersion=D._version;_userMadeChange=false;setSyncIndicator('ok');setTimeout(()=>setSyncIndicator('idle'),4000);}
     else setSyncIndicator('error');
@@ -1901,7 +1905,11 @@ async function syncToSheetsInline(){
   if(localItems>0){
     D._version=Date.now();localStorage.setItem('inv7',JSON.stringify(D));
     try{
-      const resp=await fetch(url,{method:'POST',body:JSON.stringify(D),headers:{'Content-Type':'text/plain'}});
+      const lanRaw2=localStorage.getItem('lan_data')||'{}';
+let lanParsed2={};
+try{lanParsed2=JSON.parse(lanRaw2);}catch(e){}
+const payload2={...D, lan_data: lanParsed2};
+const resp=await fetch(url,{method:'POST',body:JSON.stringify(payload2),headers:{'Content-Type':'text/plain'}});
       const json=await resp.json();
       if(json.success){_lastVersion=D._version;setSyncIndicator('ok');setTimeout(()=>setSyncIndicator('idle'),4000);statusEl.innerHTML='<span style="color:var(--green)">✅ Sync successful!</span>';toast('✅ Synced!');startPolling();}
       else{setSyncIndicator('error');statusEl.innerHTML='<span style="color:var(--red)">❌ Sync failed.</span>';}
@@ -2181,7 +2189,13 @@ const LAN_CFG = {
 function getLAN(){
   try{ return JSON.parse(localStorage.getItem('lan_data')||'{}'); } catch(e){ return {}; }
 }
-function saveLAN(lan){ localStorage.setItem('lan_data', JSON.stringify(lan)); }
+function saveLAN(lan){ 
+  localStorage.setItem('lan_data', JSON.stringify(lan));
+  _userMadeChange = true;
+  D._version = Date.now();
+  localStorage.setItem('inv7', JSON.stringify(D));
+  schedulePush();
+}
 function initLAN(lan){
   if(!lan.utp) lan.utp={stock:0,history:[]};
   if(!lan.rj45) lan.rj45={stock:0,history:[]};
