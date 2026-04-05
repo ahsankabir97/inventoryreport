@@ -972,12 +972,23 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
       </div>
 
       <!-- Unassigned Sub-panel -->
-      <div id="msub-panel-unassigned" style="display:none;">
-        <div class="sh" style="margin-bottom:14px;">
-          <div class="st" style="font-size:16px;">🔓 Unassigned <span>Equipment</span></div>
-        </div>
-        <div class="tbl-wrap" id="unWrap"></div>
-      </div>
+<div id="msub-panel-unassigned" style="display:none;">
+  <div class="sh" style="margin-bottom:14px;">
+    <div class="st" style="font-size:16px;">🔓 Unassigned <span>Equipment</span></div>
+    <div class="sw" style="margin-left:auto;">
+      <input id="unSearch" type="text" placeholder="🔍 Search serial / item..."
+        oninput="renderAll()"
+        style="width:220px;padding:8px 14px;font-size:13px;
+               background:rgba(255,255,255,.95);
+               border:1.5px solid var(--border2);
+               color:var(--text);border-radius:9px;outline:none;
+               font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;"
+        onfocus="this.style.borderColor='var(--accent)';this.style.boxShadow='0 0 0 3px var(--glow)'"
+        onblur="this.style.borderColor='var(--border2)';this.style.boxShadow='none'">
+    </div>
+  </div>
+  <div class="tbl-wrap" id="unWrap"></div>
+</div>
 
       <!-- Google Sheets Sub-panel -->
       <div id="msub-panel-sheets" style="display:none;">
@@ -1506,8 +1517,9 @@ function renderAll(){
   else renderAllTable(rows);
 
   // Unassigned
-  let un=D.unassigned;
-  if(q)un=un.filter(i=>i.name.toLowerCase().includes(q)||i.serial.toLowerCase().includes(q));
+ const unQ=(document.getElementById('unSearch')?.value||'').trim().toLowerCase();
+let un=D.unassigned;
+if(unQ)un=un.filter(i=>i.name.toLowerCase().includes(unQ)||i.serial.toLowerCase().includes(unQ));
   const uw=document.getElementById('unWrap');
   if(uw){
     if(!un.length)uw.innerHTML=`<div class="empty"><div class="ico">🔓</div><div>No unassigned devices.</div><div class="sub">Add devices from Entry to see them here.</div></div>`;
