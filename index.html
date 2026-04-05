@@ -1461,7 +1461,7 @@ function renderAll(){
   if(q)di=di.filter(i=>i.name.toLowerCase().includes(q)||i.serial.toLowerCase().includes(q));
   const dw=document.getElementById('doneWrap');
   if(!di.length)dw.innerHTML=`<div class="empty"><div class="ico">✅</div>No done records yet.</div>`;
-  else dw.innerHTML=`</table><thead><tr><th>#</th><th>Item Name</th><th>Serial / MAC</th><th>Client ID</th><th>Ticket ID</th><th>Technician</th><th>Engineer</th><th>Date</th><th>Remarks</th><th></th></tr></thead><tbody>${di.map((it,i)=>`<tr>
+  else dw.innerHTML=`<table><thead><tr><th>#</th><th>Item Name</th><th>Serial / MAC</th><th>Client ID</th><th>Ticket ID</th><th>Technician</th><th>Engineer</th><th>Date</th><th>Remarks</th><th></th></tr></thead><tbody>${di.map((it,i)=>`<tr>
     <td class="tm">${i+1}</td>
     <td class="tn">${hl(it.name,q)}</td>
     <td class="ts">${hl(it.serial,q)}</td>
