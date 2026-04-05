@@ -1267,7 +1267,15 @@ async function pullFromSheets(force){
     if(shouldUpdate){
       const wasEmpty=localItems===0&&remoteItems>0;
       _lastVersion=remoteVer;D=remote;
-      localStorage.setItem('inv7',JSON.stringify(D));renderAll();
+      localStorage.setItem('inv7',JSON.stringify(D));
+
+      // ── LAN data sync ──
+      if(remote.lan_data && typeof remote.lan_data==='object'){
+        localStorage.setItem('lan_data',JSON.stringify(remote.lan_data));
+      }
+
+      renderAll();
+      if(_lanActive) renderLAN();
       if(wasEmpty){setSyncIndicator('ok');toast('✅ Shared data loaded!');}
       else if(!force)setSyncIndicator('ok');
       setTimeout(()=>setSyncIndicator('idle'),3000);return true;
