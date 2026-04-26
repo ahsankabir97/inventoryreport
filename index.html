@@ -191,11 +191,18 @@ body::before{
   font-size:12px;font-weight:700;letter-spacing:.5px;
   color:#fff;
   font-family:'outfit',sans-serif;
-  background:linear-gradient(90deg,#60a5fa,#a5d8ff);
+  background:linear-gradient(90deg,#60a5fa 0%,#a5d8ff 30%,#ffffff 50%,#a5d8ff 70%,#60a5fa 100%);
+  background-size:200% auto;
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
+  background-clip:text;
   filter:drop-shadow(0 0 6px rgba(96,165,250,.5));
   line-height:1.3;
+  animation:shimmerName 2.5s linear infinite;
+}
+@keyframes shimmerName{
+  0%{background-position:200% center;}
+  100%{background-position:-200% center;}
 }
 
 .sidebar-section{
@@ -702,7 +709,19 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
 .manage-subtab.active .subtab-badge{background:rgba(255,255,255,.25);color:#fff;}
 
 /* Sync indicator */
-#syncDot-old-removed{}
+#syncDot{display:none;align-items:center;gap:5px;padding:5px 11px;border-radius:20px;font-size:11px;font-weight:700;font-family:'Outfit',serif;color:#fff;transition:background .3s;}
+#syncDot.shimmer-sync span{
+  background:linear-gradient(90deg,#ffffff 0%,#4ade80 30%,#ffffff 50%,#4ade80 70%,#ffffff 100%);
+  background-size:200% auto;
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:shimmerSync 1.8s linear infinite;
+}
+@keyframes shimmerSync{
+  0%{background-position:200% center;}
+  100%{background-position:-200% center;}
+}
 
 @media(max-width:700px){
   .sidebar{width:54px;top:72px;height:calc(100vh - 72px);}
@@ -796,97 +815,6 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
 .del-reason-confirm{flex:1;padding:11px;background:linear-gradient(135deg,#b91c1c,#ef4444);color:#fff;border:none;border-radius:9px;font-family:'outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 3px 12px rgba(185,28,28,.25);}
 .del-reason-confirm:hover{box-shadow:0 5px 20px rgba(185,28,28,.4);transform:translateY(-1px);}
 
-@keyframes shimmer-move {
-  0%   { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
-@keyframes pb-shimmer {
-  0%   { background-position: -300% center; }
-  100% { background-position: 300% center; }
-}
-@keyframes sync-shimmer {
-  0%   { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
-@keyframes star-pulse {
-  0%,100% { opacity:.6; transform:scale(1); }
-  50%      { opacity:1;  transform:scale(1.3); }
-}
-
-/* PREPARED BY PILL inside nav-center */
-.nav-prepared-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  margin-top: 6px;
-  padding: 4px 14px;
-  border-radius: 999px;
-  border: 1.5px solid rgba(249,168,37,.55);
-  background: rgba(249,168,37,.07);
-  backdrop-filter: blur(6px);
-}
-.pb-star {
-  font-size: 10px;
-  color: #f9a825;
-  animation: star-pulse 2s ease-in-out infinite;
-  filter: drop-shadow(0 0 5px rgba(249,168,37,.8));
-}
-.pb-label {
-  font-family: 'outfit', sans-serif;
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 1.8px;
-  text-transform: uppercase;
-  color: rgba(200,220,255,.85);
-}
-.pb-divider {
-  font-size: 13px;
-  font-weight: 300;
-  color: rgba(249,168,37,.7);
-  margin: 0 1px;
-}
-.pb-name {
-  font-family: 'outfit', sans-serif;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 2px;
-  background: linear-gradient(90deg,
-    #f9a825 0%, #ffee58 18%, #ffffff 35%,
-    #ffee58 52%, #f9a825 68%, #ffcc02 85%, #f9a825 100%
-  );
-  background-size: 300% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: pb-shimmer 2.5s linear infinite;
-  filter: drop-shadow(0 0 6px rgba(249,168,37,.4));
-}
-
-/* SYNC DOT — green dot + white/green shimmer text badge */
-#syncDot {
-  display: none;
-  align-items: center;
-  gap: 7px;
-  padding: 7px 14px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 700;
-  font-family: 'Outfit', sans-serif;
-  background: rgba(22,163,74,.2);
-  border: 1.5px solid rgba(74,222,128,.45);
-  transition: background .3s, border-color .3s;
-}
-#syncDot span {
-  background: linear-gradient(90deg,
-    #ffffff 0%, #4ade80 30%, #ffffff 55%, #4ade80 80%, #ffffff 100%
-  );
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: sync-shimmer 1.8s linear infinite;
-}
-
 </style>
 </head>
 <body>
@@ -904,13 +832,6 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
   <div class="nav-center">
     <div class="nav-title">Inventory Dashboard</div>
     <div class="nav-subtitle">Motijheel Zone</div>
-    <div class="nav-prepared-pill">
-      <span class="pb-star">✦</span>
-      <span class="pb-label">Prepared By</span>
-      <span class="pb-divider">|</span>
-      <span class="pb-name">AHSANUL KABIR</span>
-      <span class="pb-star">✦</span>
-    </div>
   </div>
   <div class="nav-right">
     <div id="syncDot"><span></span></div>
@@ -1389,14 +1310,9 @@ function setSyncIndicator(state){
   const el=document.getElementById('syncDot');if(!el)return;
   const url=getUrl();if(!url){el.style.display='none';stopPolling();return;}
   el.style.display='flex';if(!_pollHandle)startPolling();
-  const cfg={
-    idle:    {text:'🟢 Live Sync'},
-    pending: {text:'⏳ Saving...'},
-    syncing: {text:'🔄 Syncing...'},
-    ok:      {text:'✅ Updated'},
-    error:   {text:'❌ Sync Error'}
-  }[state]||{text:''};
-  el.querySelector('span').textContent=cfg.text;
+  const cfg={idle:{bg:'#1a7a3a',text:'🟢 Live Sync'},pending:{bg:'#f9a825',text:'⏳ Saving...'},syncing:{bg:'#3b82f6',text:'🔄 Syncing...'},ok:{bg:'#1a4fa0',text:'✅ Updated'},error:{bg:'#c62828',text:'❌ Sync Error'}}[state]||{bg:'#5b8dd9',text:''};
+  el.style.background=cfg.bg;el.querySelector('span').textContent=cfg.text;
+  if(state==='idle'){el.classList.add('shimmer-sync');}else{el.classList.remove('shimmer-sync');}
 }
 
 // ── ITEM NAME MANAGER ────────────────────────────────────────────────
