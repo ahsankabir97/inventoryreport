@@ -425,7 +425,6 @@ tbody td{padding:7px 8px;vertical-align:middle;text-align:center;font-weight:600
 .stat.ih .vl{color:var(--si-tx);}
 .stat.dn .vl{color:var(--sd-tx);}
 .stat.pv .vl{color:var(--sp-tx);}
-/* Active / selected stat card colors */
 .stat.t.stat-active{background:linear-gradient(135deg,#1a4fa0,#0077b6);border-color:transparent;box-shadow:0 6px 22px rgba(26,79,160,.45);transform:translateY(-3px);}
 .stat.ih.stat-active{background:linear-gradient(135deg,#1a4fa0,#2563eb);border-color:transparent;box-shadow:0 6px 22px rgba(26,79,160,.45);transform:translateY(-3px);}
 .stat.dn.stat-active{background:linear-gradient(135deg,#0077b6,#0ea5e9);border-color:transparent;box-shadow:0 6px 22px rgba(0,119,182,.45);transform:translateY(-3px);}
@@ -703,7 +702,7 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
 .manage-subtab.active .subtab-badge{background:rgba(255,255,255,.25);color:#fff;}
 
 /* Sync indicator */
-#syncDot{display:none;align-items:center;gap:5px;padding:5px 11px;border-radius:20px;font-size:11px;font-weight:700;font-family:'Outfit',serif;color:#fff;transition:background .3s;}
+#syncDot-old-removed{}
 
 @media(max-width:700px){
   .sidebar{width:54px;top:72px;height:calc(100vh - 72px);}
@@ -714,8 +713,6 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
   .sidebar-prepared-name{display:none;}
 }
 
-
-/* LAN Equipment sidebar CSS removed — uses main tab style */
 
 /* === LAN PAGE === */
 #page-lan{padding:22px 26px;}
@@ -799,6 +796,97 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
 .del-reason-confirm{flex:1;padding:11px;background:linear-gradient(135deg,#b91c1c,#ef4444);color:#fff;border:none;border-radius:9px;font-family:'outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 3px 12px rgba(185,28,28,.25);}
 .del-reason-confirm:hover{box-shadow:0 5px 20px rgba(185,28,28,.4);transform:translateY(-1px);}
 
+@keyframes shimmer-move {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes pb-shimmer {
+  0%   { background-position: -300% center; }
+  100% { background-position: 300% center; }
+}
+@keyframes sync-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes star-pulse {
+  0%,100% { opacity:.6; transform:scale(1); }
+  50%      { opacity:1;  transform:scale(1.3); }
+}
+
+/* PREPARED BY PILL inside nav-center */
+.nav-prepared-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 6px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(249,168,37,.55);
+  background: rgba(249,168,37,.07);
+  backdrop-filter: blur(6px);
+}
+.pb-star {
+  font-size: 10px;
+  color: #f9a825;
+  animation: star-pulse 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 5px rgba(249,168,37,.8));
+}
+.pb-label {
+  font-family: 'outfit', sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: rgba(200,220,255,.85);
+}
+.pb-divider {
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(249,168,37,.7);
+  margin: 0 1px;
+}
+.pb-name {
+  font-family: 'outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg,
+    #f9a825 0%, #ffee58 18%, #ffffff 35%,
+    #ffee58 52%, #f9a825 68%, #ffcc02 85%, #f9a825 100%
+  );
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: pb-shimmer 2.5s linear infinite;
+  filter: drop-shadow(0 0 6px rgba(249,168,37,.4));
+}
+
+/* SYNC DOT — green dot + white/green shimmer text badge */
+#syncDot {
+  display: none;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  background: rgba(22,163,74,.2);
+  border: 1.5px solid rgba(74,222,128,.45);
+  transition: background .3s, border-color .3s;
+}
+#syncDot span {
+  background: linear-gradient(90deg,
+    #ffffff 0%, #4ade80 30%, #ffffff 55%, #4ade80 80%, #ffffff 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: sync-shimmer 1.8s linear infinite;
+}
+
 </style>
 </head>
 <body>
@@ -816,6 +904,13 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
   <div class="nav-center">
     <div class="nav-title">Inventory Dashboard</div>
     <div class="nav-subtitle">Motijheel Zone</div>
+    <div class="nav-prepared-pill">
+      <span class="pb-star">✦</span>
+      <span class="pb-label">Prepared By</span>
+      <span class="pb-divider">|</span>
+      <span class="pb-name">AHSANUL KABIR</span>
+      <span class="pb-star">✦</span>
+    </div>
   </div>
   <div class="nav-right">
     <div id="syncDot"><span></span></div>
@@ -840,7 +935,6 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
     <div class="tab active" id="tab-all" onclick="go('all')">
       <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3" fill="rgba(96,165,250,.18)"/><path d="M3 5v6c0 1.66 4.03 3 9 3s9-1.34 9-3V5" fill="rgba(96,165,250,.1)"/><path d="M3 11v6c0 1.66 4.03 3 9 3s9-1.34 9-3v-6" fill="rgba(96,165,250,.06)"/></svg></span><span class="tab-label">ALL Equipment</span><span class="badge" id="b-all">0</span>
     </div>
-    <!-- LAN Equipment Tab -->
     <div class="tab" id="tab-lan" onclick="goLan('utp')">
       <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="6" height="6" rx="1" fill="rgba(52,211,153,.15)"/><rect x="16" y="2" width="6" height="6" rx="1" fill="rgba(52,211,153,.15)"/><rect x="9" y="16" width="6" height="6" rx="1" fill="rgba(52,211,153,.15)"/><line x1="5" y1="8" x2="5" y2="12"/><line x1="19" y1="8" x2="19" y2="12"/><line x1="5" y1="12" x2="19" y2="12"/><line x1="12" y1="12" x2="12" y2="16"/></svg></span>
       <span class="tab-label">LAN Equipment</span>
@@ -865,7 +959,6 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
     </div>
 
     <div class="sidebar-divider"></div>
-    <!-- Manage System tab — changed icon to gear/settings SVG -->
     <div class="tab" id="tab-manage" onclick="go('manage')" style="margin-top:4px;">
       <span class="tab-icon">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -888,7 +981,18 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
 
     <!-- ALL EQUIPMENT PAGE -->
     <div class="page active" id="page-all">
-      <div class="sh"><div class="st">🗂️ All <span>Equipment</span></div><div class="sw" style="margin-left:auto;"><input id="sb" type="text" placeholder="🔍 Search serial / item..." oninput="renderAll()" style="width:220px;padding:8px 14px;font-size:13px;background:rgba(255,255,255,.95);border:1.5px solid var(--border2);color:var(--text);border-radius:9px;outline:none;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;" onfocus="this.style.borderColor='var(--accent)';this.style.boxShadow='0 0 0 3px var(--glow)'" onblur="this.style.borderColor='var(--border2)';this.style.boxShadow='none'"></div></div>
+      <div class="sh">
+        <div class="st">🗂️ All <span>Equipment</span></div>
+        <div style="display:flex;align-items:center;gap:9px;margin-left:auto;">
+          <div class="sw"><input id="sb" type="text" placeholder="🔍 Search serial / item..." oninput="renderAll()" style="width:200px;padding:8px 14px;font-size:13px;background:rgba(255,255,255,.95);border:1.5px solid var(--border2);color:var(--text);border-radius:9px;outline:none;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;" onfocus="this.style.borderColor='var(--accent)';this.style.boxShadow='0 0 0 3px var(--glow)'" onblur="this.style.borderColor='var(--border2)';this.style.boxShadow='none'"></div>
+          <div id="pdfBtnWrap" style="display:none;">
+            <button onclick="openPdfModal()" style="display:flex;align-items:center;gap:7px;padding:8px 18px;background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;border:none;border-radius:9px;font-family:'outfit',sans-serif;font-size:12.5px;font-weight:700;cursor:pointer;box-shadow:0 3px 14px rgba(124,58,237,.35);transition:all .18s;white-space:nowrap;letter-spacing:.2px;" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 5px 22px rgba(124,58,237,.52)'" onmouseout="this.style.transform='';this.style.boxShadow='0 3px 14px rgba(124,58,237,.35)'">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              PDF Export
+            </button>
+          </div>
+        </div>
+      </div>
       <div class="stats" id="allStats"></div>
       <div class="stat-data-panel" id="allStatPanel"></div>
       <div class="tbl-wrap" id="allWrap"></div>
@@ -925,7 +1029,6 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
           Unassigned <span id="b-un" class="subtab-badge subtab-badge-blue">0</span>
         </div>
         <div class="manage-subtab" id="msub-tab-sheets" onclick="switchManageSub('sheets')">
-          <!-- Google Sheets icon replaced with sync/cloud SVG -->
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
           Google Sheets
         </div>
@@ -948,7 +1051,8 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
               <div style="display:flex;gap:7px;align-items:center;">
                 <input id="fn" type="text" placeholder="Select or type item name" list="ns" autocomplete="off" style="flex:1;padding:8px 12px;font-size:13px;">
                 <datalist id="ns"></datalist>
-                <button onclick="openItemMgr()" title="Add / Remove Item Names" style="height:38px;padding:0 13px;background:linear-gradient(135deg,#1a4fa0,#0077b6);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;font-family:'outfit',sans-serif;cursor:pointer;white-space:nowrap;box-shadow:0 3px 10px rgba(26,79,160,.3);transition:all .2s;flex-shrink:0;">⚙ Manage</button>
+                <!-- FIX: Added event.stopPropagation() to prevent click bubbling -->
+                <button onclick="event.stopPropagation();openItemMgr()" title="Add / Remove Item Names" style="height:38px;padding:0 13px;background:linear-gradient(135deg,#1a4fa0,#0077b6);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;font-family:'outfit',sans-serif;cursor:pointer;white-space:nowrap;box-shadow:0 3px 10px rgba(26,79,160,.3);transition:all .2s;flex-shrink:0;">⚙ Manage</button>
               </div>
             </div>
             <div class="fg" style="margin-bottom:9px;">
@@ -1037,7 +1141,6 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
     <!-- LAN EQUIPMENT PAGE -->
     <div class="page" id="page-lan" style="display:none;">
 
-      <!-- Page-level subtabs -->
       <div class="sh" style="margin-bottom:0;">
         <div class="st"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><rect x="2" y="2" width="6" height="6" rx="1" fill="rgba(52,211,153,.15)"/><rect x="16" y="2" width="6" height="6" rx="1" fill="rgba(52,211,153,.15)"/><rect x="9" y="16" width="6" height="6" rx="1" fill="rgba(52,211,153,.15)"/><line x1="5" y1="8" x2="5" y2="12"/><line x1="19" y1="8" x2="19" y2="12"/><line x1="5" y1="12" x2="19" y2="12"/><line x1="12" y1="12" x2="12" y2="16"/></svg>LAN <span>Equipment</span></div>
       </div>
@@ -1146,7 +1249,8 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
 
 <!-- ITEM NAME MANAGER MODAL -->
 <div class="mbg" id="itemMgrModal">
-  <div class="item-mgr">
+  <!-- FIX: Added onclick="event.stopPropagation()" to prevent backdrop close on inner clicks -->
+  <div class="item-mgr" onclick="event.stopPropagation()">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
       <h3 style="margin:0;">⚙️ Manage Item Names</h3>
       <button onclick="closeItemMgr()" style="background:rgba(198,40,40,.1);border:1.5px solid rgba(198,40,40,.25);color:#b91c1c;border-radius:7px;width:28px;height:28px;cursor:pointer;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;" onmouseover="this.style.background='#b91c1c';this.style.color='#fff'" onmouseout="this.style.background='rgba(198,40,40,.1)';this.style.color='#b91c1c'">✕</button>
@@ -1226,7 +1330,6 @@ function saveHiddenItems(){localStorage.setItem('hiddenItems',JSON.stringify(HID
 
 let D={unassigned:[],deleted:[],rupchan:[],amit:[],tamim:[],nazrul:[],done:[]};
 
-// ── DATE ONLY ─────────────────────────────────────────────────────────
 function fd(iso){
   if(!iso)return '';
   const d=new Date(iso);
@@ -1269,12 +1372,9 @@ async function pullFromSheets(force){
       const wasEmpty=localItems===0&&remoteItems>0;
       _lastVersion=remoteVer;D=remote;
       localStorage.setItem('inv7',JSON.stringify(D));
-
-      // ── LAN data sync ──
       if(remote.lan_data && typeof remote.lan_data==='object'){
         localStorage.setItem('lan_data',JSON.stringify(remote.lan_data));
       }
-
       renderAll();
       if(_lanActive) renderLAN();
       if(wasEmpty){setSyncIndicator('ok');toast('✅ Shared data loaded!');}
@@ -1289,19 +1389,33 @@ function setSyncIndicator(state){
   const el=document.getElementById('syncDot');if(!el)return;
   const url=getUrl();if(!url){el.style.display='none';stopPolling();return;}
   el.style.display='flex';if(!_pollHandle)startPolling();
-  const cfg={idle:{bg:'#5b8dd9',text:'🟢 Live Sync'},pending:{bg:'#f9a825',text:'⏳ Saving...'},syncing:{bg:'#3b82f6',text:'🔄 Syncing...'},ok:{bg:'#1a4fa0',text:'✅ Updated'},error:{bg:'#c62828',text:'❌ Sync Error'}}[state]||{bg:'#5b8dd9',text:''};
-  el.style.background=cfg.bg;el.querySelector('span').textContent=cfg.text;
+  const cfg={
+    idle:    {text:'🟢 Live Sync'},
+    pending: {text:'⏳ Saving...'},
+    syncing: {text:'🔄 Syncing...'},
+    ok:      {text:'✅ Updated'},
+    error:   {text:'❌ Sync Error'}
+  }[state]||{text:''};
+  el.querySelector('span').textContent=cfg.text;
 }
 
 // ── ITEM NAME MANAGER ────────────────────────────────────────────────
-function openItemMgr(){renderItemDeleteDropdown();document.getElementById('itemMgrModal').classList.add('open');setTimeout(()=>document.getElementById('newItemInput').focus(),80);}
+// FIX 1: Added null-safety (||[]) for D arrays to prevent JS errors that block modal opening
+function openItemMgr(){
+  try{renderItemDeleteDropdown();}catch(err){console.error('ItemMgr render error:',err);}
+  document.getElementById('itemMgrModal').classList.add('open');
+  setTimeout(()=>document.getElementById('newItemInput').focus(),80);
+}
 function closeItemMgr(){document.getElementById('itemMgrModal').classList.remove('open');renderAll();}
+
+// FIX 2: All D array accesses use ||[] for null safety
 function renderItemDeleteDropdown(){
   const sel=document.getElementById('deleteItemSelect');
   const emptyHint=document.getElementById('deleteItemEmptyHint');
   const dropRow=document.getElementById('deleteItemDropdownRow');
   const badge=document.getElementById('itemCountBadge');
-  const all=[...D.unassigned,...D.done,...ENGS.flatMap(eng=>D[eng])];
+  // NULL-SAFE: use ||[] on all D array accesses
+  const all=[...(D.unassigned||[]),...(D.done||[]),...ENGS.flatMap(eng=>D[eng]||[])];
   const dataNms=[...new Set(all.map(i=>i.name).filter(Boolean))];
   const allNms=[...new Set([...CUSTOM_ITEMS,...dataNms])].filter(n=>!HIDDEN_ITEMS.includes(n));
   badge.textContent=allNms.length;
@@ -1326,10 +1440,8 @@ function deleteSelectedItem(){
   const nm=sel.value;
   if(!nm){toast('⚠️ Please select an item to delete');return;}
   if(!confirm(`Remove "${nm}" from item name list?`))return;
-  // Remove from CUSTOM_ITEMS if present
   const idx=CUSTOM_ITEMS.indexOf(nm);
   if(idx!==-1){CUSTOM_ITEMS.splice(idx,1);saveCustomItems();}
-  // Add to HIDDEN_ITEMS blacklist so dataNms from inventory also get filtered
   if(!HIDDEN_ITEMS.includes(nm)){HIDDEN_ITEMS.push(nm);saveHiddenItems();}
   renderItemDeleteDropdown();renderAll();toast(`🗑 "${nm}" removed from item list`);
 }
@@ -1342,14 +1454,10 @@ function deleteCustomItem(i){
 
 // ── NAVIGATION ────────────────────────────────────────────────────────
 function go(name){
-  if(name==='manage' && _currentUser !== 'admin'){
-    authError();
-    return;
-  }
+  if(name==='manage' && _currentUser !== 'admin'){authError();return;}
   _lanActive = null;
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p=>{ p.classList.remove('active'); p.style.display=''; });
-  // hide lan page explicitly (it uses inline display)
   document.getElementById('page-lan').style.display='none';
   document.getElementById('tab-'+name).classList.add('active');
   document.getElementById('page-'+name).classList.add('active');
@@ -1369,7 +1477,6 @@ function switchManageSub(sub){
   }
 }
 
-// ── CLEAR ALL DELETED ────────────────────────────────────────────────
 function clearAllDeleted(){
   const count=(D.deleted||[]).length;
   if(!count){toast('⚠️ No deleted items to clear');return;}
@@ -1379,7 +1486,6 @@ function clearAllDeleted(){
   toast(`🗑 ${count} item(s) cleared — still in Sheets`);
 }
 
-// ── HELPERS ──────────────────────────────────────────────────────────
 function sq(){
   const activePage=document.querySelector('.page.active');
   if(activePage){
@@ -1394,14 +1500,14 @@ function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
 
 // ── RENDER ────────────────────────────────────────────────────────────
 function renderAll(){
-  const tot=ENGS.reduce((s,eng)=>s+D[eng].length,0)+D.unassigned.length+D.done.length;
-  ENGS.forEach(eng=>document.getElementById('b-'+eng).textContent=D[eng].length);
-  document.getElementById('b-done').textContent=D.done.length;
+  const tot=ENGS.reduce((s,eng)=>s+(D[eng]||[]).length,0)+(D.unassigned||[]).length+(D.done||[]).length;
+  ENGS.forEach(eng=>document.getElementById('b-'+eng).textContent=(D[eng]||[]).length);
+  document.getElementById('b-done').textContent=(D.done||[]).length;
   document.getElementById('b-all').textContent=tot;
-  document.getElementById('b-un').textContent=D.unassigned.length;
+  document.getElementById('b-un').textContent=(D.unassigned||[]).length;
   document.getElementById('b-deleted').textContent=(D.deleted||[]).length;
 
-  const all=[...D.unassigned,...D.done,...ENGS.flatMap(eng=>D[eng])];
+  const all=[...(D.unassigned||[]),...(D.done||[]),...ENGS.flatMap(eng=>D[eng]||[])];
   const dataNms=[...new Set(all.map(i=>i.name).filter(Boolean))];
   const allNms=[...new Set([...CUSTOM_ITEMS,...dataNms])].filter(n=>!HIDDEN_ITEMS.includes(n));
   const nsEl=document.getElementById('ns');
@@ -1416,18 +1522,16 @@ function renderAll(){
     const ENG_ICON=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${engColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><circle cx="12" cy="8" r="4" fill="${engColor}22"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M15.5 6.5 C16.5 5 18 5.5 18.5 7"/></svg>`;
     const page = document.getElementById('page-'+eng);
 
-    // Preserve existing search value (don't destroy the input)
     const existingSearch = page.querySelector('.eng-search');
     const prevSearch = existingSearch ? existingSearch.value : '';
     const engQ = prevSearch.trim().toLowerCase();
 
-    let items=D[eng];
+    let items=D[eng]||[];
     if(engQ)items=items.filter(i=>i.name.toLowerCase().includes(engQ)||i.serial.toLowerCase().includes(engQ));
     const isMyPage = _currentUser === eng;
     const sheetsIconHtml = isMyPage ? `<span class="sheets-eng-icon" title="Google Apps Script URL" onclick="openSheetsUrlModal()" style="cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;background:rgba(15,157,88,.12);border:1.5px solid rgba(15,157,88,.3);margin-left:8px;vertical-align:middle;flex-shrink:0;transition:all .18s;" onmouseover="this.style.background='rgba(15,157,88,.22)'" onmouseout="this.style.background='rgba(15,157,88,.12)'"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="18" height="18" rx="3" fill="#0f9d58" opacity="0.2"/><rect x="3" y="3" width="18" height="18" rx="3" stroke="#0f9d58" stroke-width="1.8" fill="none"/><rect x="7" y="7" width="4" height="2.5" rx=".5" fill="#0f9d58"/><rect x="13" y="7" width="4" height="2.5" rx=".5" fill="#0f9d58" opacity=".7"/><rect x="7" y="11" width="4" height="2.5" rx=".5" fill="#0f9d58" opacity=".85"/><rect x="13" y="11" width="4" height="2.5" rx=".5" fill="#0f9d58" opacity=".6"/><rect x="7" y="15" width="10" height="2.5" rx=".5" fill="#0f9d58" opacity=".5"/></svg></span>` : '';
     const canDoActions = canAct('provide', eng);
 
-    // Build table HTML separately
     const tableHTML = items.length===0
       ? `<div class="empty"><div class="ico">📭</div>No devices assigned.</div>`
       : `<table><thead><tr><th>#</th><th>Item Name</th><th>Serial / MAC</th><th>Status</th><th>Technician</th><th>Date</th><th>Remarks</th><th>Actions</th></tr></thead>
@@ -1448,7 +1552,6 @@ function renderAll(){
       </tr>`).join('')}</tbody></table>`;
 
     if(!existingSearch){
-      // First render — build full page structure
       const searchHtml = `<div class="sw eng-search-wrap" style="margin-left:auto;"><input type="text" class="eng-search" data-eng="${eng}" placeholder="🔍 Search serial / item..." oninput="renderAll()" style="width:220px;padding:8px 14px;font-size:13px;background:rgba(255,255,255,.95);border:1.5px solid var(--border2);color:var(--text);border-radius:9px;outline:none;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;" onfocus="this.style.borderColor='var(--accent)';this.style.boxShadow='0 0 0 3px var(--glow)'" onblur="this.style.borderColor='var(--border2)';this.style.boxShadow='none'"></div>`;
       page.innerHTML=`
         <div class="sh">
@@ -1457,14 +1560,10 @@ function renderAll(){
         </div>
         <div class="eng-tbl-wrap tbl-wrap">${tableHTML}</div>`;
     } else {
-      // Subsequent renders — preserve the input, only update table + sheets icon
       const tblWrap = page.querySelector('.eng-tbl-wrap');
       if(tblWrap) tblWrap.innerHTML = tableHTML;
-
-      // Always sync sheets icon based on current user
       const stEl = page.querySelector('.eng-st');
       if(stEl){
-        // Remove existing sheets icon span if present, re-add based on current user
         const existingIcon = stEl.querySelector('.sheets-eng-icon');
         if(existingIcon) existingIcon.remove();
         if(isMyPage){
@@ -1483,7 +1582,7 @@ function renderAll(){
   });
 
   // Done
-  let di=D.done;
+  let di=D.done||[];
   if(q)di=di.filter(i=>i.name.toLowerCase().includes(q)||i.serial.toLowerCase().includes(q));
   const dw=document.getElementById('doneWrap');
   if(!di.length)dw.innerHTML=`<div class="empty"><div class="ico">✅</div>No done records yet.</div>`;
@@ -1502,9 +1601,9 @@ function renderAll(){
 
   // All Equipment
   let rows=[];
-  ENGS.forEach(eng=>D[eng].forEach(it=>rows.push({...it,_eng:cap(eng)})));
-  D.done.forEach(it=>rows.push({...it,_eng:cap(it.engineer||'—'),status:'Done'}));
-  D.unassigned.forEach(it=>rows.push({...it,_eng:'—',status:'Unassigned'}));
+  ENGS.forEach(eng=>(D[eng]||[]).forEach(it=>rows.push({...it,_eng:cap(eng)})));
+  (D.done||[]).forEach(it=>rows.push({...it,_eng:cap(it.engineer||'—'),status:'Done'}));
+  (D.unassigned||[]).forEach(it=>rows.push({...it,_eng:'—',status:'Unassigned'}));
   if(q)rows=rows.filter(r=>r.name.toLowerCase().includes(q)||r.serial.toLowerCase().includes(q));
   document.getElementById('allStats').innerHTML=`
     <div class="stat t" onclick="filterAllTable('total','Total',this)">
@@ -1519,7 +1618,6 @@ function renderAll(){
     <div class="stat pv" onclick="filterAllTable('pv','Provided',this)">
       <span class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef6c00" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2" fill="rgba(239,108,0,.15)"/></svg></span>
       <div class="stat-text-wrap"><div class="lb">Provided</div><div class="vl">${rows.filter(r=>r.status==='Provided').length}</div></div></div>`;
-  // Re-apply active class after re-render
   if(_activeAllFilter){
     const map={total:'t',ih:'ih',dn:'dn',pv:'pv'};
     const cls=map[_activeAllFilter];
@@ -1530,9 +1628,9 @@ function renderAll(){
   else renderAllTable(rows);
 
   // Unassigned
- const unQ=(document.getElementById('unSearch')?.value||'').trim().toLowerCase();
-let un=D.unassigned;
-if(unQ)un=un.filter(i=>i.name.toLowerCase().includes(unQ)||i.serial.toLowerCase().includes(unQ));
+  const unQ=(document.getElementById('unSearch')?.value||'').trim().toLowerCase();
+  let un=D.unassigned||[];
+  if(unQ)un=un.filter(i=>i.name.toLowerCase().includes(unQ)||i.serial.toLowerCase().includes(unQ));
   const uw=document.getElementById('unWrap');
   if(uw){
     if(!un.length)uw.innerHTML=`<div class="empty"><div class="ico">🔓</div><div>No unassigned devices.</div><div class="sub">Add devices from Entry to see them here.</div></div>`;
@@ -1639,20 +1737,21 @@ function addPool(){
   save();clearForm();renderAll();toast(`📤 ${serials.length} device(s) added to Unassigned`);
 }
 function assignPool(itemId,eng){
-  const idx=D.unassigned.findIndex(x=>x.id===itemId);if(idx===-1)return;
+  const idx=(D.unassigned||[]).findIndex(x=>x.id===itemId);if(idx===-1)return;
   const it=D.unassigned.splice(idx,1)[0];
+  if(!D[eng])D[eng]=[];
   D[eng].unshift({id:gid(),name:it.name,brand:it.brand||'',serial:it.serial,status:'IN-Hand',tech:'',client:'',ticket:'',remarks:it.remarks||'',date:new Date().toISOString()});
   save();renderAll();toast(`✅ "${it.serial}" → assigned to ${cap(eng)}`);
 }
 function returnIH(eng,id){
-  const it=D[eng].find(x=>x.id===id);if(!it)return;
+  const it=(D[eng]||[]).find(x=>x.id===id);if(!it)return;
   const prevTech=it.tech||'technician';
   it.status='IN-Hand';it.tech='';it.date=new Date().toISOString();
   save();renderAll();
   toast(`↩ ${it.serial} has been returned from ${prevTech}`);
 }
 function openProvModal(eng,id){
-  const it=D[eng].find(x=>x.id===id);if(!it)return;
+  const it=(D[eng]||[]).find(x=>x.id===id);if(!it)return;
   document.getElementById('provEng').value=eng;
   document.getElementById('provId').value=id;
   document.getElementById('provModal').classList.add('open');
@@ -1663,7 +1762,7 @@ function confirmProv(){
   const id=document.getElementById('provId').value;
   const tech=document.getElementById('provTechSel').value;
   if(!tech){alert('Please select a technician!');return;}
-  const it=D[eng].find(x=>x.id===id);if(!it)return;
+  const it=(D[eng]||[]).find(x=>x.id===id);if(!it)return;
   it.status='Provided';it.tech=tech;it.date=new Date().toISOString();
   save();renderAll();closeProvModal();
   toast(`↗ ${it.serial} has been provided to ${tech}`);
@@ -1672,7 +1771,7 @@ function confirmProv(){
 let _de=null,_di=null;
 function openDM(eng,id){
   _de=eng;_di=id;
-  const it=D[eng].find(x=>x.id===id);if(!it)return;
+  const it=(D[eng]||[]).find(x=>x.id===id);if(!it)return;
   document.getElementById('dc').value=it.client||'';
   document.getElementById('dt').value=it.ticket||'';
   document.getElementById('dtech').value=it.tech||'';
@@ -1683,14 +1782,15 @@ function openDM(eng,id){
 function closeDM(){document.getElementById('doneModal').classList.remove('open');_de=null;_di=null;}
 function confirmDone(){
   if(!_de||!_di)return;
-  const idx=D[_de].findIndex(x=>x.id===_di);if(idx===-1)return;
+  const idx=(D[_de]||[]).findIndex(x=>x.id===_di);if(idx===-1)return;
   const it=D[_de].splice(idx,1)[0];
+  if(!D.done)D.done=[];
   D.done.unshift({id:gid(),name:it.name,brand:it.brand||'',serial:it.serial,client:document.getElementById('dc').value.trim()||it.client,ticket:document.getElementById('dt').value.trim()||it.ticket,tech:document.getElementById('dtech').value.trim(),engineer:document.getElementById('deng').value.trim(),remarks:document.getElementById('drm').value.trim()||it.remarks,date:new Date().toISOString()});
   save();closeDM();renderAll();toast('✅ Marked as Done');
 }
 
 // ── DELETE REASON MODAL ───────────────────────────────────────────────
-let _delPending = null; // {type:'dev'|'pool'|'done', eng, id}
+let _delPending = null;
 let _delSelectedReason = '';
 
 function openDelReason(type, eng, id){
@@ -1724,17 +1824,17 @@ function confirmDelReason(){
   const {type,eng,id} = _delPending;
   closeDelReason();
   if(type==='dev'){
-    const it=D[eng].find(x=>x.id===id);
+    const it=(D[eng]||[]).find(x=>x.id===id);
     if(it)sendToDeleted({...it,_deleteReason:reason},cap(eng));
-    D[eng]=D[eng].filter(x=>x.id!==id);
+    D[eng]=(D[eng]||[]).filter(x=>x.id!==id);
   } else if(type==='pool'){
-    const it=D.unassigned.find(x=>x.id===id);
+    const it=(D.unassigned||[]).find(x=>x.id===id);
     if(it)sendToDeleted({...it,status:'Unassigned',_deleteReason:reason},'Unassigned');
-    D.unassigned=D.unassigned.filter(x=>x.id!==id);
+    D.unassigned=(D.unassigned||[]).filter(x=>x.id!==id);
   } else if(type==='done'){
-    const it=D.done.find(x=>x.id===id);
+    const it=(D.done||[]).find(x=>x.id===id);
     if(it)sendToDeleted({...it,status:'Done',_deleteReason:reason},'Done');
-    D.done=D.done.filter(x=>x.id!==id);
+    D.done=(D.done||[]).filter(x=>x.id!==id);
   }
   save();renderAll();toast('🗑 Deleted — restore from Manage → Deleted');
 }
@@ -1753,10 +1853,10 @@ function restoreDeleted(id){
   const it=D.deleted[idx];
   const from=it._deletedFrom||'';
   const engKey=ENGS.find(en=>
-  cap(en)===from ||
-  en===from.toLowerCase() ||
-  en.toLowerCase()===from.toLowerCase()
-);
+    cap(en)===from ||
+    en===from.toLowerCase() ||
+    en.toLowerCase()===from.toLowerCase()
+  );
 
   if(engKey){
     _restorePendingId = id;
@@ -1767,12 +1867,11 @@ function restoreDeleted(id){
     return;
   }
 
-  // Non-engineer items — restore directly
   D.deleted.splice(idx,1);
   const item={...it};
   delete item._deletedFrom;delete item._deletedAt;delete item._deletedBy;delete item._deleteReason;
-  if(from==='Done'){D.done.unshift({...item,id:gid()});toast(`↩ "${item.serial}" restored to Done`);}
-  else{D.unassigned.unshift({...item,id:gid()});toast(`↩ "${item.serial}" restored to Unassigned`);}
+  if(from==='Done'){if(!D.done)D.done=[];D.done.unshift({...item,id:gid()});toast(`↩ "${item.serial}" restored to Done`);}
+  else{if(!D.unassigned)D.unassigned=[];D.unassigned.unshift({...item,id:gid()});toast(`↩ "${item.serial}" restored to Unassigned`);}
   save();renderAll();
 }
 
@@ -1787,20 +1886,20 @@ function confirmRestoreDest(dest){
   const it=D.deleted.splice(idx,1)[0];
   const item={...it};
   delete item._deletedFrom;delete item._deletedAt;delete item._deletedBy;delete item._deleteReason;
-  
-  // Save engKey before closing modal (closeRestoreDestModal sets it to null)
   const engKey = _restorePendingEngKey;
   closeRestoreDestModal();
-  
   if(dest==='eng' && engKey){
-  console.log('engKey:', engKey, 'D keys:', Object.keys(D));
-  D[engKey].unshift({...item,id:gid()});
-  save();renderAll();toast(`↩ "${item.serial}" restored to ${cap(engKey)}`);
-} else {
+    if(!D[engKey])D[engKey]=[];
+    D[engKey].unshift({...item,id:gid()});
+    save();renderAll();toast(`↩ "${item.serial}" restored to ${cap(engKey)}`);
+  } else {
+    if(!D.unassigned)D.unassigned=[];
     D.unassigned.unshift({...item,id:gid()});
     save();renderAll();toast(`↩ "${item.serial}" sent to Unassigned`);
   }
-}function toast(msg){
+}
+
+function toast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;
   t.style.display='block';
@@ -1929,6 +2028,28 @@ function doPost(e) {
     });
     if(allRows.length){ allSh.getRange(2,1,allRows.length,mainHeaders.length).setValues(allRows); styleData(allSh,allRows.length,mainHeaders.length); }
 
+    // ── LAN Equipment Sheet (UTP Cable always in Feet) ────────────────
+    var lanData = data.lan_data || {};
+    var lanSh = ss.getSheetByName("LAN Equipment") || ss.insertSheet("LAN Equipment");
+    lanSh.clearContents();
+    var lanHeaders = ["#","Type","Transaction","Quantity","Unit","Client ID","Ticket ID","Technician","By","Remarks","Date"];
+    var lanHdrRange = lanSh.getRange(1,1,1,lanHeaders.length);
+    lanHdrRange.setValues([lanHeaders]);
+    lanHdrRange.setFontWeight("bold").setHorizontalAlignment("center").setFontSize(10);
+    lanHdrRange.setBackground("#0a5c36").setFontColor("#ffffff");
+    var lanRows = [];
+    var utpData = lanData.utp || {};
+    lanRows.push([lanRows.length+1,"UTP Cable","📦 CURRENT STOCK",utpData.stock||0,"Feet","","","","","Total in store",""]);
+    (utpData.history||[]).forEach(function(h){
+      lanRows.push([lanRows.length+1,"UTP Cable",h.type==="IN"?"📥 IN":"↗ OUT",h.qty,"Feet",h.client||"",h.ticket||"",h.tech||"",h.by||"",h.remarks||"",h.date?new Date(h.date).toLocaleDateString():""]);
+    });
+    var rjData = lanData.rj45 || {};
+    lanRows.push([lanRows.length+1,"RJ-45 Connector","📦 CURRENT STOCK",rjData.stock||0,"Pieces","","","","","Total in store",""]);
+    (rjData.history||[]).forEach(function(h){
+      lanRows.push([lanRows.length+1,"RJ-45 Connector",h.type==="IN"?"📥 IN":"↗ OUT",h.qty,"Pieces",h.client||"",h.ticket||"",h.tech||"",h.by||"",h.remarks||"",h.date?new Date(h.date).toLocaleDateString():""]);
+    });
+    if(lanRows.length){ lanSh.getRange(2,1,lanRows.length,lanHeaders.length).setValues(lanRows); styleData(lanSh,lanRows.length,lanHeaders.length); }
+
     return ContentService.createTextOutput(JSON.stringify({success:true,rows:allRows.length,version:data._version||0})).setMimeType(ContentService.MimeType.JSON);
   } catch(err) {
     return ContentService.createTextOutput(JSON.stringify({success:false,error:err.message})).setMimeType(ContentService.MimeType.JSON);
@@ -1957,10 +2078,10 @@ async function syncToSheetsInline(){
     D._version=Date.now();localStorage.setItem('inv7',JSON.stringify(D));
     try{
       const lanRaw2=localStorage.getItem('lan_data')||'{}';
-let lanParsed2={};
-try{lanParsed2=JSON.parse(lanRaw2);}catch(e){}
-const payload2={...D, lan_data: lanParsed2};
-const resp=await fetch(url,{method:'POST',body:JSON.stringify(payload2),headers:{'Content-Type':'text/plain'}});
+      let lanParsed2={};
+      try{lanParsed2=JSON.parse(lanRaw2);}catch(e){}
+      const payload2={...D, lan_data: lanParsed2};
+      const resp=await fetch(url,{method:'POST',body:JSON.stringify(payload2),headers:{'Content-Type':'text/plain'}});
       const json=await resp.json();
       if(json.success){_lastVersion=D._version;setSyncIndicator('ok');setTimeout(()=>setSyncIndicator('idle'),4000);statusEl.innerHTML='<span style="color:var(--green)">✅ Sync successful!</span>';toast('✅ Synced!');startPolling();}
       else{setSyncIndicator('error');statusEl.innerHTML='<span style="color:var(--red)">❌ Sync failed.</span>';}
@@ -1969,6 +2090,7 @@ const resp=await fetch(url,{method:'POST',body:JSON.stringify(payload2),headers:
 }
 
 // ── MODAL CLOSE ─────────────────────────────────────────────────────
+// FIX 3: itemMgrModal backdrop close — ev.target check is correct, but inner div now has stopPropagation
 document.getElementById('doneModal').addEventListener('click',ev=>{if(ev.target===document.getElementById('doneModal'))closeDM();});
 document.getElementById('itemMgrModal').addEventListener('click',ev=>{if(ev.target===document.getElementById('itemMgrModal'))closeItemMgr();});
 document.getElementById('provModal').addEventListener('click',ev=>{if(ev.target===document.getElementById('provModal'))closeProvModal();});
@@ -2067,8 +2189,6 @@ const DEFAULT_PASSWORDS = {
 
 let _currentUser = null;
 
-// ── PERSISTENT SESSION ────────────────────────────────────────────────────
-// On page load, restore session from localStorage if available
 (function restoreSession(){
   const saved = localStorage.getItem('inv_session');
   if(saved){
@@ -2117,7 +2237,6 @@ function doLogin(){
     return;
   }
   _currentUser = uname;
-  // Save session to localStorage for persistence across refresh
   localStorage.setItem('inv_session', JSON.stringify({user: uname}));
   document.getElementById('loginOverlay').style.display='none';
   document.getElementById('loginErr').textContent='';
@@ -2148,6 +2267,8 @@ function applyRoleUI(){
   const manageTab = document.getElementById('tab-manage');
   if(manageTab) manageTab.style.display = (u==='admin'?'':'none');
   if(u!=='admin' && document.querySelector('#page-manage.active')){go('all');}
+  const pdfBtn = document.getElementById('pdfBtnWrap');
+  if(pdfBtn) pdfBtn.style.display = (u==='admin'?'':'none');
   renderAll();
 }
 
@@ -2235,8 +2356,6 @@ const LAN_CFG = {
   rj45: {label:'RJ-45 Connector', unit:'Pieces', icon:'🟡', color:'#b45309'},
 };
 
-// LAN data structure
-// LAN = { utp:{stock:0, history:[]}, rj45:{stock:0, history:[]}, others:{itemname:{stock:0,unit:'',history:[]}} }
 function getLAN(){
   try{ return JSON.parse(localStorage.getItem('lan_data')||'{}'); } catch(e){ return {}; }
 }
@@ -2257,33 +2376,27 @@ function initLAN(lan){
   return lan;
 }
 
-// ── SIDEBAR TOGGLE ────────────────────────────────────────────────
 let _lanActive = null;
 function goLan(sub){
   _lanActive = sub || 'utp';
-  // deactivate all other sidebar tabs and pages
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p=>{ p.classList.remove('active'); p.style.display=''; });
   document.getElementById('tab-lan').classList.add('active');
   const lanPage = document.getElementById('page-lan');
   lanPage.style.display = 'block';
-  // switch page-level subtabs
   ['utp','rj45','others'].forEach(s=>{
     document.getElementById('lan-panel-'+s).style.display = s===_lanActive ? '' : 'none';
     document.getElementById('lsub-page-'+s).classList.toggle('active', s===_lanActive);
   });
   renderLAN();
-  // show Add Stock btn for admin only
   const isAdmin = _currentUser === 'admin';
   document.getElementById('lanUtpEntryBtn').style.display   = isAdmin ? '' : 'none';
   document.getElementById('lanRj45EntryBtn').style.display  = isAdmin ? '' : 'none';
   document.getElementById('lanOthersEntryBtn').style.display= isAdmin ? '' : 'none';
 }
 
-// ── RENDER ────────────────────────────────────────────────────────
 function renderLAN(){
   const lan = initLAN(getLAN());
-  // sidebar badges
   if(!_lanActive) return;
   if(_lanActive==='utp')   renderLanSingle('utp', lan);
   if(_lanActive==='rj45')  renderLanSingle('rj45', lan);
@@ -2295,7 +2408,6 @@ function renderLanSingle(type, lan){
   const data = lan[type];
   const isAdm = _currentUser === 'admin';
   document.getElementById(type+'-store-qty').textContent = data.stock.toLocaleString();
-  // Show unit from last history entry, or fallback to cfg.unit
   const lastUnit = data.history.length > 0 ? (data.history[data.history.length-1].unit || cfg.unit) : cfg.unit;
   const unitEl = document.getElementById(type+'-store-unit');
   if(unitEl) unitEl.textContent = lastUnit;
@@ -2350,7 +2462,6 @@ function renderLanOthers(lan){
   }).join('');
 }
 
-// ── ENTRY MODAL (admin) ───────────────────────────────────────────
 let _lanEntryType = null;
 function openLanEntryModal(type){
   if(_currentUser!=='admin'){authError();return;}
@@ -2359,15 +2470,10 @@ function openLanEntryModal(type){
   document.getElementById('lanEntryModalTitle').textContent = cfg.label;
   document.getElementById('lanEntryQty').value = '';
   document.getElementById('lanEntryRemarks').value = '';
-  if(type==='utp'){
-    document.getElementById('lanEntryUnitSelectRow').style.display='';
-    document.getElementById('lanEntryUnitFixedRow').style.display='none';
-    document.getElementById('lanEntryUnitSelect').value='Feet';
-  } else {
-    document.getElementById('lanEntryUnitSelectRow').style.display='none';
-    document.getElementById('lanEntryUnitFixedRow').style.display='';
-    document.getElementById('lanEntryUnitFixed').value=cfg.unit;
-  }
+  // UTP Cable is always in Feet — show fixed readonly field
+  document.getElementById('lanEntryUnitSelectRow').style.display='none';
+  document.getElementById('lanEntryUnitFixedRow').style.display='';
+  document.getElementById('lanEntryUnitFixed').value = type==='utp' ? 'Feet' : cfg.unit;
   document.getElementById('lanEntryModal').classList.add('open');
   setTimeout(()=>document.getElementById('lanEntryQty').focus(), 80);
 }
@@ -2376,7 +2482,7 @@ function confirmLanEntry(){
   if(!_lanEntryType) return;
   const qty = parseInt(document.getElementById('lanEntryQty').value)||0;
   const unit = _lanEntryType==='utp'
-    ? document.getElementById('lanEntryUnitSelect').value
+    ? 'Feet'
     : document.getElementById('lanEntryUnitFixed').value;
   const remarks = document.getElementById('lanEntryRemarks').value.trim();
   if(qty<=0){toast('⚠️ Please enter a valid quantity');return;}
@@ -2389,7 +2495,6 @@ function confirmLanEntry(){
   toast(`📥 ${qty} ${unit} added to ${LAN_CFG[_lanEntryType].label}`);
 }
 
-// ── PROVIDE MODAL ─────────────────────────────────────────────────
 let _lanProvType = null;
 function openLanProvModal(type){
   _lanProvType = type;
@@ -2425,7 +2530,6 @@ function confirmLanProv(){
   toast(`↗ ${qty} ${cfg.unit} provided to ${client}`);
 }
 
-// ── OTHERS ENTRY ──────────────────────────────────────────────────
 function openLanOthersEntryModal(preItem){
   if(_currentUser!=='admin'){authError();return;}
   document.getElementById('lanOthersItem').value= preItem||'';
@@ -2452,7 +2556,6 @@ function confirmLanOthersEntry(){
   toast(`📥 ${qty} ${unit} of ${item} added`);
 }
 
-// ── OTHERS PROVIDE ────────────────────────────────────────────────
 let _lanOthersProvItem = null;
 function openLanOthersProvModal(item){
   _lanOthersProvItem = item;
@@ -2487,7 +2590,6 @@ function confirmLanOthersProv(){
   toast(`↗ ${qty} ${d.unit} of ${_lanOthersProvItem} provided to ${client}`);
 }
 
-// ── DELETE LAN HISTORY ENTRY ─────────────────────────────────────
 function deleteLanHistEntry(type, origIdx){
   if(_currentUser!=='admin'){authError();return;}
   const lan = initLAN(getLAN());
@@ -2495,10 +2597,8 @@ function deleteLanHistEntry(type, origIdx){
   if(!h) return;
   if(!confirm('Delete this entry? Stock will be reversed.')) return;
   const rowUnit = h.unit || LAN_CFG[type].unit;
-  // reverse stock effect
   if(h.type==='IN') lan[type].stock = Math.max(0, lan[type].stock - h.qty);
   else lan[type].stock += h.qty;
-  // push to main deleted log
   if(!D.deleted) D.deleted=[];
   D.deleted.push({
     id:gid(), name:LAN_CFG[type].label,
@@ -2514,7 +2614,6 @@ function deleteLanHistEntry(type, origIdx){
   toast('🗑 Entry deleted & moved to Deleted Items');
 }
 
-// ── DELETE OTHERS HISTORY ENTRY ───────────────────────────────────
 function deleteLanOthersHistEntry(item, origIdx){
   if(_currentUser!=='admin'){authError();return;}
   const lan = initLAN(getLAN());
@@ -2540,7 +2639,6 @@ function deleteLanOthersHistEntry(item, origIdx){
   toast('🗑 Entry deleted & moved to Deleted Items');
 }
 
-// ── OTHERS HISTORY MODAL ──────────────────────────────────────────
 let _lanHistItem = null;
 function openLanHistModal(item){
   _lanHistItem = item;
@@ -2580,7 +2678,435 @@ function openLanHistModal(item){
 }
 function closeLanHistModal(){ document.getElementById('lanHistModal').classList.remove('open'); _lanHistItem=null; }
 
-// LAN badges removed from sidebar
+// ═══════════════════════════════════════════════════════════════════════
+// PDF EXPORT SYSTEM
+// ═══════════════════════════════════════════════════════════════════════
+
+function openPdfModal(){
+  if(_currentUser !== 'admin'){ authError(); return; }
+  document.getElementById('pdfExportModal').style.display='flex';
+}
+function closePdfModal(){
+  document.getElementById('pdfExportModal').style.display='none';
+}
+document.addEventListener('click', function(ev){
+  const m = document.getElementById('pdfExportModal');
+  if(m && m.style.display==='flex' && ev.target===m) closePdfModal();
+});
+
+function triggerPDF(type){
+  closePdfModal();
+  setTimeout(()=>{
+    if(type==='all') pdfAll();
+    else if(type==='done') pdfDone();
+    else if(type==='unassigned') pdfUnassigned();
+    else if(type==='lan') pdfLAN();
+    else if(type==='full') pdfFull();
+    else if(['rupchan','amit','tamim','nazrul'].includes(type)) pdfEngineer(type);
+  }, 120);
+}
+
+// ── PDF BASE STYLES (Merriweather throughout) ────────────────────────
+function pdfBaseStyles(){
+  return `
+    @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Merriweather',Georgia,serif;color:#0f1e3c;background:#fff;font-size:10.5px;line-height:1.55;}
+    .cover{padding:38px 44px 28px;background:linear-gradient(135deg,#0f2d6e 0%,#005fa3 60%,#0077b6 100%);color:#fff;position:relative;overflow:hidden;}
+    .cover::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");}
+    .cover-zone{font-size:9.5px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(180,215,245,.75);margin-bottom:8px;font-style:italic;}
+    .cover-title{font-size:28px;font-weight:900;color:#fff;letter-spacing:-.3px;line-height:1.2;}
+    .cover-sub{font-size:12px;font-weight:300;font-style:italic;color:rgba(200,225,250,.8);margin-top:6px;letter-spacing:.3px;}
+    .cover-meta{margin-top:18px;display:flex;gap:24px;flex-wrap:wrap;}
+    .cover-meta-item{font-size:9px;color:rgba(180,215,245,.7);letter-spacing:.5px;font-weight:400;}
+    .cover-meta-val{font-size:11px;color:#fff;font-weight:700;margin-top:2px;letter-spacing:.2px;}
+    .summary-bar{display:flex;gap:0;border-bottom:3px solid #1a4fa0;}
+    .sum-cell{flex:1;padding:14px 10px 12px;text-align:center;border-right:1px solid #e0eaf7;}
+    .sum-cell:last-child{border-right:none;}
+    .sum-val{font-size:22px;font-weight:900;color:#1a4fa0;line-height:1;letter-spacing:-.5px;}
+    .sum-lbl{font-size:8px;font-weight:700;color:#5278a8;text-transform:uppercase;letter-spacing:1.2px;margin-top:5px;font-style:italic;}
+    .section{padding:18px 44px 0;}
+    .section-title{font-size:11px;font-weight:700;color:#0f2d6e;text-transform:uppercase;letter-spacing:1.5px;padding-bottom:6px;border-bottom:2px solid #1a4fa0;margin-bottom:12px;display:flex;align-items:center;gap:8px;font-style:italic;}
+    .section-title::before{content:'';display:inline-block;width:4px;height:14px;background:#1a4fa0;border-radius:2px;}
+    table{width:100%;border-collapse:collapse;}
+    thead tr{background:#0f2d6e;}
+    thead th{padding:8px 9px;color:#fff;font-weight:700;text-align:center;font-size:8.5px;letter-spacing:.8px;text-transform:uppercase;white-space:nowrap;font-family:'Merriweather',serif;font-style:italic;}
+    tbody tr{border-bottom:1px solid #e8eef8;}
+    tbody tr:nth-child(even){background:#f4f7fd;}
+    tbody tr:hover{background:#ebf2ff;}
+    tbody td{padding:7px 9px;text-align:center;font-size:10px;font-family:'Merriweather',serif;vertical-align:middle;}
+    .td-name{text-align:left;font-weight:700;font-size:10.5px;}
+    .td-serial{font-size:9.5px;letter-spacing:.3px;color:#1e3a6e;font-family:'Merriweather',serif;}
+    .badge{display:inline-block;padding:3px 9px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.3px;font-style:italic;}
+    .badge-eng{background:rgba(26,79,160,.1);color:#1a4fa0;border:1px solid rgba(26,79,160,.2);}
+    .badge-ih{background:rgba(26,79,160,.1);color:#1a4fa0;}
+    .badge-dn{background:rgba(0,119,182,.1);color:#005fa3;}
+    .badge-pv{background:rgba(239,108,0,.1);color:#ef6c00;}
+    .badge-un{background:rgba(91,141,217,.1);color:#5b8dd9;}
+    .lan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;}
+    .lan-card{border:1.5px solid #c5d8f0;border-radius:10px;padding:14px 16px;background:#f8fbff;}
+    .lan-card-label{font-size:8.5px;font-weight:700;color:#5278a8;text-transform:uppercase;letter-spacing:1.2px;font-style:italic;}
+    .lan-card-val{font-size:20px;font-weight:900;color:#059669;margin-top:4px;letter-spacing:-.5px;}
+    .lan-card-unit{font-size:10px;color:#5278a8;font-weight:400;margin-left:3px;}
+    .lan-card-name{font-size:11px;font-weight:700;color:#0f2d6e;margin-top:3px;}
+    .hist-table th{background:#1e5bb8;}
+    .del-row td{color:#b91c1c;}
+    .empty-note{padding:32px;text-align:center;color:#5278a8;font-style:italic;font-size:11px;}
+    .page-break{page-break-before:always;padding-top:28px;}
+    .footer{padding:16px 44px;text-align:center;font-size:8.5px;color:#8fb0e0;border-top:1.5px solid #c5d8f0;margin-top:24px;font-style:italic;letter-spacing:.3px;}
+    .divider{height:1.5px;background:linear-gradient(90deg,#1a4fa0,rgba(26,79,160,.1));margin:20px 44px;}
+    @media print{
+      body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+      .page-break{page-break-before:always;}
+    }
+  `;
+}
+
+function pdfMeta(title, sub){
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+  const timeStr = now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  return {dateStr, timeStr,
+    cover: `
+      <div class="cover">
+        <div class="cover-zone">Link3 Technologies Ltd. &mdash; Motijheel Zone</div>
+        <div class="cover-title">${title}</div>
+        <div class="cover-sub">${sub}</div>
+        <div class="cover-meta">
+          <div class="cover-meta-item">Generated On<div class="cover-meta-val">${dateStr}</div></div>
+          <div class="cover-meta-item">Time<div class="cover-meta-val">${timeStr}</div></div>
+          <div class="cover-meta-item">Prepared by<div class="cover-meta-val">Ahsanul Kabir</div></div>
+        </div>
+      </div>`
+  };
+}
+
+function openPrintWin(htmlContent){
+  const blob = new Blob([htmlContent], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const win = window.open(url,'_blank');
+  if(!win){ toast('\u26a0\ufe0f Popup blocked! Please allow popups.'); return; }
+  setTimeout(()=>URL.revokeObjectURL(url), 90000);
+}
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── STATUS BADGE ─────────────────────────────────────────────────────
+function stBadge(s){
+  const cls = s==='IN-Hand'?'ih':s==='Done'?'dn':s==='Provided'?'pv':'un';
+  const lbl = s==='IN-Hand'?'In Hand':s||'—';
+  return `<span class="badge badge-${cls}">${lbl}</span>`;
+}
+
+// ── PDF: ALL EQUIPMENT ───────────────────────────────────────────────
+function pdfAll(){
+  const rows = window._allRows || [];
+  const {dateStr, timeStr, cover} = pdfMeta('Inventory Report','All Equipment — Complete Export');
+  const lan = initLAN(getLAN());
+  const total=rows.length, inHand=rows.filter(r=>r.status==='IN-Hand').length,
+        done=rows.filter(r=>r.status==='Done').length, prov=rows.filter(r=>r.status==='Provided').length,
+        unassigned=rows.filter(r=>r._eng==='—').length;
+  const tbody = rows.length ? rows.map((r,i)=>`<tr>
+    <td>${i+1}</td><td class="td-name">${esc(r.name)}</td>
+    <td class="td-serial">${esc(r.serial)}</td>
+    <td><span class="badge badge-eng">${esc(r._eng)}</span></td>
+    <td>${stBadge(r.status)}</td>
+    <td>${esc(r.client||'—')}</td><td>${esc(r.ticket||'—')}</td>
+    <td>${esc(r.tech||'—')}</td><td>${fd(r.date||'')}</td>
+    <td style="font-size:9px;color:#5278a8;text-align:left;">${esc(r.remarks||'')}</td>
+  </tr>`).join('') : `<tr><td colspan="10" class="empty-note">No equipment data found</td></tr>`;
+  openPrintWin(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Inventory Report — ${dateStr}</title>
+  <style>${pdfBaseStyles()}</style></head><body>
+  ${cover}
+  <div class="summary-bar">
+    <div class="sum-cell"><div class="sum-val">${total}</div><div class="sum-lbl">Total</div></div>
+    <div class="sum-cell"><div class="sum-val" style="color:#1a4fa0;">${inHand}</div><div class="sum-lbl">In-Hand</div></div>
+    <div class="sum-cell"><div class="sum-val" style="color:#005fa3;">${done}</div><div class="sum-lbl">Done</div></div>
+    <div class="sum-cell"><div class="sum-val" style="color:#ef6c00;">${prov}</div><div class="sum-lbl">Provided</div></div>
+    <div class="sum-cell"><div class="sum-val" style="color:#5b8dd9;">${unassigned}</div><div class="sum-lbl">Unassigned</div></div>
+    <div class="sum-cell"><div class="sum-val" style="color:#059669;">${(lan.utp?lan.utp.stock:0).toLocaleString()}<span style="font-size:11px;"> ft</span></div><div class="sum-lbl">UTP Cable</div></div>
+    <div class="sum-cell"><div class="sum-val" style="color:#b45309;">${(lan.rj45?lan.rj45.stock:0).toLocaleString()}</div><div class="sum-lbl">RJ-45</div></div>
+  </div>
+  <div class="section" style="padding-top:18px;">
+    <div class="section-title">Equipment List</div>
+    <table><thead><tr><th>#</th><th style="text-align:left;">Item Name</th><th>Serial / MAC</th><th>Assigned To</th><th>Status</th><th>Client</th><th>Ticket</th><th>Technician</th><th>Date</th><th style="text-align:left;">Remarks</th></tr></thead>
+    <tbody>${tbody}</tbody></table>
+  </div>
+  <div class="footer">Inventory Dashboard &mdash; Motijheel Zone &nbsp;|&nbsp; Link3 Technologies Ltd. &nbsp;|&nbsp; ${dateStr} ${timeStr}</div>
+  <script>window.onload=function(){setTimeout(()=>window.print(),600);}<\/script></body></html>`);
+}
+
+// ── PDF: DONE LIST ───────────────────────────────────────────────────
+function pdfDone(){
+  const items = D.done || [];
+  const {dateStr, timeStr, cover} = pdfMeta('Done List Report','Completed Jobs & Assignments');
+  const tbody = items.length ? items.map((it,i)=>`<tr>
+    <td>${i+1}</td><td class="td-name">${esc(it.name)}</td>
+    <td class="td-serial">${esc(it.serial)}</td>
+    <td>${esc(it.client||'—')}</td><td>${esc(it.ticket||'—')}</td>
+    <td>${esc(it.tech||'—')}</td>
+    <td><span class="badge badge-eng">${esc(it.engineer||'—')}</span></td>
+    <td>${fd(it.date||'')}</td>
+    <td style="font-size:9px;color:#5278a8;text-align:left;">${esc(it.remarks||'')}</td>
+  </tr>`).join('') : `<tr><td colspan="9" class="empty-note">No done records found</td></tr>`;
+  openPrintWin(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Done List — ${dateStr}</title>
+  <style>${pdfBaseStyles()}</style></head><body>
+  ${cover}
+  <div class="summary-bar">
+    <div class="sum-cell"><div class="sum-val" style="color:#005fa3;">${items.length}</div><div class="sum-lbl">Total Done</div></div>
+  </div>
+  <div class="section" style="padding-top:18px;">
+    <div class="section-title">Completed Jobs</div>
+    <table><thead><tr><th>#</th><th style="text-align:left;">Item Name</th><th>Serial / MAC</th><th>Client ID</th><th>Ticket ID</th><th>Technician</th><th>Engineer</th><th>Date</th><th style="text-align:left;">Remarks</th></tr></thead>
+    <tbody>${tbody}</tbody></table>
+  </div>
+  <div class="footer">Done List &mdash; Motijheel Zone &nbsp;|&nbsp; ${dateStr} ${timeStr}</div>
+  <script>window.onload=function(){setTimeout(()=>window.print(),600);}<\/script></body></html>`);
+}
+
+// ── PDF: ENGINEER ────────────────────────────────────────────────────
+function pdfEngineer(eng){
+  const items = D[eng] || [];
+  const engName = eng.charAt(0).toUpperCase()+eng.slice(1);
+  const {dateStr, timeStr, cover} = pdfMeta(engName + "'s Devices", 'Engineer Equipment Report');
+  const inHand=items.filter(i=>i.status==='IN-Hand').length, prov=items.filter(i=>i.status==='Provided').length, done=items.filter(i=>i.status==='Done').length;
+  const tbody = items.length ? items.map((it,i)=>`<tr>
+    <td>${i+1}</td><td class="td-name">${esc(it.name)}</td>
+    <td class="td-serial">${esc(it.serial)}</td>
+    <td>${stBadge(it.status)}</td>
+    <td>${esc(it.tech||'—')}</td><td>${fd(it.date||'')}</td>
+    <td style="font-size:9px;color:#5278a8;text-align:left;">${esc(it.remarks||'')}</td>
+  </tr>`).join('') : `<tr><td colspan="7" class="empty-note">No devices assigned to ${engName}</td></tr>`;
+  openPrintWin(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${engName} Devices — ${dateStr}</title>
+  <style>${pdfBaseStyles()}</style></head><body>
+  ${cover}
+  <div class="summary-bar">
+    <div class="sum-cell"><div class="sum-val">${items.length}</div><div class="sum-lbl">Total</div></div>
+    <div class="sum-cell"><div class="sum-val" style="color:#1a4fa0;">${inHand}</div><div class="sum-lbl">In-Hand</div></div>
+    <div class="sum-cell"><div class="sum-val" style="color:#ef6c00;">${prov}</div><div class="sum-lbl">Provided</div></div>
+    <div class="sum-cell"><div class="sum-val" style="color:#005fa3;">${done}</div><div class="sum-lbl">Done</div></div>
+  </div>
+  <div class="section" style="padding-top:18px;">
+    <div class="section-title">${engName}'s Device List</div>
+    <table><thead><tr><th>#</th><th style="text-align:left;">Item Name</th><th>Serial / MAC</th><th>Status</th><th>Technician</th><th>Date</th><th style="text-align:left;">Remarks</th></tr></thead>
+    <tbody>${tbody}</tbody></table>
+  </div>
+  <div class="footer">${engName}'s Report &mdash; Motijheel Zone &nbsp;|&nbsp; ${dateStr} ${timeStr}</div>
+  <script>window.onload=function(){setTimeout(()=>window.print(),600);}<\/script></body></html>`);
+}
+
+// ── PDF: UNASSIGNED ──────────────────────────────────────────────────
+function pdfUnassigned(){
+  const items = D.unassigned || [];
+  const {dateStr, timeStr, cover} = pdfMeta('Unassigned Devices', 'Equipment Awaiting Assignment');
+  const tbody = items.length ? items.map((it,i)=>`<tr>
+    <td>${i+1}</td><td class="td-name">${esc(it.name)}</td>
+    <td class="td-serial">${esc(it.serial)}</td>
+    <td style="font-size:9px;color:#5278a8;text-align:left;">${esc(it.remarks||'—')}</td>
+  </tr>`).join('') : `<tr><td colspan="4" class="empty-note">No unassigned devices</td></tr>`;
+  openPrintWin(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Unassigned — ${dateStr}</title>
+  <style>${pdfBaseStyles()}</style></head><body>
+  ${cover}
+  <div class="summary-bar">
+    <div class="sum-cell"><div class="sum-val" style="color:#5b8dd9;">${items.length}</div><div class="sum-lbl">Unassigned</div></div>
+  </div>
+  <div class="section" style="padding-top:18px;">
+    <div class="section-title">Unassigned Device List</div>
+    <table><thead><tr><th>#</th><th style="text-align:left;">Item Name</th><th>Serial / MAC</th><th style="text-align:left;">Remarks</th></tr></thead>
+    <tbody>${tbody}</tbody></table>
+  </div>
+  <div class="footer">Unassigned Devices &mdash; Motijheel Zone &nbsp;|&nbsp; ${dateStr} ${timeStr}</div>
+  <script>window.onload=function(){setTimeout(()=>window.print(),600);}<\/script></body></html>`);
+}
+
+// ── PDF: LAN EQUIPMENT ───────────────────────────────────────────────
+function pdfLAN(){
+  const lan = initLAN(getLAN());
+  const {dateStr, timeStr, cover} = pdfMeta('LAN Equipment Report', 'UTP Cable, RJ-45 Connector & Others — Stock & History');
+  const utpStock = lan.utp ? lan.utp.stock : 0;
+  const rjStock  = lan.rj45 ? lan.rj45.stock : 0;
+
+  // UTP history
+  const utpHist = (lan.utp && lan.utp.history) ? [...lan.utp.history].reverse() : [];
+  const utpTbody = utpHist.length ? utpHist.map((h,i)=>`<tr>
+    <td>${i+1}</td>
+    <td><span class="badge" style="${h.type==='IN'?'background:rgba(5,150,105,.12);color:#059669;':'background:rgba(239,108,0,.12);color:#ef6c00;'}">${h.type==='IN'?'IN':'OUT'}</span></td>
+    <td style="font-weight:700;color:${h.type==='IN'?'#059669':'#ef6c00'};">${h.type==='IN'?'+':'-'}${h.qty} Feet</td>
+    <td>${esc(h.client||'—')}</td><td>${esc(h.ticket||'—')}</td>
+    <td>${esc(h.tech||'—')}</td>
+    <td>${esc(h.by?h.by.charAt(0).toUpperCase()+h.by.slice(1):'—')}</td>
+    <td style="font-size:9px;">${esc(h.remarks||'')}</td>
+    <td>${fd(h.date||'')}</td>
+  </tr>`).join('') : `<tr><td colspan="9" class="empty-note">No UTP transactions yet</td></tr>`;
+
+  // RJ45 history
+  const rjHist = (lan.rj45 && lan.rj45.history) ? [...lan.rj45.history].reverse() : [];
+  const rjTbody = rjHist.length ? rjHist.map((h,i)=>`<tr>
+    <td>${i+1}</td>
+    <td><span class="badge" style="${h.type==='IN'?'background:rgba(5,150,105,.12);color:#059669;':'background:rgba(239,108,0,.12);color:#ef6c00;'}">${h.type==='IN'?'IN':'OUT'}</span></td>
+    <td style="font-weight:700;color:${h.type==='IN'?'#059669':'#ef6c00'};">${h.type==='IN'?'+':'-'}${h.qty} Pcs</td>
+    <td>${esc(h.client||'—')}</td><td>${esc(h.ticket||'—')}</td>
+    <td>${esc(h.tech||'—')}</td>
+    <td>${esc(h.by?h.by.charAt(0).toUpperCase()+h.by.slice(1):'—')}</td>
+    <td style="font-size:9px;">${esc(h.remarks||'')}</td>
+    <td>${fd(h.date||'')}</td>
+  </tr>`).join('') : `<tr><td colspan="9" class="empty-note">No RJ-45 transactions yet</td></tr>`;
+
+  // Others
+  const othersCards = LAN_OTHERS_ITEMS.map(it=>{
+    const d = lan.others[it]||{stock:0,unit:'Pieces'};
+    return `<div class="lan-card"><div class="lan-card-label">Others</div><div class="lan-card-val">${d.stock.toLocaleString()}<span class="lan-card-unit">${d.unit}</span></div><div class="lan-card-name">${esc(it)}</div></div>`;
+  }).join('');
+
+  openPrintWin(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>LAN Equipment — ${dateStr}</title>
+  <style>${pdfBaseStyles()}</style></head><body>
+  ${cover}
+  <div class="summary-bar">
+    <div class="sum-cell"><div class="sum-val" style="color:#059669;">${utpStock.toLocaleString()}<span style="font-size:10px;font-weight:400;"> ft</span></div><div class="sum-lbl">UTP In Store</div></div>
+    <div class="sum-cell"><div class="sum-val" style="color:#b45309;">${rjStock.toLocaleString()}</div><div class="sum-lbl">RJ-45 In Store</div></div>
+    <div class="sum-cell"><div class="sum-val" style="color:#7c3aed;">${utpHist.length + rjHist.length}</div><div class="sum-lbl">Total Transactions</div></div>
+  </div>
+
+  <div class="section" style="padding-top:18px;">
+    <div class="section-title">Others Stock</div>
+    <div class="lan-grid">${othersCards}</div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="section">
+    <div class="section-title">UTP Cable — Transaction History</div>
+    <table class="hist-table"><thead><tr><th>#</th><th>Type</th><th>Quantity</th><th>Client ID</th><th>Ticket ID</th><th>Technician</th><th>By</th><th style="text-align:left;">Remarks</th><th>Date</th></tr></thead>
+    <tbody>${utpTbody}</tbody></table>
+  </div>
+
+  <div class="divider"></div>
+  <div class="section">
+    <div class="section-title">RJ-45 Connector — Transaction History</div>
+    <table class="hist-table"><thead><tr><th>#</th><th>Type</th><th>Quantity</th><th>Client ID</th><th>Ticket ID</th><th>Technician</th><th>By</th><th style="text-align:left;">Remarks</th><th>Date</th></tr></thead>
+    <tbody>${rjTbody}</tbody></table>
+  </div>
+
+  <div class="footer">LAN Equipment Report &mdash; Motijheel Zone &nbsp;|&nbsp; ${dateStr} ${timeStr}</div>
+  <script>window.onload=function(){setTimeout(()=>window.print(),600);}<\/script></body></html>`);
+}
+
+// ── PDF: FULL REPORT ─────────────────────────────────────────────────
+function pdfFull(){
+  const {dateStr, timeStr, cover} = pdfMeta('Full Inventory Report', 'All Sections — Engineers, Done, LAN Stock & Deleted Items');
+  const lan = initLAN(getLAN());
+  const allRows = window._allRows || [];
+  const total=allRows.length, inHand=allRows.filter(r=>r.status==='IN-Hand').length,
+        done=allRows.filter(r=>r.status==='Done').length, prov=allRows.filter(r=>r.status==='Provided').length;
+
+  // All Equipment table
+  const allTbody = allRows.map((r,i)=>`<tr>
+    <td>${i+1}</td><td class="td-name">${esc(r.name)}</td>
+    <td class="td-serial">${esc(r.serial)}</td>
+    <td><span class="badge badge-eng">${esc(r._eng)}</span></td>
+    <td>${stBadge(r.status)}</td>
+    <td>${esc(r.client||'—')}</td><td>${esc(r.ticket||'—')}</td>
+    <td>${esc(r.tech||'—')}</td><td>${fd(r.date||'')}</td>
+  </tr>`).join('') || `<tr><td colspan="9" class="empty-note">No data</td></tr>`;
+
+  // Engineers sections
+  const engSections = ['rupchan','amit','tamim','nazrul'].map(eng=>{
+    const items = D[eng]||[];
+    const engName = eng.charAt(0).toUpperCase()+eng.slice(1);
+    const rows = items.map((it,i)=>`<tr>
+      <td>${i+1}</td><td class="td-name">${esc(it.name)}</td>
+      <td class="td-serial">${esc(it.serial)}</td>
+      <td>${stBadge(it.status)}</td>
+      <td>${esc(it.tech||'—')}</td><td>${fd(it.date||'')}</td>
+      <td style="font-size:9px;text-align:left;">${esc(it.remarks||'')}</td>
+    </tr>`).join('') || `<tr><td colspan="7" class="empty-note">No devices for ${engName}</td></tr>`;
+    return `<div class="section page-break">
+      <div class="section-title">${engName}'s Devices (${items.length})</div>
+      <table><thead><tr><th>#</th><th style="text-align:left;">Item Name</th><th>Serial/MAC</th><th>Status</th><th>Technician</th><th>Date</th><th style="text-align:left;">Remarks</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>`;
+  }).join('<div class="divider"></div>');
+
+  // Done
+  const doneItems = D.done||[];
+  const doneTbody = doneItems.map((it,i)=>`<tr>
+    <td>${i+1}</td><td class="td-name">${esc(it.name)}</td>
+    <td class="td-serial">${esc(it.serial)}</td>
+    <td>${esc(it.client||'—')}</td><td>${esc(it.ticket||'—')}</td>
+    <td>${esc(it.tech||'—')}</td>
+    <td><span class="badge badge-eng">${esc(it.engineer||'—')}</span></td>
+    <td>${fd(it.date||'')}</td>
+  </tr>`).join('') || `<tr><td colspan="8" class="empty-note">No done records</td></tr>`;
+
+  // LAN summary cards
+  const utpStock = lan.utp?lan.utp.stock:0, rjStock = lan.rj45?lan.rj45.stock:0;
+  const othersCards = LAN_OTHERS_ITEMS.map(it=>{
+    const d = lan.others[it]||{stock:0,unit:'Pieces'};
+    return `<div class="lan-card"><div class="lan-card-label">Others</div><div class="lan-card-val">${d.stock}<span class="lan-card-unit">${d.unit}</span></div><div class="lan-card-name">${esc(it)}</div></div>`;
+  }).join('');
+
+  // Deleted
+  const delItems = D.deleted||[];
+  const delTbody = delItems.map((it,i)=>`<tr class="del-row">
+    <td>${i+1}</td><td class="td-name">${esc(it.name)}</td>
+    <td class="td-serial">${esc(it.serial)}</td>
+    <td>${esc(it._deletedFrom||'—')}</td>
+    <td>${esc(it._deleteReason||'—')}</td>
+    <td>${fd(it._deletedAt||'')}</td>
+  </tr>`).join('') || `<tr><td colspan="6" class="empty-note">No deleted items</td></tr>`;
+
+  openPrintWin(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Full Inventory Report — ${dateStr}</title>
+  <style>${pdfBaseStyles()}</style></head><body>
+  ${cover}
+  <div class="summary-bar">
+    <div class="sum-cell"><div class="sum-val">${total}</div><div class="sum-lbl">Total</div></div>
+    <div class="sum-cell"><div class="sum-val" style="color:#1a4fa0;">${inHand}</div><div class="sum-lbl">In-Hand</div></div>
+    <div class="sum-cell"><div class="sum-val" style="color:#005fa3;">${done}</div><div class="sum-lbl">Done</div></div>
+    <div class="sum-cell"><div class="sum-val" style="color:#ef6c00;">${prov}</div><div class="sum-lbl">Provided</div></div>
+    <div class="sum-cell"><div class="sum-val" style="color:#059669;">${utpStock.toLocaleString()}<span style="font-size:10px;"> ft</span></div><div class="sum-lbl">UTP Cable</div></div>
+    <div class="sum-cell"><div class="sum-val" style="color:#b45309;">${rjStock.toLocaleString()}</div><div class="sum-lbl">RJ-45</div></div>
+    <div class="sum-cell"><div class="sum-val" style="color:#b91c1c;">${delItems.length}</div><div class="sum-lbl">Deleted</div></div>
+  </div>
+
+  <!-- ALL EQUIPMENT -->
+  <div class="section" style="padding-top:18px;">
+    <div class="section-title">All Equipment Overview</div>
+    <table><thead><tr><th>#</th><th style="text-align:left;">Item Name</th><th>Serial/MAC</th><th>Assigned To</th><th>Status</th><th>Client</th><th>Ticket</th><th>Technician</th><th>Date</th></tr></thead>
+    <tbody>${allTbody}</tbody></table>
+  </div>
+
+  <!-- ENGINEERS -->
+  <div class="divider"></div>
+  ${engSections}
+
+  <!-- DONE LIST -->
+  <div class="divider"></div>
+  <div class="section page-break">
+    <div class="section-title">Done List (${doneItems.length})</div>
+    <table><thead><tr><th>#</th><th style="text-align:left;">Item Name</th><th>Serial/MAC</th><th>Client ID</th><th>Ticket ID</th><th>Technician</th><th>Engineer</th><th>Date</th></tr></thead>
+    <tbody>${doneTbody}</tbody></table>
+  </div>
+
+  <!-- LAN STOCK -->
+  <div class="divider"></div>
+  <div class="section page-break">
+    <div class="section-title">LAN Equipment Stock</div>
+    <div class="lan-grid">
+      <div class="lan-card"><div class="lan-card-label">UTP Cable</div><div class="lan-card-val">${utpStock.toLocaleString()}<span class="lan-card-unit">Feet</span></div><div class="lan-card-name">In Store</div></div>
+      <div class="lan-card"><div class="lan-card-label">RJ-45 Connector</div><div class="lan-card-val">${rjStock.toLocaleString()}<span class="lan-card-unit">Pcs</span></div><div class="lan-card-name">In Store</div></div>
+      ${othersCards}
+    </div>
+  </div>
+
+  <!-- DELETED ITEMS -->
+  <div class="divider"></div>
+  <div class="section">
+    <div class="section-title" style="color:#b91c1c;">Deleted Items (${delItems.length})</div>
+    <table><thead><tr><th>#</th><th style="text-align:left;">Item Name</th><th>Serial/MAC</th><th>Was In</th><th style="text-align:left;">Reason</th><th>Deleted On</th></tr></thead>
+    <tbody>${delTbody}</tbody></table>
+  </div>
+
+  <div class="footer">Full Inventory Report &mdash; Motijheel Zone &nbsp;|&nbsp; Link3 Technologies Ltd. &nbsp;|&nbsp; ${dateStr} ${timeStr}</div>
+  <script>window.onload=function(){setTimeout(()=>window.print(),800);}<\/script></body></html>`);
+}
 
 </script>
 
@@ -2603,6 +3129,7 @@ function closeLanHistModal(){ document.getElementById('lanHistModal').classList.
     <div id="sheetsUrlMiniStatus" style="margin-top:9px;font-size:12px;text-align:center;font-family:'Plus Jakarta Sans',sans-serif;min-height:16px;"></div>
   </div>
 </div>
+
 <!-- RESTORE DESTINATION MODAL -->
 <div id="restoreDestModal" style="position:fixed;inset:0;z-index:5000;background:rgba(10,25,60,.55);display:none;align-items:center;justify-content:center;backdrop-filter:blur(5px);">
   <div style="background:#fff;border-radius:18px;padding:30px 28px 24px;max-width:400px;width:92%;box-shadow:0 16px 56px rgba(0,0,0,.28);animation:pop .18s ease both;">
@@ -2658,15 +3185,15 @@ function closeLanHistModal(){ document.getElementById('lanHistModal').classList.
       <label>Quantity</label>
       <input id="lanEntryQty" type="number" min="1" placeholder="e.g. 500" style="font-size:15px;font-weight:700;">
     </div>
-    <div class="fg" id="lanEntryUnitSelectRow">
+    <div class="fg" id="lanEntryUnitSelectRow" style="display:none;">
       <label>Unit</label>
       <select id="lanEntryUnitSelect" style="width:100%;background:rgba(255,255,255,.95);border:1.5px solid var(--border);color:var(--text);padding:10px 14px;border-radius:9px;font-size:13.5px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;outline:none;">
         <option value="Feet">Feet</option>
       </select>
     </div>
-    <div class="fg" id="lanEntryUnitFixedRow" style="display:none;">
+    <div class="fg" id="lanEntryUnitFixedRow">
       <label>Unit</label>
-      <input id="lanEntryUnitFixed" type="text" style="font-size:13px;" readonly>
+      <input id="lanEntryUnitFixed" type="text" style="font-size:13px;background:rgba(240,245,255,.85);cursor:default;" readonly>
     </div>
     <div class="fg">
       <label>Remarks (optional)</label>
@@ -2779,6 +3306,99 @@ function closeLanHistModal(){ document.getElementById('lanHistModal').classList.
       <button onclick="closeLanHistModal()" style="background:rgba(198,40,40,.1);border:1.5px solid rgba(198,40,40,.25);color:#b91c1c;border-radius:7px;width:28px;height:28px;cursor:pointer;font-size:13px;font-weight:700;transition:all .15s;">✕</button>
     </div>
     <div id="lanHistModalBody" style="overflow-y:auto;flex:1;"></div>
+  </div>
+</div>
+
+
+<!-- PDF EXPORT MODAL -->
+<div id="pdfExportModal" style="display:none;position:fixed;inset:0;z-index:6000;background:rgba(10,20,55,.65);backdrop-filter:blur(10px);align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:20px;padding:0;width:520px;max-width:95vw;max-height:90vh;overflow:hidden;box-shadow:0 28px 80px rgba(10,20,60,.35);animation:pop .18s ease both;">
+    <!-- Modal Header -->
+    <div style="background:linear-gradient(135deg,#0f2d6e 0%,#0077b6 100%);padding:22px 26px 18px;position:relative;">
+      <div style="font-family:'Merriweather',serif;font-size:17px;font-weight:700;color:#fff;letter-spacing:.3px;">📄 PDF Export</div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;color:rgba(200,225,255,.75);margin-top:4px;font-weight:500;">Select which section to export as PDF</div>
+      <button onclick="closePdfModal()" style="position:absolute;right:18px;top:18px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .15s;" onmouseover="this.style.background='rgba(255,255,255,.28)'" onmouseout="this.style.background='rgba(255,255,255,.15)'">✕</button>
+    </div>
+    <!-- Options Grid -->
+    <div style="padding:22px 24px;overflow-y:auto;max-height:calc(90vh - 120px);">
+      <div style="font-family:'Merriweather',serif;font-size:10px;font-weight:700;color:#5278a8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;">Choose Report Type</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;" id="pdfOptionGrid">
+
+        <!-- All Equipment -->
+        <div class="pdf-opt-card" onclick="triggerPDF('all')" style="cursor:pointer;border:2px solid rgba(26,79,160,.2);border-radius:13px;padding:16px 14px;background:rgba(240,245,255,.6);transition:all .16s;user-select:none;" onmouseover="this.style.borderColor='#1a4fa0';this.style.background='rgba(220,233,255,.8)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(26,79,160,.2)';this.style.background='rgba(240,245,255,.6)';this.style.transform=''">
+          <div style="font-size:24px;margin-bottom:8px;">🗂️</div>
+          <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#1a4fa0;">All Equipment</div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5px;color:#5278a8;margin-top:3px;font-weight:500;">Full inventory with stats & LAN stock</div>
+        </div>
+
+        <!-- Done List -->
+        <div class="pdf-opt-card" onclick="triggerPDF('done')" style="cursor:pointer;border:2px solid rgba(0,119,182,.2);border-radius:13px;padding:16px 14px;background:rgba(236,252,243,.6);transition:all .16s;user-select:none;" onmouseover="this.style.borderColor='#0077b6';this.style.background='rgba(209,250,229,.8)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(0,119,182,.2)';this.style.background='rgba(236,252,243,.6)';this.style.transform=''">
+          <div style="font-size:24px;margin-bottom:8px;">☑️</div>
+          <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#0077b6;">Done List</div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5px;color:#5278a8;margin-top:3px;font-weight:500;">Completed jobs with client & ticket info</div>
+        </div>
+
+        <!-- Rupchan -->
+        <div class="pdf-opt-card" onclick="triggerPDF('rupchan')" style="cursor:pointer;border:2px solid rgba(244,114,182,.25);border-radius:13px;padding:16px 14px;background:rgba(253,242,248,.6);transition:all .16s;user-select:none;" onmouseover="this.style.borderColor='#f472b6';this.style.background='rgba(251,207,232,.7)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(244,114,182,.25)';this.style.background='rgba(253,242,248,.6)';this.style.transform=''">
+          <div style="font-size:24px;margin-bottom:8px;">👤</div>
+          <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#db2777;">Rupchan</div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5px;color:#5278a8;margin-top:3px;font-weight:500;">Rupchan's assigned devices</div>
+        </div>
+
+        <!-- Amit -->
+        <div class="pdf-opt-card" onclick="triggerPDF('amit')" style="cursor:pointer;border:2px solid rgba(52,211,153,.25);border-radius:13px;padding:16px 14px;background:rgba(240,253,244,.6);transition:all .16s;user-select:none;" onmouseover="this.style.borderColor='#34d399';this.style.background='rgba(209,250,229,.7)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(52,211,153,.25)';this.style.background='rgba(240,253,244,.6)';this.style.transform=''">
+          <div style="font-size:24px;margin-bottom:8px;">👤</div>
+          <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#059669;">Amit</div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5px;color:#5278a8;margin-top:3px;font-weight:500;">Amit's assigned devices</div>
+        </div>
+
+        <!-- Tamim -->
+        <div class="pdf-opt-card" onclick="triggerPDF('tamim')" style="cursor:pointer;border:2px solid rgba(251,146,60,.25);border-radius:13px;padding:16px 14px;background:rgba(255,247,237,.6);transition:all .16s;user-select:none;" onmouseover="this.style.borderColor='#fb923c';this.style.background='rgba(254,215,170,.7)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(251,146,60,.25)';this.style.background='rgba(255,247,237,.6)';this.style.transform=''">
+          <div style="font-size:24px;margin-bottom:8px;">👤</div>
+          <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#ea580c;">Tamim</div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5px;color:#5278a8;margin-top:3px;font-weight:500;">Tamim's assigned devices</div>
+        </div>
+
+        <!-- Nazrul -->
+        <div class="pdf-opt-card" onclick="triggerPDF('nazrul')" style="cursor:pointer;border:2px solid rgba(167,139,250,.25);border-radius:13px;padding:16px 14px;background:rgba(245,243,255,.6);transition:all .16s;user-select:none;" onmouseover="this.style.borderColor='#a78bfa';this.style.background='rgba(221,214,254,.7)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(167,139,250,.25)';this.style.background='rgba(245,243,255,.6)';this.style.transform=''">
+          <div style="font-size:24px;margin-bottom:8px;">👤</div>
+          <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#7c3aed;">Nazrul</div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5px;color:#5278a8;margin-top:3px;font-weight:500;">Nazrul's assigned devices</div>
+        </div>
+
+        <!-- Unassigned -->
+        <div class="pdf-opt-card" onclick="triggerPDF('unassigned')" style="cursor:pointer;border:2px solid rgba(91,141,217,.22);border-radius:13px;padding:16px 14px;background:rgba(238,243,252,.6);transition:all .16s;user-select:none;" onmouseover="this.style.borderColor='#5b8dd9';this.style.background='rgba(219,229,248,.7)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(91,141,217,.22)';this.style.background='rgba(238,243,252,.6)';this.style.transform=''">
+          <div style="font-size:24px;margin-bottom:8px;">🔓</div>
+          <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#1e5bb8;">Unassigned</div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5px;color:#5278a8;margin-top:3px;font-weight:500;">Devices not yet assigned</div>
+        </div>
+
+        <!-- LAN Equipment -->
+        <div class="pdf-opt-card" onclick="triggerPDF('lan')" style="cursor:pointer;border:2px solid rgba(5,150,105,.22);border-radius:13px;padding:16px 14px;background:rgba(236,253,245,.6);transition:all .16s;user-select:none;" onmouseover="this.style.borderColor='#059669';this.style.background='rgba(209,250,229,.7)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(5,150,105,.22)';this.style.background='rgba(236,253,245,.6)';this.style.transform=''">
+          <div style="font-size:24px;margin-bottom:8px;">🔌</div>
+          <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#059669;">LAN Equipment</div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5px;color:#5278a8;margin-top:3px;font-weight:500;">UTP Cable, RJ-45 & Others stock</div>
+        </div>
+
+      </div>
+
+      <!-- Full Report -->
+      <div style="margin-top:13px;">
+        <div class="pdf-opt-card" onclick="triggerPDF('full')" style="cursor:pointer;border:2px solid rgba(124,58,237,.25);border-radius:13px;padding:16px 20px;background:linear-gradient(135deg,rgba(124,58,237,.06),rgba(168,85,247,.04));transition:all .16s;user-select:none;display:flex;align-items:center;gap:14px;" onmouseover="this.style.borderColor='#7c3aed';this.style.background='linear-gradient(135deg,rgba(124,58,237,.12),rgba(168,85,247,.08))';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(124,58,237,.25)';this.style.background='linear-gradient(135deg,rgba(124,58,237,.06),rgba(168,85,247,.04))';this.style.transform=''">
+          <div style="font-size:30px;">📋</div>
+          <div>
+            <div style="font-family:'Merriweather',serif;font-size:13.5px;font-weight:700;color:#7c3aed;">Full Report — All Sections</div>
+            <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5px;color:#5278a8;margin-top:3px;font-weight:500;">Complete inventory report including all engineers, done list, LAN stock & deleted items</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;padding:11px 14px;background:rgba(26,79,160,.06);border-radius:10px;border:1px solid rgba(91,141,217,.25);">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;color:#5278a8;font-weight:600;line-height:1.6;">
+          💡 PDF খোলার পর <strong>Ctrl+P</strong> চাপুন → <strong>"Save as PDF"</strong> সিলেক্ট করুন → <strong>"More settings"</strong> এ গিয়ে Background graphics চালু রাখুন
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
