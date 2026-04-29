@@ -830,7 +830,7 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
   // Firebase তে data push করার function
   window.fbPush = async function() {
     try {
-      setSyncIndicator('syncing');
+      if(typeof setSyncIndicator === 'function') setSyncIndicator('syncing');
       const lanRaw = localStorage.getItem('lan_data') || '{}';
       const payload = {
         ...window.D,
@@ -838,11 +838,11 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
         _lan: JSON.parse(lanRaw)
       };
       await set(ref(db, 'inventory'), payload);
-      setSyncIndicator('ok');
-      setTimeout(() => setSyncIndicator('idle'), 3000);
+      if(typeof setSyncIndicator === 'function') setSyncIndicator('ok');
+      setTimeout(() => { if(typeof setSyncIndicator === 'function') setSyncIndicator('idle'); }, 3000);
     } catch(err) {
       console.error('Firebase push error:', err);
-      setSyncIndicator('error');
+      if(typeof setSyncIndicator === 'function') setSyncIndicator('error');
     }
   };
 
@@ -876,7 +876,7 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
 
   // App ready হলে listener শুরু করো
   window.addEventListener('load', () => {
-    setTimeout(() => window.fbListen(), 500);
+    setTimeout(() => window.fbListen(), 1200);
   });
 </script>
 </head>
