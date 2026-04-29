@@ -1343,21 +1343,31 @@ function save(){
 }
 function schedulePush(){if(!getUrl())return;setSyncIndicator('pending');clearTimeout(_pushTimer);_pushTimer=setTimeout(pushNow,2000);}
 async function pushNow(){
-  const url=getUrl();if(!url)return;
-  let remoteVer=0;
-  try{const chk=await fetch(url+'?action=getData',{method:'GET',cache:'no-store'});const txt=await chk.text();const rem=JSON.parse(txt);if(rem&&!rem.error)remoteVer=rem._version||0;}catch(e){}
-  
+  const url = getUrl();
+  if(!url) return;
   setSyncIndicator('syncing');
-  try{
-    const lanRaw=localStorage.getItem('lan_data')||'{}';
-    let lanParsed={};
-    try{lanParsed=JSON.parse(lanRaw);}catch(e){}
-    const payload={...D, lan_data: lanParsed};
-    const resp=await fetch(url,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain'}});
-    const json=await resp.json();
-    if(json.success){_lastVersion=D._version;_userMadeChange=false;setSyncIndicator('ok');setTimeout(()=>setSyncIndicator('idle'),4000);}
-    else setSyncIndicator('error');
-  }catch(err){setSyncIndicator('error');}
+  try {
+    const lanRaw = localStorage.getItem('lan_data') || '{}';
+    let lanParsed = {};
+    try { lanParsed = JSON.parse(lanRaw); } catch(e) {}
+    const payload = {...D, lan_data: lanParsed};
+    const resp = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {'Content-Type': 'text/plain'}
+    });
+    const json = await resp.json();
+    if(json.success) {
+      _lastVersion = D._version;
+      setSyncIndicator('ok');
+      setTimeout(() => setSyncIndicator('idle'), 4000);
+    } else {
+      setSyncIndicator('error');
+    }
+  } catch(err) {
+    console.error('Push error:', err);
+    setSyncIndicator('error');
+  }
 }
 async function pullFromSheets(force){
   const url=getUrl();if(!url)return false;
