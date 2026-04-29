@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Inventory Dashboard</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%231a4fa0'/><stop offset='100%25' stop-color='%230077b6'/></linearGradient></defs><rect width='100' height='100' rx='20' fill='url(%23g)'/><rect x='15' y='45' width='70' height='42' rx='4' fill='white' opacity='.95'/><polygon points='10,48 50,18 90,48' fill='white' opacity='.85'/><rect x='38' y='62' width='24' height='25' rx='3' fill='%231a4fa0'/><rect x='28' y='55' width='16' height='14' rx='2' fill='%2360a5fa' opacity='.9'/><rect x='56' y='55' width='16' height='14' rx='2' fill='%2360a5fa' opacity='.9'/></svg>">
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&family=Roboto+Serif:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -787,7 +787,13 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
 .lan-entry-title{font-family:'outfit',sans-serif;font-size:12px;font-weight:800;color:#059669;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
 
 /* === SHEETS URL MINI MODAL === */
+#sheetsUrlModal{position:fixed;inset:0;z-index:9500;background:rgba(10,25,60,.6);display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+#sheetsUrlModal.open{display:flex;}
+.sheets-url-box{background:#fff;border-radius:16px;padding:28px 28px 22px;max-width:420px;width:92%;box-shadow:0 12px 48px rgba(0,0,0,.28);animation:pageIn .22s ease both;}
+.sheets-url-box-title{font-family:'outfit',sans-serif;font-size:15px;font-weight:800;color:var(--accent2);margin-bottom:16px;display:flex;align-items:center;gap:9px;}
+.sheets-url-input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:12.5px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);font-weight:600;background:rgba(255,255,255,.95);outline:none;transition:all .2s;}
 .sheets-url-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow);}
+.sheets-url-box-btns{display:flex;gap:8px;margin-top:14px;}
 
 /* === DELETE REASON MODAL === */
 #delReasonModal{position:fixed;inset:0;z-index:5000;background:rgba(10,25,60,.55);display:none;align-items:center;justify-content:center;backdrop-filter:blur(5px);}
@@ -810,81 +816,6 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
 .del-reason-confirm:hover{box-shadow:0 5px 20px rgba(185,28,28,.4);transform:translateY(-1px);}
 
 </style>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyDemX_T3bzB4-ONiCMTEoJOMP-JphJR_H0",
-    authDomain: "link3-motijheel-inventory.firebaseapp.com",
-    databaseURL: "https://link3-motijheel-inventory-default-rtdb.firebaseio.com",
-    projectId: "link3-motijheel-inventory",
-    storageBucket: "link3-motijheel-inventory.firebasestorage.app",
-    messagingSenderId: "9224551617",
-    appId: "1:9224551617:web:a19f5abeb41f6f532f6840"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-  // Firebase তে data push করার function
-  window.fbPush = async function() {
-    try {
-      if(typeof setSyncIndicator === 'function') setSyncIndicator('syncing');
-      const lanRaw = localStorage.getItem('lan_data') || '{}';
-      const payload = {
-        ...window.D,
-        _version: Date.now(),
-        _lan: JSON.parse(lanRaw)
-      };
-      await set(ref(db, 'inventory'), payload);
-      if(typeof setSyncIndicator === 'function') setSyncIndicator('ok');
-      setTimeout(() => { if(typeof setSyncIndicator === 'function') setSyncIndicator('idle'); }, 3000);
-    } catch(err) {
-      console.error('Firebase push error:', err);
-      if(typeof setSyncIndicator === 'function') setSyncIndicator('error');
-    }
-  };
-
-  // Real-time listener — সব user কে auto-update করে
-  window.fbListen = function() {
-    // নতুন (D variable কে সরাসরি update করে):
-onValue(ref(db, 'inventory'), (snapshot) => {
-    const remote = snapshot.val();
-    if (!remote) return;
-
-    const updated = {
-        unassigned: remote.unassigned || [],
-        deleted:    remote.deleted    || [],
-        rupchan:    remote.rupchan    || [],
-        amit:       remote.amit       || [],
-        tamim:      remote.tamim      || [],
-        nazrul:     remote.nazrul     || [],
-        done:       remote.done       || [],
-        _version:   remote._version   || 0
-    };
-
-    // window.D এবং local D দুটোই একসাথে update করো
-    window.D = updated;
-    if (typeof D !== 'undefined') {
-        Object.assign(D, updated);
-    }
-
-    localStorage.setItem('inv7', JSON.stringify(updated));
-
-    if (remote._lan) {
-        localStorage.setItem('lan_data', JSON.stringify(remote._lan));
-    }
-
-    if (typeof renderAll === 'function') renderAll();
-    if (window._lanActive && typeof renderLAN === 'function') renderLAN();
-});
-
-  // App ready হলে listener শুরু করো
-window.addEventListener('load', () => {
-    setTimeout(() => window.fbListen(), 300);
-});
-</script>
 </head>
 <body>
 
@@ -1018,6 +949,10 @@ window.addEventListener('load', () => {
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
           Unassigned <span id="b-un" class="subtab-badge subtab-badge-blue">0</span>
         </div>
+        <div class="manage-subtab" id="msub-tab-sheets" onclick="switchManageSub('sheets')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+          Google Sheets
+        </div>
         <div class="manage-subtab" id="msub-tab-deleted" onclick="switchManageSub('deleted')">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
           Deleted Item <span id="b-deleted" class="subtab-badge subtab-badge-red">0</span>
@@ -1081,6 +1016,34 @@ window.addEventListener('load', () => {
 </div>
 
       <!-- Google Sheets Sub-panel -->
+      <div id="msub-panel-sheets" style="display:none;">
+        <div class="card" style="max-width:600px;">
+          <div class="card-title">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+            Real-Time Multi-User Sync
+          </div>
+          <div style="background:rgba(26,79,160,.07);border:1px solid rgba(91,141,217,.4);border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:12.5px;color:var(--text2);line-height:1.7;font-family:'Plus Jakarta Sans',sans-serif;">
+            <strong style="color:var(--accent2);font-family:'outfit',sans-serif;display:block;margin-bottom:6px;">🌐 How to sync with 4 users:</strong>
+            1. Deploy the Apps Script code below in your Google Sheet.<br>
+            2. Paste the Web App URL and click <strong>"Connect &amp; Sync"</strong>.<br>
+            3. Share the same URL with the other 3 users — they paste and connect too.<br>
+            4. Any change by one user will <strong>auto-update others within 8 seconds</strong>.<br>
+            <span style="color:var(--teal);font-size:11.5px;">💡 Google Sheets acts as the shared database — no server needed.</span>
+          </div>
+          <div class="fg">
+            <label>Google Apps Script Web App URL</label>
+            <input id="sheetsUrl" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:12px;">
+            <div style="font-size:11px;color:var(--muted);margin-top:4px;">⚠️ When deploying: set "Execute as: Me" and "Who has access: Anyone".</div>
+          </div>
+          <div style="background:rgba(221,232,248,.7);border:1px solid var(--border);border-radius:8px;padding:12px;margin:12px 0;font-size:11px;color:var(--text2);font-family:'JetBrains Mono',monospace;max-height:260px;overflow-y:auto;line-height:1.6;white-space:pre-wrap;user-select:all;" id="scriptCode"></div>
+          <div style="display:flex;justify-content:space-between;gap:9px;margin-top:12px;flex-wrap:wrap;">
+            <button class="btn btn-g" onclick="copyScript()">📋 Copy Script</button>
+            <button class="btn btn-b" onclick="syncToSheetsInline()">🔗 Connect &amp; Sync</button>
+          </div>
+          <div id="syncStatusInline" style="margin-top:10px;font-size:12px;text-align:center;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;"></div>
+        </div>
+      </div>
+
       <!-- Deleted Sub-panel -->
       <div id="msub-panel-deleted" style="display:none;">
         <div class="deleted-zone">
@@ -1296,27 +1259,60 @@ function fd(iso){
 
 // ── SYNC ─────────────────────────────────────────────────────────────
 let _lastVersion=0,_pushTimer=null,_pollHandle=null,_userMadeChange=false;
-function save(){
-    D._version = Date.now();
-    window.D = D;
-    Object.assign(window.D, D);  // ← এই লাইন যোগ
-    localStorage.setItem('inv7', JSON.stringify(D));
-    if (typeof window.fbPush === 'function') window.fbPush();
+function getUrl(){return localStorage.getItem('sheetsUrl')||'';}
+function countItems(obj){return(obj.rupchan||[]).length+(obj.amit||[]).length+(obj.tamim||[]).length+(obj.nazrul||[]).length+(obj.unassigned||[]).length+(obj.done||[]).length;}
+function save(){_userMadeChange=true;D._version=Date.now();localStorage.setItem('inv7',JSON.stringify(D));schedulePush();}
+function schedulePush(){if(!getUrl())return;setSyncIndicator('pending');clearTimeout(_pushTimer);_pushTimer=setTimeout(pushNow,2000);}
+async function pushNow(){
+  const url=getUrl();if(!url)return;
+  let remoteVer=0;
+  try{const chk=await fetch(url+'?action=getData',{method:'GET',cache:'no-store'});const txt=await chk.text();const rem=JSON.parse(txt);if(rem&&!rem.error)remoteVer=rem._version||0;}catch(e){}
+  if(remoteVer>(D._version||0)){await pullFromSheets(true);return;}
+  setSyncIndicator('syncing');
+  try{
+    const lanRaw=localStorage.getItem('lan_data')||'{}';
+    let lanParsed={};
+    try{lanParsed=JSON.parse(lanRaw);}catch(e){}
+    const payload={...D, lan_data: lanParsed};
+    const resp=await fetch(url,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain'}});
+    const json=await resp.json();
+    if(json.success){_lastVersion=D._version;_userMadeChange=false;setSyncIndicator('ok');setTimeout(()=>setSyncIndicator('idle'),4000);}
+    else setSyncIndicator('error');
+  }catch(err){setSyncIndicator('error');}
 }
-
+async function pullFromSheets(force){
+  const url=getUrl();if(!url)return false;
+  try{
+    const resp=await fetch(url+'?action=getData',{method:'GET',cache:'no-store'});
+    const text=await resp.text();let remote;
+    try{remote=JSON.parse(text);}catch(e){return false;}
+    if(!remote||typeof remote!=='object'||remote.error)return false;
+    const remoteVer=remote._version||0;const remoteItems=countItems(remote);const localItems=countItems(D);
+    const shouldUpdate=force||remoteVer>_lastVersion||(remoteItems>0&&localItems===0&&remoteVer>0);
+    if(shouldUpdate){
+      const wasEmpty=localItems===0&&remoteItems>0;
+      _lastVersion=remoteVer;D=remote;
+      localStorage.setItem('inv7',JSON.stringify(D));
+      if(remote.lan_data && typeof remote.lan_data==='object'){
+        localStorage.setItem('lan_data',JSON.stringify(remote.lan_data));
+      }
+      renderAll();
+      if(_lanActive) renderLAN();
+      if(wasEmpty){setSyncIndicator('ok');toast('✅ Shared data loaded!');}
+      else if(!force)setSyncIndicator('ok');
+      setTimeout(()=>setSyncIndicator('idle'),3000);return true;
+    }return false;
+  }catch(err){return false;}
+}
+function startPolling(){if(_pollHandle)return;_pollHandle=setInterval(pullFromSheets,8000);}
+function stopPolling(){clearInterval(_pollHandle);_pollHandle=null;}
 function setSyncIndicator(state){
   const el=document.getElementById('syncDot');if(!el)return;
-  el.style.display='flex';
-  const cfg={
-    idle:   {bg:'#1a7a3a', text:'🟢 Firebase Live'},
-    syncing:{bg:'#3b82f6', text:'🔄 Syncing...'},
-    ok:     {bg:'#1a4fa0', text:'✅ Saved'},
-    error:  {bg:'#c62828', text:'❌ Sync Error'}
-  }[state]||{bg:'#5b8dd9',text:''};
-  el.style.background=cfg.bg;
-  el.querySelector('span').textContent=cfg.text;
-  if(state==='idle'){el.classList.add('shimmer-sync');}
-  else{el.classList.remove('shimmer-sync');}
+  const url=getUrl();if(!url){el.style.display='none';stopPolling();return;}
+  el.style.display='flex';if(!_pollHandle)startPolling();
+  const cfg={idle:{bg:'#1a7a3a',text:'🟢 Live Sync'},pending:{bg:'#f9a825',text:'⏳ Saving...'},syncing:{bg:'#3b82f6',text:'🔄 Syncing...'},ok:{bg:'#1a4fa0',text:'✅ Updated'},error:{bg:'#c62828',text:'❌ Sync Error'}}[state]||{bg:'#5b8dd9',text:''};
+  el.style.background=cfg.bg;el.querySelector('span').textContent=cfg.text;
+  if(state==='idle'){el.classList.add('shimmer-sync');}else{el.classList.remove('shimmer-sync');}
 }
 
 // ── ITEM NAME MANAGER ────────────────────────────────────────────────
@@ -1385,10 +1381,16 @@ function go(name){
 }
 
 function switchManageSub(sub){
-  ['entry','unassigned','deleted'].forEach(s=>{
+  ['entry','unassigned','sheets','deleted'].forEach(s=>{
     document.getElementById('msub-panel-'+s).style.display=s===sub?'':'none';
     document.getElementById('msub-tab-'+s).classList.toggle('active',s===sub);
   });
+  if(sub==='sheets'){
+    document.getElementById('scriptCode').textContent=SCRIPT_CODE;
+    const saved=localStorage.getItem('sheetsUrl')||'';
+    document.getElementById('sheetsUrl').value=saved;
+    document.getElementById('syncStatusInline').textContent='';
+  }
 }
 
 function clearAllDeleted(){
@@ -1443,7 +1445,7 @@ function renderAll(){
     let items=D[eng]||[];
     if(engQ)items=items.filter(i=>i.name.toLowerCase().includes(engQ)||i.serial.toLowerCase().includes(engQ));
     const isMyPage = _currentUser === eng;
-   const sheetsIconHtml = '';
+    const sheetsIconHtml = isMyPage ? `<span class="sheets-eng-icon" title="Google Apps Script URL" onclick="openSheetsUrlModal()" style="cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;background:rgba(15,157,88,.12);border:1.5px solid rgba(15,157,88,.3);margin-left:8px;vertical-align:middle;flex-shrink:0;transition:all .18s;" onmouseover="this.style.background='rgba(15,157,88,.22)'" onmouseout="this.style.background='rgba(15,157,88,.12)'"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="18" height="18" rx="3" fill="#0f9d58" opacity="0.2"/><rect x="3" y="3" width="18" height="18" rx="3" stroke="#0f9d58" stroke-width="1.8" fill="none"/><rect x="7" y="7" width="4" height="2.5" rx=".5" fill="#0f9d58"/><rect x="13" y="7" width="4" height="2.5" rx=".5" fill="#0f9d58" opacity=".7"/><rect x="7" y="11" width="4" height="2.5" rx=".5" fill="#0f9d58" opacity=".85"/><rect x="13" y="11" width="4" height="2.5" rx=".5" fill="#0f9d58" opacity=".6"/><rect x="7" y="15" width="10" height="2.5" rx=".5" fill="#0f9d58" opacity=".5"/></svg></span>` : '';
     const canDoActions = canAct('provide', eng);
 
     const tableHTML = items.length===0
@@ -1476,10 +1478,21 @@ function renderAll(){
     } else {
       const tblWrap = page.querySelector('.eng-tbl-wrap');
       if(tblWrap) tblWrap.innerHTML = tableHTML;
-    const stEl = page.querySelector('.eng-st');
+      const stEl = page.querySelector('.eng-st');
       if(stEl){
         const existingIcon = stEl.querySelector('.sheets-eng-icon');
         if(existingIcon) existingIcon.remove();
+        if(isMyPage){
+          const iconSpan = document.createElement('span');
+          iconSpan.className = 'sheets-eng-icon';
+          iconSpan.title = 'Google Apps Script URL';
+          iconSpan.onclick = openSheetsUrlModal;
+          iconSpan.style.cssText = 'cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;background:rgba(15,157,88,.12);border:1.5px solid rgba(15,157,88,.3);margin-left:8px;vertical-align:middle;flex-shrink:0;transition:all .18s;';
+          iconSpan.onmouseover = ()=>{ iconSpan.style.background='rgba(15,157,88,.22)'; };
+          iconSpan.onmouseout  = ()=>{ iconSpan.style.background='rgba(15,157,88,.12)'; };
+          iconSpan.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="18" height="18" rx="3" fill="#0f9d58" opacity="0.2"/><rect x="3" y="3" width="18" height="18" rx="3" stroke="#0f9d58" stroke-width="1.8" fill="none"/><rect x="7" y="7" width="4" height="2.5" rx=".5" fill="#0f9d58"/><rect x="13" y="7" width="4" height="2.5" rx=".5" fill="#0f9d58" opacity=".7"/><rect x="7" y="11" width="4" height="2.5" rx=".5" fill="#0f9d58" opacity=".85"/><rect x="13" y="11" width="4" height="2.5" rx=".5" fill="#0f9d58" opacity=".6"/><rect x="7" y="15" width="10" height="2.5" rx=".5" fill="#0f9d58" opacity=".5"/></svg>`;
+          stEl.appendChild(iconSpan);
+        }
       }
     }
   });
@@ -1827,8 +1840,170 @@ function authGuard(action, engKey, fn){
   else { authError(); }
 }
 
+function switchToSheets(){
+  if(_currentUser==='admin'){
+    go('manage');
+    setTimeout(()=>switchManageSub('sheets'),80);
+  } else {
+    toast('📡 Google Sheets sync is available for Admin only.');
+  }
+}
 
 // ── GOOGLE SHEETS ─────────────────────────────────────────────────────
+const SCRIPT_CODE = `// ════════════════════════════════════════════════════════════════════
+// Inventory Dashboard — Real-Time Multi-User Apps Script
+// Deploy as: Web App → Execute as ME → Access: ANYONE (even anonymous)
+// ════════════════════════════════════════════════════════════════════
+
+var STORE_SHEET = "JSON_STORE";
+var STORE_CELL  = "A1";
+
+function doGet(e) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sh = ss.getSheetByName(STORE_SHEET);
+    if (!sh) return ContentService.createTextOutput(JSON.stringify({error:"no store"})).setMimeType(ContentService.MimeType.JSON);
+    var raw = sh.getRange(STORE_CELL).getValue();
+    if (!raw) return ContentService.createTextOutput(JSON.stringify({error:"empty"})).setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(raw).setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({error:err.message})).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doPost(e) {
+  try {
+    var raw  = e.postData.contents;
+    var data = JSON.parse(raw);
+    var ss   = SpreadsheetApp.getActiveSpreadsheet();
+
+    var storeSh = ss.getSheetByName(STORE_SHEET) || ss.insertSheet(STORE_SHEET);
+    storeSh.getRange(STORE_CELL).setValue(raw);
+    storeSh.hideSheet();
+
+    var mainHeaders    = ["Sheet","#","Item Name","Serial/MAC","Status","Technician","Client ID","Ticket ID","Engineer","Remarks","Date"];
+    var deletedHeaders = ["#","Item Name","Serial/MAC","Was In","Status","Deleted At","Remarks"];
+
+    var sheetNames = ["Rupchan","Amit","Tamim","Nazrul","Done","Unassigned","All Equipment","Deleted"];
+    sheetNames.forEach(function(name) {
+      var sh = ss.getSheetByName(name) || ss.insertSheet(name);
+      sh.clearContents();
+      var isDeleted = (name === "Deleted");
+      var hdr = isDeleted ? deletedHeaders : mainHeaders;
+      var hdrRange = sh.getRange(1,1,1,hdr.length);
+      hdrRange.setValues([hdr]);
+      hdrRange.setFontWeight("bold").setHorizontalAlignment("center").setFontSize(10);
+      if(isDeleted){hdrRange.setBackground("#7f1d1d").setFontColor("#ffffff");}
+      else{hdrRange.setBackground("#1a4fa0").setFontColor("#ffffff");}
+    });
+
+    function styleData(sh, numRows, numCols) {
+      if(numRows < 1) return;
+      sh.getRange(2,1,numRows,numCols).setFontWeight("bold").setHorizontalAlignment("center").setFontSize(11);
+    }
+
+    ["rupchan","amit","tamim","nazrul"].forEach(function(eng) {
+      var sh = ss.getSheetByName(eng.charAt(0).toUpperCase()+eng.slice(1));
+      var rows = (data[eng]||[]).map(function(it,i) {
+        return [eng,i+1,it.name,it.serial,it.status,it.tech||"",it.client||"",it.ticket||"",eng,it.remarks||"",it.date?new Date(it.date).toLocaleDateString():""];
+      });
+      if(rows.length){ sh.getRange(2,1,rows.length,mainHeaders.length).setValues(rows); styleData(sh,rows.length,mainHeaders.length); }
+    });
+
+    var doneSh = ss.getSheetByName("Done");
+    var doneRows = (data.done||[]).map(function(it,i) {
+      return ["Done",i+1,it.name,it.serial,"Done",it.tech||"",it.client||"",it.ticket||"",it.engineer||"",it.remarks||"",it.date?new Date(it.date).toLocaleDateString():""];
+    });
+    if(doneRows.length){ doneSh.getRange(2,1,doneRows.length,mainHeaders.length).setValues(doneRows); styleData(doneSh,doneRows.length,mainHeaders.length); }
+
+    var unSh = ss.getSheetByName("Unassigned");
+    var unRows = (data.unassigned||[]).map(function(it,i) {
+      return ["Unassigned",i+1,it.name,it.serial,"Unassigned","","","","",it.remarks||"",""];
+    });
+    if(unRows.length){ unSh.getRange(2,1,unRows.length,mainHeaders.length).setValues(unRows); styleData(unSh,unRows.length,mainHeaders.length); }
+
+    var delSh = ss.getSheetByName("Deleted");
+    var delRows = (data.deleted||[]).map(function(it,i) {
+      return [i+1, it.name, it.serial, it._deletedFrom||"—", it.status||"—",
+              it._deletedAt ? new Date(it._deletedAt).toLocaleDateString() : "", it.remarks||""];
+    });
+    if(delRows.length){ delSh.getRange(2,1,delRows.length,deletedHeaders.length).setValues(delRows); styleData(delSh,delRows.length,deletedHeaders.length); }
+
+    var allSh = ss.getSheetByName("All Equipment");
+    var allRows = [];
+    ["rupchan","amit","tamim","nazrul"].forEach(function(eng) {
+      (data[eng]||[]).forEach(function(it) {
+        allRows.push([eng,allRows.length+1,it.name,it.serial,it.status,it.tech||"",it.client||"",it.ticket||"",eng,it.remarks||"",it.date?new Date(it.date).toLocaleDateString():""]);
+      });
+    });
+    (data.done||[]).forEach(function(it) {
+      allRows.push(["Done",allRows.length+1,it.name,it.serial,"Done",it.tech||"",it.client||"",it.ticket||"",it.engineer||"",it.remarks||"",it.date?new Date(it.date).toLocaleDateString():""]);
+    });
+    (data.unassigned||[]).forEach(function(it) {
+      allRows.push(["Unassigned",allRows.length+1,it.name,it.serial,"Unassigned","","","","",it.remarks||"",""]);
+    });
+    if(allRows.length){ allSh.getRange(2,1,allRows.length,mainHeaders.length).setValues(allRows); styleData(allSh,allRows.length,mainHeaders.length); }
+
+    // ── LAN Equipment Sheet (UTP Cable always in Feet) ────────────────
+    var lanData = data.lan_data || {};
+    var lanSh = ss.getSheetByName("LAN Equipment") || ss.insertSheet("LAN Equipment");
+    lanSh.clearContents();
+    var lanHeaders = ["#","Type","Transaction","Quantity","Unit","Client ID","Ticket ID","Technician","By","Remarks","Date"];
+    var lanHdrRange = lanSh.getRange(1,1,1,lanHeaders.length);
+    lanHdrRange.setValues([lanHeaders]);
+    lanHdrRange.setFontWeight("bold").setHorizontalAlignment("center").setFontSize(10);
+    lanHdrRange.setBackground("#0a5c36").setFontColor("#ffffff");
+    var lanRows = [];
+    var utpData = lanData.utp || {};
+    lanRows.push([lanRows.length+1,"UTP Cable","📦 CURRENT STOCK",utpData.stock||0,"Feet","","","","","Total in store",""]);
+    (utpData.history||[]).forEach(function(h){
+      lanRows.push([lanRows.length+1,"UTP Cable",h.type==="IN"?"📥 IN":"↗ OUT",h.qty,"Feet",h.client||"",h.ticket||"",h.tech||"",h.by||"",h.remarks||"",h.date?new Date(h.date).toLocaleDateString():""]);
+    });
+    var rjData = lanData.rj45 || {};
+    lanRows.push([lanRows.length+1,"RJ-45 Connector","📦 CURRENT STOCK",rjData.stock||0,"Pieces","","","","","Total in store",""]);
+    (rjData.history||[]).forEach(function(h){
+      lanRows.push([lanRows.length+1,"RJ-45 Connector",h.type==="IN"?"📥 IN":"↗ OUT",h.qty,"Pieces",h.client||"",h.ticket||"",h.tech||"",h.by||"",h.remarks||"",h.date?new Date(h.date).toLocaleDateString():""]);
+    });
+    if(lanRows.length){ lanSh.getRange(2,1,lanRows.length,lanHeaders.length).setValues(lanRows); styleData(lanSh,lanRows.length,lanHeaders.length); }
+
+    return ContentService.createTextOutput(JSON.stringify({success:true,rows:allRows.length,version:data._version||0})).setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({success:false,error:err.message})).setMimeType(ContentService.MimeType.JSON);
+  }
+}`;
+
+function copyScript(){
+  navigator.clipboard.writeText(SCRIPT_CODE).then(()=>toast('📋 Script copied!')).catch(()=>toast('⚠️ Please copy manually from the code box'));
+}
+
+async function syncToSheetsInline(){
+  const url=document.getElementById('sheetsUrl').value.trim();
+  const statusEl=document.getElementById('syncStatusInline');
+  if(!url){statusEl.textContent='⚠️ Please enter Web App URL first.';return;}
+  localStorage.setItem('sheetsUrl',url);
+  setSyncIndicator('syncing');statusEl.textContent='⏳ Connecting...';
+  let remoteData=null,remoteVer=0;
+  try{const chk=await fetch(url+'?action=getData',{method:'GET',cache:'no-store'});const txt=await chk.text();const rem=JSON.parse(txt);if(rem&&!rem.error){remoteData=rem;remoteVer=rem._version||0;}}catch(e){}
+  const localItems=countItems(D);const remoteItems=remoteData?countItems(remoteData):0;
+  if(remoteItems>0&&remoteVer>=(D._version||0)){
+    D=remoteData;_lastVersion=remoteVer;localStorage.setItem('inv7',JSON.stringify(D));renderAll();
+    statusEl.innerHTML='<span style="color:var(--green)">✅ Connected! Shared data loaded.</span>';
+    toast('✅ Connected — shared data loaded!');setSyncIndicator('ok');setTimeout(()=>setSyncIndicator('idle'),4000);startPolling();return;
+  }
+  if(localItems>0){
+    D._version=Date.now();localStorage.setItem('inv7',JSON.stringify(D));
+    try{
+      const lanRaw2=localStorage.getItem('lan_data')||'{}';
+      let lanParsed2={};
+      try{lanParsed2=JSON.parse(lanRaw2);}catch(e){}
+      const payload2={...D, lan_data: lanParsed2};
+      const resp=await fetch(url,{method:'POST',body:JSON.stringify(payload2),headers:{'Content-Type':'text/plain'}});
+      const json=await resp.json();
+      if(json.success){_lastVersion=D._version;setSyncIndicator('ok');setTimeout(()=>setSyncIndicator('idle'),4000);statusEl.innerHTML='<span style="color:var(--green)">✅ Sync successful!</span>';toast('✅ Synced!');startPolling();}
+      else{setSyncIndicator('error');statusEl.innerHTML='<span style="color:var(--red)">❌ Sync failed.</span>';}
+    }catch(err){setSyncIndicator('error');statusEl.innerHTML='<span style="color:var(--red)">❌ Error: '+err.message+'</span>';}
+  }else{statusEl.innerHTML='<span style="color:var(--teal)">✅ Connected. Start adding data.</span>';setSyncIndicator('idle');startPolling();}
+}
 
 // ── MODAL CLOSE ─────────────────────────────────────────────────────
 // FIX 3: itemMgrModal backdrop close — ev.target check is correct, but inner div now has stopPropagation
@@ -1837,18 +2012,19 @@ document.getElementById('itemMgrModal').addEventListener('click',ev=>{if(ev.targ
 document.getElementById('provModal').addEventListener('click',ev=>{if(ev.target===document.getElementById('provModal'))closeProvModal();});
 
 // ── STARTUP ──────────────────────────────────────────────────────────
-const _local=JSON.parse(localStorage.getItem('inv7')||'null');
-if(_local){ D=_local; }
+const _savedUrl=localStorage.getItem('sheetsUrl')||'';
+const _sm=document.getElementById('sheetsUrl');if(_savedUrl&&_sm)_sm.value=_savedUrl;
 
-localStorage.removeItem('sheetsUrl');
+const _local=JSON.parse(localStorage.getItem('inv7')||'null');
+if(_local){D=_local;_lastVersion=_local._version||0;}
 
 setSyncIndicator('idle');
 document.getElementById('tab-manage').style.display='none';
-window.D = D;  // ← এই লাইনটা যোগ করুন
 go('all');
 
-// Polling একদম বন্ধ — Google Sheets থেকে কখনো pull করবে না
-// startPolling() কল করা হবে না
+if(_savedUrl){
+  pullFromSheets(true).then(()=>{startPolling();});
+}
 </script>
 
 <!-- LOGIN OVERLAY -->
@@ -2012,6 +2188,31 @@ function applyRoleUI(){
   renderAll();
 }
 
+function openSheetsUrlModal(){
+  const saved=localStorage.getItem('sheetsUrl')||'';
+  document.getElementById('sheetsUrlMini').value=saved;
+  document.getElementById('sheetsUrlMiniStatus').textContent='';
+  document.getElementById('sheetsUrlModal').classList.add('open');
+  setTimeout(()=>document.getElementById('sheetsUrlMini').focus(),80);
+}
+function closeSheetsUrlModal(){
+  document.getElementById('sheetsUrlModal').classList.remove('open');
+}
+function saveSheetsUrlMini(){
+  const url=document.getElementById('sheetsUrlMini').value.trim();
+  const st=document.getElementById('sheetsUrlMiniStatus');
+  if(!url){st.style.color='var(--red)';st.textContent='\u26a0\ufe0f Please enter a URL.';return;}
+  if(!url.startsWith('https://')){st.style.color='var(--red)';st.textContent='\u26a0\ufe0f URL must start with https://';return;}
+  localStorage.setItem('sheetsUrl',url);
+  const mi=document.getElementById('sheetsUrl');if(mi)mi.value=url;
+  st.style.color='#1a7a3c';st.textContent='\u2705 URL saved! Connecting...';
+  if(typeof pullFromSheets==='function')pullFromSheets(true).then(()=>{if(typeof startPolling==='function')startPolling();});
+  setTimeout(closeSheetsUrlModal,1400);
+}
+document.addEventListener('click',function(e){
+  const m=document.getElementById('sheetsUrlModal');
+  if(m&&m.classList.contains('open')&&e.target===m)closeSheetsUrlModal();
+});
 function canAct(action, engKey){
   const u = _currentUser;
   if(!u) return false;
@@ -2074,11 +2275,12 @@ const LAN_CFG = {
 function getLAN(){
   try{ return JSON.parse(localStorage.getItem('lan_data')||'{}'); } catch(e){ return {}; }
 }
-function saveLAN(lan){
+function saveLAN(lan){ 
   localStorage.setItem('lan_data', JSON.stringify(lan));
-  window.D._version = Date.now();
-  localStorage.setItem('inv7', JSON.stringify(window.D));
-  if (typeof window.fbPush === 'function') window.fbPush();
+  _userMadeChange = true;
+  D._version = Date.now();
+  localStorage.setItem('inv7', JSON.stringify(D));
+  schedulePush();
 }
 function initLAN(lan){
   if(!lan.utp) lan.utp={stock:0,history:[]};
@@ -2825,6 +3027,25 @@ function pdfFull(){
 </script>
 
 <!-- SHEETS URL MINI MODAL -->
+<div id="sheetsUrlModal">
+  <div class="sheets-url-box">
+    <div class="sheets-url-box-title">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="18" height="18" rx="3" fill="#0f9d58" opacity="0.2"/><rect x="3" y="3" width="18" height="18" rx="3" stroke="#0f9d58" stroke-width="1.8" fill="none"/><rect x="7" y="7" width="4" height="2.5" rx=".5" fill="#0f9d58"/><rect x="13" y="7" width="4" height="2.5" rx=".5" fill="#0f9d58" opacity=".7"/><rect x="7" y="11" width="4" height="2.5" rx=".5" fill="#0f9d58" opacity=".85"/><rect x="13" y="11" width="4" height="2.5" rx=".5" fill="#0f9d58" opacity=".6"/><rect x="7" y="15" width="10" height="2.5" rx=".5" fill="#0f9d58" opacity=".5"/></svg>
+      Google Apps Script Web App URL
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;display:block;margin-bottom:6px;font-weight:700;font-family:'outfit',sans-serif;">Web App URL</label>
+      <input class="sheets-url-input" id="sheetsUrlMini" type="text" placeholder="https://script.google.com/macros/s/.../exec">
+      <div style="font-size:11px;color:var(--muted);margin-top:5px;">⚠️ Deploy with "Execute as: Me" and "Who has access: Anyone".</div>
+    </div>
+    <div class="sheets-url-box-btns">
+      <button class="btn btn-g" onclick="closeSheetsUrlModal()" style="flex:1;">Cancel</button>
+      <button class="btn btn-b" onclick="saveSheetsUrlMini()" style="flex:1;">🔗 Connect &amp; Sync</button>
+    </div>
+    <div id="sheetsUrlMiniStatus" style="margin-top:9px;font-size:12px;text-align:center;font-family:'Plus Jakarta Sans',sans-serif;min-height:16px;"></div>
+  </div>
+</div>
+
 <!-- RESTORE DESTINATION MODAL -->
 <div id="restoreDestModal" style="position:fixed;inset:0;z-index:5000;background:rgba(10,25,60,.55);display:none;align-items:center;justify-content:center;backdrop-filter:blur(5px);">
   <div style="background:#fff;border-radius:18px;padding:30px 28px 24px;max-width:400px;width:92%;box-shadow:0 16px 56px rgba(0,0,0,.28);animation:pop .18s ease both;">
