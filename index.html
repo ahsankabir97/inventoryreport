@@ -848,11 +848,12 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
 
   // Real-time listener — সব user কে auto-update করে
   window.fbListen = function() {
-    onValue(ref(db, 'inventory'), (snapshot) => {
-      const remote = snapshot.val();
-      if (!remote) return;
+    // নতুন (D variable কে সরাসরি update করে):
+onValue(ref(db, 'inventory'), (snapshot) => {
+    const remote = snapshot.val();
+    if (!remote) return;
 
-      window.D = {
+    const updated = {
         unassigned: remote.unassigned || [],
         deleted:    remote.deleted    || [],
         rupchan:    remote.rupchan    || [],
@@ -861,23 +862,28 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
         nazrul:     remote.nazrul     || [],
         done:       remote.done       || [],
         _version:   remote._version   || 0
-      };
+    };
 
-      localStorage.setItem('inv7', JSON.stringify(window.D));
+    // window.D এবং local D দুটোই একসাথে update করো
+    window.D = updated;
+    if (typeof D !== 'undefined') {
+        Object.assign(D, updated);
+    }
 
-      if (remote._lan) {
+    localStorage.setItem('inv7', JSON.stringify(updated));
+
+    if (remote._lan) {
         localStorage.setItem('lan_data', JSON.stringify(remote._lan));
-      }
+    }
 
-      if (typeof renderAll === 'function') renderAll();
-      if (window._lanActive && typeof renderLAN === 'function') renderLAN();
-    });
-  };
+    if (typeof renderAll === 'function') renderAll();
+    if (window._lanActive && typeof renderLAN === 'function') renderLAN();
+});
 
   // App ready হলে listener শুরু করো
-  window.addEventListener('load', () => {
-    setTimeout(() => window.fbListen(), 1200);
-  });
+window.addEventListener('load', () => {
+    setTimeout(() => window.fbListen(), 300);
+});
 </script>
 </head>
 <body>
@@ -1291,10 +1297,11 @@ function fd(iso){
 // ── SYNC ─────────────────────────────────────────────────────────────
 let _lastVersion=0,_pushTimer=null,_pollHandle=null,_userMadeChange=false;
 function save(){
-  D._version = Date.now();
-  window.D = D;
-  localStorage.setItem('inv7', JSON.stringify(D));
-  if (typeof window.fbPush === 'function') window.fbPush();
+    D._version = Date.now();
+    window.D = D;
+    Object.assign(window.D, D);  // ← এই লাইন যোগ
+    localStorage.setItem('inv7', JSON.stringify(D));
+    if (typeof window.fbPush === 'function') window.fbPush();
 }
 
 function setSyncIndicator(state){
@@ -1837,6 +1844,7 @@ localStorage.removeItem('sheetsUrl');
 
 setSyncIndicator('idle');
 document.getElementById('tab-manage').style.display='none';
+window.D = D;  // ← এই লাইনটা যোগ করুন
 go('all');
 
 // Polling একদম বন্ধ — Google Sheets থেকে কখনো pull করবে না
