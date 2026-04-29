@@ -2284,10 +2284,13 @@ function saveLAN(lan){
 }
 function initLAN(lan){
   if(!lan.utp) lan.utp={stock:0,history:[]};
+  if(!lan.utp.history) lan.utp.history=[];
   if(!lan.rj45) lan.rj45={stock:0,history:[]};
+  if(!lan.rj45.history) lan.rj45.history=[];
   if(!lan.others) lan.others={};
   LAN_OTHERS_ITEMS.forEach(it=>{
     if(!lan.others[it]) lan.others[it]={stock:0,unit:'Pieces',history:[]};
+    if(!lan.others[it].history) lan.others[it].history=[];  // ← এই line add
   });
   return lan;
 }
@@ -2456,20 +2459,40 @@ function openLanOthersEntryModal(preItem){
 }
 function closeLanOthersEntryModal(){ document.getElementById('lanOthersEntryModal').classList.remove('open'); }
 function confirmLanOthersEntry(){
-  const item    = document.getElementById('lanOthersItem').value;
-  const qty     = parseInt(document.getElementById('lanOthersQty').value)||0;
-  const unit    = document.getElementById('lanOthersUnit').value.trim()||'Pieces';
-  const remarks = document.getElementById('lanOthersRemarks').value.trim();
-  if(!item){toast('⚠️ Please select an item');return;}
-  if(qty<=0){toast('⚠️ Please enter a valid quantity');return;}
-  const lan = initLAN(getLAN());
-  lan.others[item].stock += qty;
-  if(unit) lan.others[item].unit = unit;
-  lan.others[item].history.push({type:'IN',qty,unit,remarks,date:new Date().toISOString(),by:_currentUser});
-  saveLAN(lan);
-  closeLanOthersEntryModal();
-  renderLAN();
-  toast(`📥 ${qty} ${unit} of ${item} added`);
+  const itemEl = document.getElementById('lanOthersItem');
+  const item = itemEl ? itemEl.value.trim() : '';
+  const qtyEl = document.getElementById('lanOthersQty');
+  const qty = parseInt(qtyEl ? qtyEl.value : '0') || 0;
+  const unitEl = document.getElementById('lanOthersUnit');
+  const unit = (unitEl ? unitEl.value.trim() : '') || 'Pieces';
+  const remarksEl = document.getElementById('lanOthersRemarks');
+  const remarks = remarksEl ? remarksEl.value.trim() : '';
+
+  console.log('confirmLanOthersEntry called:', {item, qty, unit});
+
+  if(!item){ alert('Please select an item'); return; }
+  if(qty <= 0){ alert('Please enter a valid quantity'); return; }
+
+  try {
+    const lan = initLAN(getLAN());
+    if(!lan.others) lan.others = {};
+    if(!lan.others[item]) lan.others[item] = {stock:0, unit:'Pieces', history:[]};
+if(!lan.others[item].history) lan.others[item].history = [];  // ← এই line add করো
+    lan.others[item].stock += qty;
+    lan.others[item].unit = unit;
+    lan.others[item].history.push({
+      type:'IN', qty, unit, remarks,
+      date: new Date().toISOString(),
+      by: _currentUser || 'admin'
+    });
+    saveLAN(lan);
+    closeLanOthersEntryModal();
+    renderLAN();
+    toast('📥 ' + qty + ' ' + unit + ' of ' + item + ' added');
+  } catch(err) {
+    console.error('Error in confirmLanOthersEntry:', err);
+    alert('Error: ' + err.message);
+  }
 }
 
 let _lanOthersProvItem = null;
