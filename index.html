@@ -868,6 +868,11 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
     <div class="tab" id="tab-done" onclick="go('done')">
       <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" opacity=".4" stroke="#22c55e"/><path d="M7.5 12.5l3 3 6-6" stroke="#22c55e"/></svg></span><span class="tab-label">Done List</span><span class="badge" id="b-done">0</span>
     </div>
+<div class="tab" id="tab-deleted-view" onclick="go('deleted-view')">
+      <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></span>
+      <span class="tab-label">Deleted Items</span>
+      <span class="badge" id="b-deleted-view" style="background:rgba(248,113,113,.2);color:#f87171;border-color:rgba(248,113,113,.3);">0</span>
+    </div>
 
     <div class="sidebar-divider"></div>
     <div class="sidebar-section">Engineers</div>
@@ -931,6 +936,7 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
     </div>
 
     <!-- ENGINEER PAGES -->
+    <div class="page" id="page-deleted-view"></div>
     <div class="page" id="page-rupchan"></div>
     <div class="page" id="page-amit"></div>
     <div class="page" id="page-tamim"></div>
@@ -1376,6 +1382,16 @@ function deleteCustomItem(i){
 // ── NAVIGATION ────────────────────────────────────────────────────────
 function go(name){
   if(name==='manage' && _currentUser !== 'admin'){authError();return;}
+if(name==='deleted-view'){
+    _lanActive = null;
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p=>{ p.classList.remove('active'); p.style.display=''; });
+    document.getElementById('page-lan').style.display='none';
+    document.getElementById('tab-deleted-view').classList.add('active');
+    document.getElementById('page-deleted-view').classList.add('active');
+    renderDeletedViewPage();
+    return;
+  }
   _lanActive = null;
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p=>{ p.classList.remove('active'); p.style.display=''; });
@@ -1427,6 +1443,8 @@ function renderAll(){
   document.getElementById('b-all').textContent=tot;
   document.getElementById('b-un').textContent=(D.unassigned||[]).length;
   document.getElementById('b-deleted').textContent=(D.deleted||[]).length;
+const dvBadge=document.getElementById('b-deleted-view');
+  if(dvBadge) dvBadge.textContent=(D.deleted||[]).length;
 
   const all=[...(D.unassigned||[]),...(D.done||[]),...ENGS.flatMap(eng=>D[eng]||[])];
   const dataNms=[...new Set(all.map(i=>i.name).filter(Boolean))];
@@ -1819,7 +1837,47 @@ function confirmRestoreDest(dest){
     save();renderAll();toast(`↩ "${item.serial}" sent to Unassigned`);
   }
 }
-
+function renderDeletedViewPage(){
+  const page = document.getElementById('page-deleted-view');
+  if(!page) return;
+  const del = D.deleted || [];
+  const canManage = _currentUser === 'admin' || _currentUser === 'rupchan';
+  let html = `<div class="sh">
+    <div class="st">🗑 Deleted <span>Items</span></div>
+    <div style="font-size:12px;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;margin-left:auto;display:flex;align-items:center;gap:6px;">`;
+  if(canManage){
+    html += `<button onclick="if(confirm('Clear all deleted items?')){D.deleted=[];save();renderAll();renderDeletedViewPage();toast('🗑 All cleared');}" style="padding:6px 14px;background:linear-gradient(135deg,#b91c1c,#ef4444);color:#fff;border:none;border-radius:8px;font-family:'outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 10px rgba(185,28,28,.25);transition:all .18s;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform=''">🗑 Clear All</button>`;
+  } else {
+    html += `<span style="background:rgba(248,113,113,.12);color:#b91c1c;border:1px solid rgba(248,113,113,.25);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;font-family:'outfit',sans-serif;">👁 View Only</span>`;
+  }
+  html += `</div></div>`;
+  if(!del.length){
+    html += `<div class="tbl-wrap"><div class="empty"><div class="ico">🗑</div><div>No deleted items.</div></div></div>`;
+  } else {
+    html += `<div class="tbl-wrap"><table><thead><tr>
+      <th>#</th><th>Item Name</th><th>Serial / MAC</th><th>Was In</th><th>Status</th>
+      <th>Deleted By</th><th>Reason</th><th>Deleted On</th>
+      ${canManage ? '<th>Actions</th>' : ''}
+    </tr></thead><tbody>`;
+    del.forEach((it,i)=>{
+      html += `<tr>
+        <td class="tm">${i+1}</td>
+        <td class="tn">${e(it.name)}</td>
+        <td class="ts">${e(it.serial)}</td>
+        <td><span class="tag-e">${e(it._deletedFrom||'—')}</span></td>
+        <td><span class="status ${it.status==='IN-Hand'?'si':it.status==='Done'?'sd':it.status==='Provided'?'sp':'si'}">${it.status||'—'}</span></td>
+        <td class="tm" style="font-weight:700;color:var(--accent2);">${e(it._deletedBy?cap(it._deletedBy):'—')}</td>
+        <td class="tm" style="max-width:150px;white-space:normal;color:#b91c1c;font-size:10.5px;">${e(it._deleteReason||'—')}</td>
+        <td class="tt">${fd(it._deletedAt)}</td>
+        ${canManage ? `<td><div class="ar">
+          <button class="ab restore" onclick="restoreDeleted('${it.id}');setTimeout(renderDeletedViewPage,200);">↩ Restore</button>
+        </div></td>` : ''}
+      </tr>`;
+    });
+    html += `</tbody></table></div>`;
+  }
+  page.innerHTML = html;
+}
 function toast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;
