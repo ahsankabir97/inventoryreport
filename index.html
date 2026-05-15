@@ -816,6 +816,7 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
 .del-reason-confirm:hover{box-shadow:0 5px 20px rgba(185,28,28,.4);transform:translateY(-1px);}
 
 </style>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -922,6 +923,25 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
               PDF Export
             </button>
           </div>
+<div id="xlsxBtnWrap" style="display:none;">
+  <button onclick="openXlsxModal()"
+    style="display:flex;align-items:center;gap:7px;padding:8px 18px;
+           background:linear-gradient(135deg,#059669,#34d399);color:#fff;border:none;
+           border-radius:9px;font-family:'outfit',sans-serif;font-size:12.5px;font-weight:700;
+           cursor:pointer;box-shadow:0 3px 14px rgba(5,150,105,.35);transition:all .18s;
+           white-space:nowrap;letter-spacing:.2px;"
+    onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 5px 22px rgba(5,150,105,.52)'"
+    onmouseout="this.style.transform='';this.style.boxShadow='0 3px 14px rgba(5,150,105,.35)'">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+      <line x1="16" y1="13" x2="8" y2="13"/>
+      <line x1="16" y1="17" x2="8" y2="17"/>
+    </svg>
+    Excel Export
+  </button>
+</div>
         </div>
       </div>
       <div class="stats" id="allStats"></div>
@@ -1249,7 +1269,56 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
 </div>
 
 <div id="toast"></div>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
+  const firebaseConfig = {
+    apiKey: "AIzaSyDemX_T3bzB4-ONiCMTEoJOMP-JphJR_H0",
+    authDomain: "link3-motijheel-inventory.firebaseapp.com",
+    databaseURL: "https://link3-motijheel-inventory-default-rtdb.firebaseio.com",
+    projectId: "link3-motijheel-inventory",
+    storageBucket: "link3-motijheel-inventory.firebasestorage.app",
+    messagingSenderId: "9224551617",
+    appId: "1:9224551617:web:a19f5abeb41f6f532f6840"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  window._firebaseDB = db;
+  window._firebaseRef = ref;
+  window._firebaseSet = set;
+  window._firebaseOnValue = onValue;
+  window._firebaseReady = true;
+
+  // ── 1) Inventory real-time sync
+  onValue(ref(db, 'inventory'), (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      localStorage.setItem('inv7', JSON.stringify(data));
+      if (typeof D !== 'undefined') D = data;
+      if (typeof renderAll === 'function') renderAll();
+      if (window._lanActive && typeof renderLAN === 'function') renderLAN();
+    }
+  });
+
+  // ── 2) Password sync
+  onValue(ref(db, 'passwords'), (snapshot) => {
+    const data = snapshot.val();
+    if(data){
+      localStorage.setItem('inv_passwords', JSON.stringify(data));
+    }
+  });
+
+// 👇 এখানে এই block টা যোগ করো 👇
+  onValue(ref(db, 'lan_data'), (snapshot) => {
+    const data = snapshot.val();
+    if(data){
+      localStorage.setItem('lan_data', JSON.stringify(data));
+      if(window._lanActive && typeof renderLAN === 'function') renderLAN();
+    }
+  });
+</script>
 <script>
 const ENGS=['rupchan','amit','tamim','nazrul'];
 function gid(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5);}
@@ -1272,7 +1341,21 @@ function fd(iso){
 let _lastVersion=0,_pushTimer=null,_pollHandle=null,_userMadeChange=false;
 function getUrl(){return localStorage.getItem('sheetsUrl')||'';}
 function countItems(obj){return(obj.rupchan||[]).length+(obj.amit||[]).length+(obj.tamim||[]).length+(obj.nazrul||[]).length+(obj.unassigned||[]).length+(obj.done||[]).length;}
-function save(){_userMadeChange=true;D._version=Date.now();localStorage.setItem('inv7',JSON.stringify(D));schedulePush();}
+function save(){
+  _userMadeChange = true;
+  D._version = Date.now();
+  localStorage.setItem('inv7', JSON.stringify(D));
+
+  // ── Firebase এ save করো (Primary)
+  if(window._firebaseReady && window._firebaseDB){
+    window._firebaseSet(window._firebaseRef(window._firebaseDB, 'inventory'), D)
+      .then(() => setSyncIndicator('ok'))
+      .catch(err => { console.error('Firebase error:', err); setSyncIndicator('error'); });
+  }
+
+  // ── Google Sheets এ copy পাঠাও (Secondary)
+  schedulePush();
+}
 function schedulePush(){if(!getUrl())return;setSyncIndicator('pending');clearTimeout(_pushTimer);_pushTimer=setTimeout(pushNow,2000);}
 async function pushNow(){
   const url=getUrl();if(!url)return;
@@ -1321,7 +1404,7 @@ function setSyncIndicator(state){
   const el=document.getElementById('syncDot');if(!el)return;
   const url=getUrl();if(!url){el.style.display='none';stopPolling();return;}
   el.style.display='flex';if(!_pollHandle)startPolling();
-  const cfg={idle:{bg:'#1a7a3a',text:'🟢 Live Sync'},pending:{bg:'#f9a825',text:'⏳ Saving...'},syncing:{bg:'#3b82f6',text:'🔄 Syncing...'},ok:{bg:'#1a4fa0',text:'✅ Updated'},error:{bg:'#c62828',text:'❌ Sync Error'}}[state]||{bg:'#5b8dd9',text:''};
+  const cfg={idle:{bg:'#1a7a3a',text:'🟢 Live'},pending:{bg:'#f9a825',text:'⏳ Saving...'},syncing:{bg:'#3b82f6',text:'🔄 Syncing...'},ok:{bg:'#1a4fa0',text:'✅ Updated'},error:{bg:'#c62828',text:'❌ Sync Error'}}[state]||{bg:'#5b8dd9',text:''};
   el.style.background=cfg.bg;el.querySelector('span').textContent=cfg.text;
   if(state==='idle'){el.classList.add('shimmer-sync');}else{el.classList.remove('shimmer-sync');}
 }
@@ -1415,6 +1498,7 @@ function switchManageSub(sub){
 }
 
 function clearAllDeleted(){
+  if(_currentUser !== 'admin'){ authError(); return; } // এই line যোগ করো
   const count=(D.deleted||[]).length;
   if(!count){toast('⚠️ No deleted items to clear');return;}
   if(!confirm(`Remove ${count} deleted item(s) from interface?\n\nNote: Data remains in Google Sheets.`))return;
@@ -1422,7 +1506,13 @@ function clearAllDeleted(){
   save();renderAll();
   toast(`🗑 ${count} item(s) cleared — still in Sheets`);
 }
-
+function permDeleteItem(id){
+  if(!confirm('এই item টা permanently delete করবেন?\nআর restore করা যাবে না।')) return;
+  D.deleted = (D.deleted||[]).filter(x => x.id !== id);
+  save();
+  renderAll();
+  toast('🗑 Item permanently deleted');
+}
 function sq(){
   const activePage=document.querySelector('.page.active');
   if(activePage){
@@ -1591,7 +1681,7 @@ const dvBadge=document.getElementById('b-deleted-view');
     const btn=document.getElementById('clearAllBtn');
     if(btn)btn.disabled=(D.deleted||[]).length===0;
     if(!del.length)delW.innerHTML=`<div class="empty" style="background:transparent;"><div class="ico">🗑</div>No deleted items.</div>`;
-    else delW.innerHTML=`<table style="width:100%"><thead><tr><th>#</th><th>Item Name</th><th>Serial / MAC</th><th>Was In</th><th>Status</th><th>Deleted By</th><th>Reason</th><th>Deleted On</th><th>Restore</th></tr></thead><tbody>${del.map((it,i)=>`<tr>
+    else delW.innerHTML=`<table style="width:100%"><thead><tr><th>#</th><th>Item Name</th><th>Serial / MAC</th><th>Was In</th><th>Status</th><th>Deleted By</th><th>Reason</th><th>Deleted On</th><th>Restore</th>${_currentUser==='admin'?'<th>Del</th>':''}</tr></thead><tbody>${del.map((it,i)=>`<tr>
       <td class="tm">${i+1}</td>
       <td class="tn">${hl(it.name,q)}</td>
       <td class="ts">${hl(it.serial,q)}</td>
@@ -1600,7 +1690,8 @@ const dvBadge=document.getElementById('b-deleted-view');
       <td class="tm" style="font-weight:700;color:var(--accent2);">${e(it._deletedBy?cap(it._deletedBy):'—')}</td>
       <td class="tm" style="max-width:140px;white-space:normal;color:var(--red);font-size:10.5px;">${e(it._deleteReason||'—')}</td>
       <td class="tt">${fd(it._deletedAt)}</td>
-      <td><button class="ab restore" onclick="restoreDeleted('${it.id}')">↩ Restore</button></td>
+      ${_currentUser==='admin' ? `<td><button class="ab restore" onclick="restoreDeleted('${it.id}')">↩ Restore</button></td>` : '<td>—</td>'}
+      ${_currentUser==='admin'?`<td><button class="ab x" onclick="permDeleteItem('${it.id}')">🗑</button></td>`:''}
     </tr>`).join('')}</tbody></table>`;
   }
 }
@@ -1787,6 +1878,7 @@ let _restorePendingId = null;
 let _restorePendingEngKey = null;
 
 function restoreDeleted(id){
+  if(_currentUser !== 'admin'){ authError(); return; } // এই line যোগ করো
   if(!D.deleted)return;
   const idx=D.deleted.findIndex(x=>x.id===id);if(idx===-1)return;
   const it=D.deleted[idx];
@@ -1841,7 +1933,7 @@ function renderDeletedViewPage(){
   const page = document.getElementById('page-deleted-view');
   if(!page) return;
   const del = D.deleted || [];
-  const canManage = _currentUser === 'admin' || _currentUser === 'rupchan';
+  const canManage = _currentUser === 'admin';
   let html = `<div class="sh">
     <div class="st">🗑 Deleted <span>Items</span></div>
     <div style="font-size:12px;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;margin-left:auto;display:flex;align-items:center;gap:6px;">`;
@@ -1857,7 +1949,7 @@ function renderDeletedViewPage(){
     html += `<div class="tbl-wrap"><table><thead><tr>
       <th>#</th><th>Item Name</th><th>Serial / MAC</th><th>Was In</th><th>Status</th>
       <th>Deleted By</th><th>Reason</th><th>Deleted On</th>
-      ${canManage ? '<th>Actions</th>' : ''}
+      ${canManage ? '<th>Restore</th>' : ''}${_currentUser==='admin' ? '<th>Del</th>' : ''}
     </tr></thead><tbody>`;
     del.forEach((it,i)=>{
       html += `<tr>
@@ -1869,9 +1961,12 @@ function renderDeletedViewPage(){
         <td class="tm" style="font-weight:700;color:var(--accent2);">${e(it._deletedBy?cap(it._deletedBy):'—')}</td>
         <td class="tm" style="max-width:150px;white-space:normal;color:#b91c1c;font-size:10.5px;">${e(it._deleteReason||'—')}</td>
         <td class="tt">${fd(it._deletedAt)}</td>
-        ${canManage ? `<td><div class="ar">
-          <button class="ab restore" onclick="restoreDeleted('${it.id}');setTimeout(renderDeletedViewPage,200);">↩ Restore</button>
-        </div></td>` : ''}
+        ${canManage ? `<td>
+  <button class="ab restore" onclick="restoreDeleted('${it.id}');setTimeout(renderDeletedViewPage,200);">↩ Restore</button>
+</td>` : ''}
+${_currentUser==='admin' ? `<td>
+  <button class="ab x" onclick="permDeleteItem('${it.id}');setTimeout(renderDeletedViewPage,200);">🗑</button>
+</td>` : ''}
       </tr>`;
     });
     html += `</tbody></table></div>`;
@@ -2088,6 +2183,234 @@ go('all');
 if(_savedUrl){
   pullFromSheets(true).then(()=>{startPolling();});
 }
+// ═══════════════════════════════════════════════════════════════════
+// EXCEL EXPORT SYSTEM
+// ═══════════════════════════════════════════════════════════════════
+
+function openXlsxModal(){
+  if(_currentUser !== 'admin'){ authError(); return; }
+  document.getElementById('xlsxExportModal').style.display='flex';
+}
+function closeXlsxModal(){
+  document.getElementById('xlsxExportModal').style.display='none';
+}
+document.addEventListener('click', function(ev){
+  const m = document.getElementById('xlsxExportModal');
+  if(m && m.style.display==='flex' && ev.target===m) closeXlsxModal();
+});
+
+function xlsxHeaderStyle(){
+  return {
+    font:  { bold:true, color:{ rgb:'FFFFFF' }, sz:11 },
+    fill:  { fgColor:{ rgb:'1A4FA0' } },
+    alignment: { horizontal:'center', vertical:'center', wrapText:true },
+    border: {
+      top:    { style:'thin', color:{ rgb:'FFFFFF' } },
+      bottom: { style:'thin', color:{ rgb:'FFFFFF' } },
+      left:   { style:'thin', color:{ rgb:'FFFFFF' } },
+      right:  { style:'thin', color:{ rgb:'FFFFFF' } }
+    }
+  };
+}
+
+function xlsxCellStyle(even){
+  return {
+    font: { sz:10 },
+    fill: { fgColor:{ rgb: even ? 'D2E4FF' : 'FFFFFF' } },
+    alignment: { horizontal:'center', vertical:'center', wrapText:true },
+    border: {
+      top:    { style:'thin', color:{ rgb:'C5D8F0' } },
+      bottom: { style:'thin', color:{ rgb:'C5D8F0' } },
+      left:   { style:'thin', color:{ rgb:'C5D8F0' } },
+      right:  { style:'thin', color:{ rgb:'C5D8F0' } }
+    }
+  };
+}
+
+function makeSheet(headers, rows, headerColor){
+  const ws = {};
+  const hColor = headerColor || '1A4FA0';
+  const hStyle = {
+    font:  { bold:true, color:{ rgb:'FFFFFF' }, sz:11 },
+    fill:  { fgColor:{ rgb: hColor } },
+    alignment: { horizontal:'center', vertical:'center', wrapText:true },
+    border: {
+      top:    { style:'thin', color:{ rgb:'FFFFFF' } },
+      bottom: { style:'thin', color:{ rgb:'FFFFFF' } },
+      left:   { style:'thin', color:{ rgb:'FFFFFF' } },
+      right:  { style:'thin', color:{ rgb:'FFFFFF' } }
+    }
+  };
+
+  // Headers
+  headers.forEach((h, ci) => {
+    const addr = XLSX.utils.encode_cell({ r:0, c:ci });
+    ws[addr] = { v: h, t:'s', s: hStyle };
+  });
+
+  // Rows
+  rows.forEach((row, ri) => {
+    const even = ri % 2 === 0;
+    const rowStyle = {
+      font: { sz:10 },
+      fill: { fgColor:{ rgb: even ? 'EEF3FC' : 'FFFFFF' } },
+      alignment: { horizontal:'center', vertical:'center', wrapText:true },
+      border: {
+        top:    { style:'thin', color:{ rgb:'C5D8F0' } },
+        bottom: { style:'thin', color:{ rgb:'C5D8F0' } },
+        left:   { style:'thin', color:{ rgb:'C5D8F0' } },
+        right:  { style:'thin', color:{ rgb:'C5D8F0' } }
+      }
+    };
+    row.forEach((val, ci) => {
+      const addr = XLSX.utils.encode_cell({ r: ri+1, c: ci });
+      ws[addr] = { v: val==null?'':val, t:'s', s: rowStyle };
+    });
+  });
+
+  const totalRows = rows.length + 1;
+  const totalCols = headers.length;
+  ws['!ref'] = XLSX.utils.encode_range({ s:{r:0,c:0}, e:{r:totalRows, c:totalCols-1} });
+
+  // Column widths
+  ws['!cols'] = headers.map(h => ({ wch: Math.max(h.length + 4, 14) }));
+
+  // Freeze header row
+  ws['!freeze'] = { xSplit:0, ySplit:1, topLeftCell:'A2', activePane:'bottomLeft' };
+
+  return ws;
+}
+
+function fdXlsx(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+}
+
+function exportXlsx(){
+  const wb = XLSX.utils.book_new();
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  const lan = initLAN(getLAN());
+
+  // ── All Equipment ──────────────────────────────────────────
+  if(document.getElementById('xls-all').checked){
+    const headers = ['#','Item Name','Serial / MAC','Assigned To','Status','Client ID','Ticket ID','Technician','Date','Remarks'];
+    const allRows = window._allRows || [];
+    const rows = allRows.map((r,i) => [
+      i+1, r.name||'', r.serial||'', r._eng||'—',
+      r.status||'', r.client||'—', r.ticket||'—',
+      r.tech||'—', fdXlsx(r.date||''), r.remarks||''
+    ]);
+    XLSX.utils.book_append_sheet(wb, makeSheet(headers, rows, '0F2D6E'), 'All Equipment');
+  }
+
+  // ── Engineers ──────────────────────────────────────────────
+  const engColors = { rupchan:'DB2777', amit:'059669', tamim:'EA580C', nazrul:'7C3AED' };
+  ['rupchan','amit','tamim','nazrul'].forEach(eng => {
+    if(!document.getElementById('xls-'+eng).checked) return;
+    const headers = ['#','Item Name','Serial / MAC','Status','Technician','Date','Remarks'];
+    const items = D[eng] || [];
+    const rows = items.map((it,i) => [
+      i+1, it.name||'', it.serial||'',
+      it.status||'', it.tech||'—',
+      fdXlsx(it.date||''), it.remarks||''
+    ]);
+    const sheetName = eng.charAt(0).toUpperCase()+eng.slice(1);
+    XLSX.utils.book_append_sheet(wb, makeSheet(headers, rows, engColors[eng]||'1A4FA0'), sheetName);
+  });
+
+  // ── Done List ──────────────────────────────────────────────
+  if(document.getElementById('xls-done').checked){
+    const headers = ['#','Item Name','Serial / MAC','Client ID','Ticket ID','Technician','Engineer','Date','Remarks'];
+    const items = D.done || [];
+    const rows = items.map((it,i) => [
+      i+1, it.name||'', it.serial||'',
+      it.client||'', it.ticket||'',
+      it.tech||'—', it.engineer||'—',
+      fdXlsx(it.date||''), it.remarks||''
+    ]);
+    XLSX.utils.book_append_sheet(wb, makeSheet(headers, rows, '0077B6'), 'Done List');
+  }
+
+  // ── Unassigned ─────────────────────────────────────────────
+  if(document.getElementById('xls-unassigned').checked){
+    const headers = ['#','Item Name','Serial / MAC','Remarks'];
+    const items = D.unassigned || [];
+    const rows = items.map((it,i) => [
+      i+1, it.name||'', it.serial||'', it.remarks||''
+    ]);
+    XLSX.utils.book_append_sheet(wb, makeSheet(headers, rows, '1E5BB8'), 'Unassigned');
+  }
+
+  // ── LAN Equipment ──────────────────────────────────────────
+  if(document.getElementById('xls-lan').checked){
+    // UTP
+    const utpHeaders = ['#','Type','Quantity','Unit','Client ID','Ticket ID','Technician','By','Remarks','Date'];
+    const utpRows = [];
+    utpRows.push([1,'📦 Current Stock', lan.utp?lan.utp.stock:0,'Feet','','','','','Total in store','']);
+    (lan.utp&&lan.utp.history||[]).slice().reverse().forEach((h,i)=>{
+      utpRows.push([i+2, h.type==='IN'?'📥 IN':'↗ OUT', h.qty,'Feet',
+        h.client||'', h.ticket||'', h.tech||'',
+        h.by?h.by.charAt(0).toUpperCase()+h.by.slice(1):'—',
+        h.remarks||'', fdXlsx(h.date||'')]);
+    });
+    XLSX.utils.book_append_sheet(wb, makeSheet(utpHeaders, utpRows, '0A5C36'), 'LAN - UTP Cable');
+
+    // RJ45
+    const rjHeaders = ['#','Type','Quantity','Unit','Client ID','Ticket ID','Technician','By','Remarks','Date'];
+    const rjRows = [];
+    rjRows.push([1,'📦 Current Stock', lan.rj45?lan.rj45.stock:0,'Pieces','','','','','Total in store','']);
+    (lan.rj45&&lan.rj45.history||[]).slice().reverse().forEach((h,i)=>{
+      rjRows.push([i+2, h.type==='IN'?'📥 IN':'↗ OUT', h.qty,'Pieces',
+        h.client||'', h.ticket||'', h.tech||'',
+        h.by?h.by.charAt(0).toUpperCase()+h.by.slice(1):'—',
+        h.remarks||'', fdXlsx(h.date||'')]);
+    });
+    XLSX.utils.book_append_sheet(wb, makeSheet(rjHeaders, rjRows, 'B45309'), 'LAN - RJ45');
+
+    // Others
+    const othHeaders = ['#','Item Name','Type','Quantity','Unit','Client ID','Ticket ID','Technician','By','Remarks','Date'];
+    const othRows = [];
+    let rowNum = 1;
+    LAN_OTHERS_ITEMS.forEach(item => {
+      const d = (lan.others&&lan.others[item]) || {stock:0, unit:'Pieces', history:[]};
+      othRows.push([rowNum++,'📦 '+item+' (Current Stock)', '', d.stock, d.unit||'Pieces','','','','','Total in store','']);
+      (d.history||[]).slice().reverse().forEach(h=>{
+        othRows.push([rowNum++, item, h.type==='IN'?'📥 IN':'↗ OUT', h.qty, h.unit||d.unit||'Pieces',
+          h.client||'', h.ticket||'', h.tech||'',
+          h.by?h.by.charAt(0).toUpperCase()+h.by.slice(1):'—',
+          h.remarks||'', fdXlsx(h.date||'')]);
+      });
+    });
+    XLSX.utils.book_append_sheet(wb, makeSheet(othHeaders, othRows, '7C3AED'), 'LAN - Others');
+  }
+
+  // ── Deleted Items ──────────────────────────────────────────
+  if(document.getElementById('xls-deleted').checked){
+    const headers = ['#','Item Name','Serial / MAC','Was In','Status','Deleted By','Reason','Deleted On'];
+    const items = D.deleted || [];
+    const rows = items.map((it,i) => [
+      i+1, it.name||'', it.serial||'',
+      it._deletedFrom||'—', it.status||'—',
+      it._deletedBy ? it._deletedBy.charAt(0).toUpperCase()+it._deletedBy.slice(1) : '—',
+      it._deleteReason||'—',
+      fdXlsx(it._deletedAt||'')
+    ]);
+    XLSX.utils.book_append_sheet(wb, makeSheet(headers, rows, 'B91C1C'), 'Deleted Items');
+  }
+
+  // ── Download ───────────────────────────────────────────────
+  if(wb.SheetNames.length === 0){
+    toast('⚠️ কমপক্ষে একটি sheet সিলেক্ট করুন!');
+    return;
+  }
+
+  const fileName = `Inventory_${dateStr.replace(/ /g,'_')}.xlsx`;
+  XLSX.writeFile(wb, fileName, { bookType:'xlsx', type:'binary', cellStyles:true });
+  closeXlsxModal();
+  toast('📥 Excel file downloaded!');
+}
 </script>
 
 <!-- LOGIN OVERLAY -->
@@ -2183,6 +2506,8 @@ let _currentUser = null;
 })();
 
 function getPasswords(){
+  // Firebase এ passwords আলাদা node এ থাকবে
+  // এখন localStorage fallback রাখো
   try{
     const saved = localStorage.getItem('inv_passwords');
     if(saved) return {...DEFAULT_PASSWORDS,...JSON.parse(saved)};
@@ -2192,6 +2517,10 @@ function getPasswords(){
 
 function savePasswords(pwObj){
   localStorage.setItem('inv_passwords', JSON.stringify(pwObj));
+  // Firebase এও save করো
+  if(window._firebaseReady && window._firebaseDB){
+    window._firebaseSet(window._firebaseRef(window._firebaseDB, 'passwords'), pwObj);
+  }
 }
 
 function toggleVis(inputId, btn){
@@ -2248,6 +2577,8 @@ function applyRoleUI(){
   if(u!=='admin' && document.querySelector('#page-manage.active')){go('all');}
   const pdfBtn = document.getElementById('pdfBtnWrap');
   if(pdfBtn) pdfBtn.style.display = (u==='admin'?'':'none');
+const xlsxBtn = document.getElementById('xlsxBtnWrap');
+if(xlsxBtn) xlsxBtn.style.display = (u==='admin' ? '' : 'none');
   renderAll();
 }
 
@@ -2338,11 +2669,18 @@ const LAN_CFG = {
 function getLAN(){
   try{ return JSON.parse(localStorage.getItem('lan_data')||'{}'); } catch(e){ return {}; }
 }
-function saveLAN(lan){ 
+function saveLAN(lan){
   localStorage.setItem('lan_data', JSON.stringify(lan));
   _userMadeChange = true;
   D._version = Date.now();
   localStorage.setItem('inv7', JSON.stringify(D));
+
+  // Firebase এ LAN data আলাদাভাবে save
+  if(window._firebaseReady && window._firebaseDB){
+    window._firebaseSet(window._firebaseRef(window._firebaseDB, 'lan_data'), lan)
+      .catch(err => console.error('LAN Firebase error:', err));
+  }
+
   schedulePush();
 }
 function initLAN(lan){
@@ -3405,6 +3743,196 @@ function pdfFull(){
       </div>
     </div>
   </div>
+</div>
+<!-- EXCEL EXPORT MODAL -->
+<div id="xlsxExportModal" style="display:none;position:fixed;inset:0;z-index:6000;
+     background:rgba(10,20,55,.65);backdrop-filter:blur(10px);
+     align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:20px;padding:0;width:520px;max-width:95vw;
+              max-height:90vh;overflow:hidden;
+              box-shadow:0 28px 80px rgba(10,20,60,.35);animation:pop .18s ease both;">
+    <div style="background:linear-gradient(135deg,#059669 0%,#0077b6 100%);
+                padding:22px 26px 18px;position:relative;">
+      <div style="font-family:'Merriweather',serif;font-size:17px;font-weight:700;
+                  color:#fff;letter-spacing:.3px;">📊 Excel Export</div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;
+                  color:rgba(200,255,230,.75);margin-top:4px;font-weight:500;">
+        কোন sheet গুলো export করবেন সিলেক্ট করুন
+      </div>
+      <button onclick="closeXlsxModal()"
+        style="position:absolute;right:18px;top:18px;background:rgba(255,255,255,.15);
+               border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:8px;
+               width:30px;height:30px;cursor:pointer;font-size:14px;font-weight:700;
+               display:flex;align-items:center;justify-content:center;transition:all .15s;"
+        onmouseover="this.style.background='rgba(255,255,255,.28)'"
+        onmouseout="this.style.background='rgba(255,255,255,.15)'">✕</button>
+    </div>
+
+    <div style="padding:22px 24px;overflow-y:auto;max-height:calc(90vh - 120px);">
+      <div style="font-family:'Merriweather',serif;font-size:10px;font-weight:700;
+                  color:#5278a8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;">
+        Sheet সিলেক্ট করুন
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:9px;" id="xlsxCheckList">
+
+        <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;
+               border-radius:11px;cursor:pointer;border:2px solid rgba(26,79,160,.18);
+               background:rgba(240,245,255,.6);transition:all .15s;user-select:none;"
+               onmouseover="this.style.borderColor='#1a4fa0';this.style.background='rgba(220,233,255,.8)'"
+               onmouseout="this.style.borderColor='rgba(26,79,160,.18)';this.style.background='rgba(240,245,255,.6)'">
+          <input type="checkbox" id="xls-all" checked
+                 style="width:16px;height:16px;accent-color:#1a4fa0;cursor:pointer;">
+          <div>
+            <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#1a4fa0;">
+              🗂️ All Equipment
+            </div>
+            <div style="font-size:10.5px;color:#5278a8;margin-top:2px;">সব equipment একসাথে</div>
+          </div>
+        </label>
+
+        <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;
+               border-radius:11px;cursor:pointer;border:2px solid rgba(244,114,182,.2);
+               background:rgba(253,242,248,.6);transition:all .15s;user-select:none;"
+               onmouseover="this.style.borderColor='#f472b6';this.style.background='rgba(251,207,232,.7)'"
+               onmouseout="this.style.borderColor='rgba(244,114,182,.2)';this.style.background='rgba(253,242,248,.6)'">
+          <input type="checkbox" id="xls-rupchan" checked
+                 style="width:16px;height:16px;accent-color:#db2777;cursor:pointer;">
+          <div>
+            <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#db2777;">
+              👤 Rupchan
+            </div>
+            <div style="font-size:10.5px;color:#5278a8;margin-top:2px;">Rupchan এর devices</div>
+          </div>
+        </label>
+
+        <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;
+               border-radius:11px;cursor:pointer;border:2px solid rgba(52,211,153,.2);
+               background:rgba(240,253,244,.6);transition:all .15s;user-select:none;"
+               onmouseover="this.style.borderColor='#34d399';this.style.background='rgba(209,250,229,.7)'"
+               onmouseout="this.style.borderColor='rgba(52,211,153,.2)';this.style.background='rgba(240,253,244,.6)'">
+          <input type="checkbox" id="xls-amit" checked
+                 style="width:16px;height:16px;accent-color:#059669;cursor:pointer;">
+          <div>
+            <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#059669;">
+              👤 Amit
+            </div>
+            <div style="font-size:10.5px;color:#5278a8;margin-top:2px;">Amit এর devices</div>
+          </div>
+        </label>
+
+        <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;
+               border-radius:11px;cursor:pointer;border:2px solid rgba(251,146,60,.2);
+               background:rgba(255,247,237,.6);transition:all .15s;user-select:none;"
+               onmouseover="this.style.borderColor='#fb923c';this.style.background='rgba(254,215,170,.7)'"
+               onmouseout="this.style.borderColor='rgba(251,146,60,.2)';this.style.background='rgba(255,247,237,.6)'">
+          <input type="checkbox" id="xls-tamim" checked
+                 style="width:16px;height:16px;accent-color:#ea580c;cursor:pointer;">
+          <div>
+            <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#ea580c;">
+              👤 Tamim
+            </div>
+            <div style="font-size:10.5px;color:#5278a8;margin-top:2px;">Tamim এর devices</div>
+          </div>
+        </label>
+
+        <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;
+               border-radius:11px;cursor:pointer;border:2px solid rgba(167,139,250,.2);
+               background:rgba(245,243,255,.6);transition:all .15s;user-select:none;"
+               onmouseover="this.style.borderColor='#a78bfa';this.style.background='rgba(221,214,254,.7)'"
+               onmouseout="this.style.borderColor='rgba(167,139,250,.2)';this.style.background='rgba(245,243,255,.6)'">
+          <input type="checkbox" id="xls-nazrul" checked
+                 style="width:16px;height:16px;accent-color:#7c3aed;cursor:pointer;">
+          <div>
+            <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#7c3aed;">
+              👤 Nazrul
+            </div>
+            <div style="font-size:10.5px;color:#5278a8;margin-top:2px;">Nazrul এর devices</div>
+          </div>
+        </label>
+
+        <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;
+               border-radius:11px;cursor:pointer;border:2px solid rgba(0,119,182,.2);
+               background:rgba(236,252,243,.6);transition:all .15s;user-select:none;"
+               onmouseover="this.style.borderColor='#0077b6';this.style.background='rgba(209,250,229,.7)'"
+               onmouseout="this.style.borderColor='rgba(0,119,182,.2)';this.style.background='rgba(236,252,243,.6)'">
+          <input type="checkbox" id="xls-done" checked
+                 style="width:16px;height:16px;accent-color:#0077b6;cursor:pointer;">
+          <div>
+            <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#0077b6;">
+              ☑️ Done List
+            </div>
+            <div style="font-size:10.5px;color:#5278a8;margin-top:2px;">Completed jobs</div>
+          </div>
+        </label>
+
+        <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;
+               border-radius:11px;cursor:pointer;border:2px solid rgba(91,141,217,.2);
+               background:rgba(238,243,252,.6);transition:all .15s;user-select:none;"
+               onmouseover="this.style.borderColor='#5b8dd9';this.style.background='rgba(219,229,248,.7)'"
+               onmouseout="this.style.borderColor='rgba(91,141,217,.2)';this.style.background='rgba(238,243,252,.6)'">
+          <input type="checkbox" id="xls-unassigned" checked
+                 style="width:16px;height:16px;accent-color:#1e5bb8;cursor:pointer;">
+          <div>
+            <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#1e5bb8;">
+              🔓 Unassigned
+            </div>
+            <div style="font-size:10.5px;color:#5278a8;margin-top:2px;">Unassigned devices</div>
+          </div>
+        </label>
+
+        <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;
+               border-radius:11px;cursor:pointer;border:2px solid rgba(5,150,105,.2);
+               background:rgba(236,253,245,.6);transition:all .15s;user-select:none;"
+               onmouseover="this.style.borderColor='#059669';this.style.background='rgba(209,250,229,.7)'"
+               onmouseout="this.style.borderColor='rgba(5,150,105,.2)';this.style.background='rgba(236,253,245,.6)'">
+          <input type="checkbox" id="xls-lan" checked
+                 style="width:16px;height:16px;accent-color:#059669;cursor:pointer;">
+          <div>
+            <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#059669;">
+              🔌 LAN Equipment
+            </div>
+            <div style="font-size:10.5px;color:#5278a8;margin-top:2px;">UTP, RJ-45 & Others stock + history</div>
+          </div>
+        </label>
+
+        <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;
+               border-radius:11px;cursor:pointer;border:2px solid rgba(185,28,28,.2);
+               background:rgba(254,242,242,.6);transition:all .15s;user-select:none;"
+               onmouseover="this.style.borderColor='#b91c1c';this.style.background='rgba(254,226,226,.7)'"
+               onmouseout="this.style.borderColor='rgba(185,28,28,.2)';this.style.background='rgba(254,242,242,.6)'">
+          <input type="checkbox" id="xls-deleted" checked
+                 style="width:16px;height:16px;accent-color:#b91c1c;cursor:pointer;">
+          <div>
+            <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#b91c1c;">
+              🗑️ Deleted Items
+            </div>
+            <div style="font-size:10.5px;color:#5278a8;margin-top:2px;">সব deleted items with reason</div>
+          </div>
+        </label>
+
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:18px;">
+        <button onclick="closeXlsxModal()"
+          style="flex:1;padding:12px;background:rgba(221,232,248,.9);color:var(--text2);
+                 border:1px solid var(--border);border-radius:10px;font-family:'outfit',sans-serif;
+                 font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;">
+          Cancel
+        </button>
+        <button onclick="exportXlsx()"
+          style="flex:2;padding:12px;background:linear-gradient(135deg,#059669,#0077b6);
+                 color:#fff;border:none;border-radius:10px;font-family:'outfit',sans-serif;
+                 font-size:13px;font-weight:700;cursor:pointer;
+                 box-shadow:0 4px 16px rgba(5,150,105,.35);transition:all .2s;"
+          onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 22px rgba(5,150,105,.5)'"
+          onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(5,150,105,.35)'">
+          📥 Download Excel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 </div>
 
 </body>
