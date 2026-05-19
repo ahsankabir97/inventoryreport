@@ -886,8 +886,8 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
     <div class="tab" id="tab-tamim" onclick="go('tamim')">
       <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fb923c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4" fill="rgba(251,146,60,.15)"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M15.5 6.5 C16.5 5 18 5.5 18.5 7"/></svg></span><span class="tab-label">Tamim</span><span class="badge" id="b-tamim">0</span>
     </div>
-    <div class="tab" id="tab-nazrul" onclick="go('nazrul')">
-      <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4" fill="rgba(167,139,250,.15)"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M15.5 6.5 C16.5 5 18 5.5 18.5 7"/></svg></span><span class="tab-label">Nazrul</span><span class="badge" id="b-nazrul">0</span>
+    <div class="tab" id="tab-reserved" onclick="go('reserved')">
+      <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4" fill="rgba(167,139,250,.15)"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M15.5 6.5 C16.5 5 18 5.5 18.5 7"/></svg></span><span class="tab-label">Reserved</span><span class="badge" id="b-reserved">0</span>
     </div>
 
     <div class="sidebar-divider"></div>
@@ -960,7 +960,7 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
     <div class="page" id="page-rupchan"></div>
     <div class="page" id="page-amit"></div>
     <div class="page" id="page-tamim"></div>
-    <div class="page" id="page-nazrul"></div>
+    <div class="page" id="page-reserved"></div>
 
     <!-- MANAGE SYSTEM -->
     <div class="page" id="page-manage">
@@ -1320,7 +1320,7 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
   });
 </script>
 <script>
-const ENGS=['rupchan','amit','tamim','nazrul'];
+const ENGS=['rupchan','amit','tamim','reserved'];
 function gid(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5);}
 
 let CUSTOM_ITEMS=JSON.parse(localStorage.getItem('customItems')||'[]');
@@ -1329,7 +1329,7 @@ function saveCustomItems(){localStorage.setItem('customItems',JSON.stringify(CUS
 let HIDDEN_ITEMS=JSON.parse(localStorage.getItem('hiddenItems')||'[]');
 function saveHiddenItems(){localStorage.setItem('hiddenItems',JSON.stringify(HIDDEN_ITEMS));}
 
-let D={unassigned:[],deleted:[],rupchan:[],amit:[],tamim:[],nazrul:[],done:[]};
+let D={unassigned:[],deleted:[],rupchan:[],amit:[],tamim:[],reserved:[],done:[]};
 
 function fd(iso){
   if(!iso)return '';
@@ -1340,7 +1340,7 @@ function fd(iso){
 // ── SYNC ─────────────────────────────────────────────────────────────
 let _lastVersion=0,_pushTimer=null,_pollHandle=null,_userMadeChange=false;
 function getUrl(){return localStorage.getItem('sheetsUrl')||'';}
-function countItems(obj){return(obj.rupchan||[]).length+(obj.amit||[]).length+(obj.tamim||[]).length+(obj.nazrul||[]).length+(obj.unassigned||[]).length+(obj.done||[]).length;}
+function countItems(obj){return(obj.rupchan||[]).length+(obj.amit||[]).length+(obj.tamim||[]).length+(obj.reserved||[]).length+(obj.unassigned||[]).length+(obj.done||[]).length;}
 function save(){
   _userMadeChange = true;
   D._version = Date.now();
@@ -1544,7 +1544,7 @@ const dvBadge=document.getElementById('b-deleted-view');
 
   const q=sq();
 
-  const ENG_COLORS={rupchan:'#f472b6',amit:'#34d399',tamim:'#fb923c',nazrul:'#a78bfa'};
+  const ENG_COLORS={rupchan:'#f472b6',amit:'#34d399',tamim:'#fb923c',reserved:'#a78bfa'};
 
   ENGS.forEach(eng=>{
     const engColor=ENG_COLORS[eng]||'#60a5fa';
@@ -2042,7 +2042,7 @@ function doPost(e) {
     var mainHeaders    = ["Sheet","#","Item Name","Serial/MAC","Status","Technician","Client ID","Ticket ID","Engineer","Remarks","Date"];
     var deletedHeaders = ["#","Item Name","Serial/MAC","Was In","Status","Deleted At","Remarks"];
 
-    var sheetNames = ["Rupchan","Amit","Tamim","Nazrul","Done","Unassigned","All Equipment","Deleted"];
+    var sheetNames = ["Rupchan","Amit","Tamim","Reserved","Done","Unassigned","All Equipment","Deleted"];
     sheetNames.forEach(function(name) {
       var sh = ss.getSheetByName(name) || ss.insertSheet(name);
       sh.clearContents();
@@ -2060,7 +2060,7 @@ function doPost(e) {
       sh.getRange(2,1,numRows,numCols).setFontWeight("bold").setHorizontalAlignment("center").setFontSize(11);
     }
 
-    ["rupchan","amit","tamim","nazrul"].forEach(function(eng) {
+    ["rupchan","amit","tamim","reserved"].forEach(function(eng) {
       var sh = ss.getSheetByName(eng.charAt(0).toUpperCase()+eng.slice(1));
       var rows = (data[eng]||[]).map(function(it,i) {
         return [eng,i+1,it.name,it.serial,it.status,it.tech||"",it.client||"",it.ticket||"",eng,it.remarks||"",it.date?new Date(it.date).toLocaleDateString():""];
@@ -2089,7 +2089,7 @@ function doPost(e) {
 
     var allSh = ss.getSheetByName("All Equipment");
     var allRows = [];
-    ["rupchan","amit","tamim","nazrul"].forEach(function(eng) {
+    ["rupchan","amit","tamim","reserved"].forEach(function(eng) {
       (data[eng]||[]).forEach(function(it) {
         allRows.push([eng,allRows.length+1,it.name,it.serial,it.status,it.tech||"",it.client||"",it.ticket||"",eng,it.remarks||"",it.date?new Date(it.date).toLocaleDateString():""]);
       });
@@ -2306,8 +2306,8 @@ function exportXlsx(){
   }
 
   // ── Engineers ──────────────────────────────────────────────
-  const engColors = { rupchan:'DB2777', amit:'059669', tamim:'EA580C', nazrul:'7C3AED' };
-  ['rupchan','amit','tamim','nazrul'].forEach(eng => {
+  const engColors = { rupchan:'DB2777', amit:'059669', tamim:'EA580C', reserved:'7C3AED' };
+  ['rupchan','amit','tamim','reserved'].forEach(eng => {
     if(!document.getElementById('xls-'+eng).checked) return;
     const headers = ['#','Item Name','Serial / MAC','Status','Technician','Date','Remarks'];
     const items = D[eng] || [];
@@ -2486,7 +2486,7 @@ const DEFAULT_PASSWORDS = {
   rupchan: 'Rupchan@123',
   amit:    'Amit@123',
   tamim:   'Tamim@123',
-  nazrul:  'Nazrul@123'
+  reserved:  'reserved@123'
 };
 
 let _currentUser = null;
@@ -3042,7 +3042,7 @@ function triggerPDF(type){
     else if(type==='unassigned') pdfUnassigned();
     else if(type==='lan') pdfLAN();
     else if(type==='full') pdfFull();
-    else if(['rupchan','amit','tamim','nazrul'].includes(type)) pdfEngineer(type);
+    else if(['rupchan','amit','tamim','reserved'].includes(type)) pdfEngineer(type);
   }, 120);
 }
 
@@ -3349,7 +3349,7 @@ function pdfFull(){
   </tr>`).join('') || `<tr><td colspan="9" class="empty-note">No data</td></tr>`;
 
   // Engineers sections
-  const engSections = ['rupchan','amit','tamim','nazrul'].map(eng=>{
+  const engSections = ['rupchan','amit','tamim','reserved'].map(eng=>{
     const items = D[eng]||[];
     const engName = eng.charAt(0).toUpperCase()+eng.slice(1);
     const rows = items.map((it,i)=>`<tr>
@@ -3702,11 +3702,11 @@ function pdfFull(){
           <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5px;color:#5278a8;margin-top:3px;font-weight:500;">Tamim's assigned devices</div>
         </div>
 
-        <!-- Nazrul -->
-        <div class="pdf-opt-card" onclick="triggerPDF('nazrul')" style="cursor:pointer;border:2px solid rgba(167,139,250,.25);border-radius:13px;padding:16px 14px;background:rgba(245,243,255,.6);transition:all .16s;user-select:none;" onmouseover="this.style.borderColor='#a78bfa';this.style.background='rgba(221,214,254,.7)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(167,139,250,.25)';this.style.background='rgba(245,243,255,.6)';this.style.transform=''">
+        <!-- Reserved -->
+        <div class="pdf-opt-card" onclick="triggerPDF('reserved')" style="cursor:pointer;border:2px solid rgba(167,139,250,.25);border-radius:13px;padding:16px 14px;background:rgba(245,243,255,.6);transition:all .16s;user-select:none;" onmouseover="this.style.borderColor='#a78bfa';this.style.background='rgba(221,214,254,.7)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(167,139,250,.25)';this.style.background='rgba(245,243,255,.6)';this.style.transform=''">
           <div style="font-size:24px;margin-bottom:8px;">👤</div>
-          <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#7c3aed;">Nazrul</div>
-          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5px;color:#5278a8;margin-top:3px;font-weight:500;">Nazrul's assigned devices</div>
+          <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#7c3aed;">Reserved</div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5px;color:#5278a8;margin-top:3px;font-weight:500;">Reserved's assigned devices</div>
         </div>
 
         <!-- Unassigned -->
@@ -3841,13 +3841,13 @@ function pdfFull(){
                background:rgba(245,243,255,.6);transition:all .15s;user-select:none;"
                onmouseover="this.style.borderColor='#a78bfa';this.style.background='rgba(221,214,254,.7)'"
                onmouseout="this.style.borderColor='rgba(167,139,250,.2)';this.style.background='rgba(245,243,255,.6)'">
-          <input type="checkbox" id="xls-nazrul" checked
+          <input type="checkbox" id="xls-reserved" checked
                  style="width:16px;height:16px;accent-color:#7c3aed;cursor:pointer;">
           <div>
             <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#7c3aed;">
-              👤 Nazrul
+              👤 Reserved
             </div>
-            <div style="font-size:10.5px;color:#5278a8;margin-top:2px;">Nazrul এর devices</div>
+            <div style="font-size:10.5px;color:#5278a8;margin-top:2px;">Reserved এর devices</div>
           </div>
         </label>
 
