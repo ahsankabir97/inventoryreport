@@ -857,25 +857,7 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
 
   <!-- SIDEBAR -->
   <nav class="sidebar">
-    <div class="sidebar-nav-items">
-    <div class="sidebar-section">Equipment</div>
-    <div class="tab active" id="tab-all" onclick="go('all')">
-      <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3" fill="rgba(96,165,250,.18)"/><path d="M3 5v6c0 1.66 4.03 3 9 3s9-1.34 9-3V5" fill="rgba(96,165,250,.1)"/><path d="M3 11v6c0 1.66 4.03 3 9 3s9-1.34 9-3v-6" fill="rgba(96,165,250,.06)"/></svg></span><span class="tab-label">ALL Equipment</span><span class="badge" id="b-all">0</span>
-    </div>
-    <div class="tab" id="tab-lan" onclick="goLan('utp')">
-      <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="6" height="6" rx="1" fill="rgba(52,211,153,.15)"/><rect x="16" y="2" width="6" height="6" rx="1" fill="rgba(52,211,153,.15)"/><rect x="9" y="16" width="6" height="6" rx="1" fill="rgba(52,211,153,.15)"/><line x1="5" y1="8" x2="5" y2="12"/><line x1="19" y1="8" x2="19" y2="12"/><line x1="5" y1="12" x2="19" y2="12"/><line x1="12" y1="12" x2="12" y2="16"/></svg></span>
-      <span class="tab-label">LAN Equipment</span>
-    </div>
-    <div class="tab" id="tab-done" onclick="go('done')">
-      <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" opacity=".4" stroke="#22c55e"/><path d="M7.5 12.5l3 3 6-6" stroke="#22c55e"/></svg></span><span class="tab-label">Done List</span><span class="badge" id="b-done">0</span>
-    </div>
-<div class="tab" id="tab-deleted-view" onclick="go('deleted-view')">
-      <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></span>
-      <span class="tab-label">Deleted Items</span>
-      <span class="badge" id="b-deleted-view" style="background:rgba(248,113,113,.2);color:#f87171;border-color:rgba(248,113,113,.3);">0</span>
-    </div>
-
-    <div class="sidebar-divider"></div>
+   <div class="sidebar-nav-items">
     <div class="sidebar-section">Engineers</div>
     <div class="tab" id="tab-rupchan" onclick="go('rupchan')">
       <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4" fill="rgba(244,114,182,.15)"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M15.5 6.5 C16.5 5 18 5.5 18.5 7"/></svg></span><span class="tab-label">Rupchan</span><span class="badge" id="b-rupchan">0</span>
@@ -888,6 +870,38 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
     </div>
     <div class="tab" id="tab-reserved" onclick="go('reserved')">
       <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4" fill="rgba(167,139,250,.15)"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M15.5 6.5 C16.5 5 18 5.5 18.5 7"/></svg></span><span class="tab-label">Reserved</span><span class="badge" id="b-reserved">0</span>
+    </div>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Equipment</div>
+    <div class="tab active" id="tab-all" onclick="go('all')">
+      <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3" fill="rgba(96,165,250,.18)"/><path d="M3 5v6c0 1.66 4.03 3 9 3s9-1.34 9-3V5" fill="rgba(96,165,250,.1)"/><path d="M3 11v6c0 1.66 4.03 3 9 3s9-1.34 9-3v-6" fill="rgba(96,165,250,.06)"/></svg></span><span class="tab-label">ALL Equipment</span><span class="badge" id="b-all">0</span>
+    </div>
+    <div class="tab" id="tab-lan" onclick="goLan('utp')">
+      <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="6" height="6" rx="1" fill="rgba(52,211,153,.15)"/><rect x="16" y="2" width="6" height="6" rx="1" fill="rgba(52,211,153,.15)"/><rect x="9" y="16" width="6" height="6" rx="1" fill="rgba(52,211,153,.15)"/><line x1="5" y1="8" x2="5" y2="12"/><line x1="19" y1="8" x2="19" y2="12"/><line x1="5" y1="12" x2="19" y2="12"/><line x1="12" y1="12" x2="12" y2="16"/></svg></span>
+      <span class="tab-label">LAN Equipment</span>
+    </div>
+    <div class="tab" id="tab-radio" onclick="go('radio')">
+      <span class="tab-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 8l1.5 1.5"/><path d="M18.5 8L17 9.5"/>
+          <path d="M3 5l2 2"/><path d="M21 5l-2 2"/>
+          <rect x="7" y="11" width="10" height="10" rx="1" fill="rgba(245,158,11,.15)"/>
+          <circle cx="12" cy="16" r="1.5" fill="#f59e0b"/>
+          <line x1="12" y1="11" x2="12" y2="8"/>
+          <circle cx="12" cy="7" r="1" fill="rgba(245,158,11,.4)"/>
+        </svg>
+      </span>
+      <span class="tab-label">Radio Device</span>
+      <span class="badge" id="b-radio" style="background:rgba(245,158,11,.2);color:#b45309;border-color:rgba(245,158,11,.3);">0</span>
+    </div>
+    <div class="tab" id="tab-done" onclick="go('done')">
+      <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" opacity=".4" stroke="#22c55e"/><path d="M7.5 12.5l3 3 6-6" stroke="#22c55e"/></svg></span><span class="tab-label">Done List</span><span class="badge" id="b-done">0</span>
+    </div>
+    <div class="tab" id="tab-deleted-view" onclick="go('deleted-view')">
+      <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></span>
+      <span class="tab-label">Deleted Items</span>
+      <span class="badge" id="b-deleted-view" style="background:rgba(248,113,113,.2);color:#f87171;border-color:rgba(248,113,113,.3);">0</span>
     </div>
 
     <div class="sidebar-divider"></div>
@@ -961,7 +975,8 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
     <div class="page" id="page-amit"></div>
     <div class="page" id="page-tamim"></div>
     <div class="page" id="page-reserved"></div>
-
+<div class="page" id="page-radio"></div>
+	
     <!-- MANAGE SYSTEM -->
     <div class="page" id="page-manage">
 
@@ -1533,6 +1548,17 @@ function renderAll(){
   document.getElementById('b-all').textContent=tot;
   document.getElementById('b-un').textContent=(D.unassigned||[]).length;
   document.getElementById('b-deleted').textContent=(D.deleted||[]).length;
+const RADIO_ITEMS_LIST = ['epmp cambium integrate radio sm-180','epmp cambium eforce300 with dish','nano airfiber 5xhd','nano power beam-m5 620','nano power beam-400','nano rocket ac-lite'];
+let radioCount = 0;
+ENGS.forEach(eng => {
+  (D[eng]||[]).forEach(it => {
+    if(RADIO_ITEMS_LIST.some(r => it.name && it.name.toLowerCase().includes(r))) radioCount++;
+  });
+});
+(D.unassigned||[]).forEach(it => {
+  if(RADIO_ITEMS_LIST.some(r => it.name && it.name.toLowerCase().includes(r))) radioCount++;
+});
+document.getElementById('b-radio').textContent = radioCount;
 const dvBadge=document.getElementById('b-deleted-view');
   if(dvBadge) dvBadge.textContent=(D.deleted||[]).length;
 
@@ -1693,6 +1719,83 @@ const dvBadge=document.getElementById('b-deleted-view');
       ${_currentUser==='admin' ? `<td><button class="ab restore" onclick="restoreDeleted('${it.id}')">↩ Restore</button></td>` : '<td>—</td>'}
       ${_currentUser==='admin'?`<td><button class="ab x" onclick="permDeleteItem('${it.id}')">🗑</button></td>`:''}
     </tr>`).join('')}</tbody></table>`;
+  }
+// Radio Device page
+  const radioPage = document.getElementById('page-radio');
+  if(radioPage && radioPage.classList.contains('active')){
+    const RADIO_ITEMS = ['ePMP Cambium Integrate Radio SM-180','ePMP Cambium Eforce300 With Dish','NANO AIRFIBER 5XHD','NANO POWER BEAM-M5 620','NANO POWER BEAM-400','NANO ROCKET AC-LITE'];
+    let radioRows = [];
+    ENGS.forEach(eng => {
+      (D[eng]||[]).forEach(it => {
+        if(RADIO_ITEMS.some(r => it.name && it.name.toLowerCase().includes(r.toLowerCase()))){
+          radioRows.push({...it, _eng: cap(eng)});
+        }
+      });
+    });
+    (D.unassigned||[]).forEach(it => {
+      if(RADIO_ITEMS.some(r => it.name && it.name.toLowerCase().includes(r.toLowerCase()))){
+        radioRows.push({...it, _eng: '—', status: 'Unassigned'});
+      }
+    });
+    
+// Done items নিচে, বাকিগুলো উপরে
+    radioRows.sort((a, b) => {
+      const nameA = (a.name||'').toLowerCase();
+      const nameB = (b.name||'').toLowerCase();
+      if(nameA < nameB) return -1;
+      if(nameA > nameB) return 1;
+      return 0;
+    });
+    const ENG_COLORS = {rupchan:'#f472b6', amit:'#34d399', tamim:'#fb923c', reserved:'#a78bfa'};
+    radioPage.innerHTML = `
+      <div class="sh">
+        <div class="st">📡 Radio <span>Devices</span></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
+          <span style="font-size:12px;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;">
+            Total: <strong style="color:var(--accent2);">${radioRows.length}</strong>
+          </span>
+        </div>
+      </div>
+      <div class="stats" style="margin-bottom:18px;">
+        <div class="stat t">
+          <span class="stat-icon">📡</span>
+          <div class="stat-text-wrap"><div class="lb">Total</div><div class="vl">${radioRows.length}</div></div>
+        </div>
+        <div class="stat ih">
+          <span class="stat-icon">✋</span>
+          <div class="stat-text-wrap"><div class="lb">IN-Hand</div><div class="vl">${radioRows.filter(r=>r.status==='IN-Hand').length}</div></div>
+        </div>
+        <div class="stat dn">
+          <span class="stat-icon">✅</span>
+          <div class="stat-text-wrap"><div class="lb">Done</div><div class="vl">${radioRows.filter(r=>r.status==='Done').length}</div></div>
+        </div>
+        <div class="stat pv">
+          <span class="stat-icon">↗</span>
+          <div class="stat-text-wrap"><div class="lb">Provided</div><div class="vl">${radioRows.filter(r=>r.status==='Provided').length}</div></div>
+        </div>
+      </div>
+      ${radioRows.length === 0
+        ? `<div class="tbl-wrap"><div class="empty"><div class="ico">📡</div><div>No Radio Devices found.</div><div class="sub">Add radio items from Manage → Entry</div></div></div>`
+        : `<div class="tbl-wrap"><table>
+            <thead><tr>
+              <th>#</th><th>Item Name</th><th>Serial / MAC</th>
+              <th>Assigned To</th><th>Status</th><th>Technician</th>
+              <th>Client</th><th>Ticket</th><th>Date</th><th>Remarks</th>
+            </tr></thead>
+            <tbody>${radioRows.map((r,i) => `<tr>
+              <td class="tm">${i+1}</td>
+              <td class="tn">${e(r.name)}</td>
+              <td class="ts">${e(r.serial)}</td>
+              <td><span class="tag-e" style="color:${ENG_COLORS[r._eng?.toLowerCase()]||'var(--accent2)'};">${e(r._eng)}</span></td>
+              <td><span class="status ${r.status==='IN-Hand'?'si':r.status==='Done'?'sd':r.status==='Provided'?'sp':'si'}">${r.status==='IN-Hand'?'In Hand':r.status||'Unassigned'}</span></td>
+              <td class="tm">${e(r.tech||'—')}</td>
+              <td class="tm">${e(r.client||'—')}</td>
+              <td class="tm">${e(r.ticket||'—')}</td>
+              <td class="tt">${fd(r.date||'')}</td>
+              <td class="tm">${e(r.remarks||'')}</td>
+            </tr>`).join('')}</tbody>
+          </table></div>`
+      }`;
   }
 }
 
