@@ -1683,15 +1683,24 @@ const dvBadge=document.getElementById('b-deleted-view');
   else renderAllTable(rows);
 
   // Unassigned
+  // Unassigned
   const unQ=(document.getElementById('unSearch')?.value||'').trim().toLowerCase();
   let un=D.unassigned||[];
   if(unQ)un=un.filter(i=>i.name.toLowerCase().includes(unQ)||i.serial.toLowerCase().includes(unQ));
+  // Sort by item name (alphabetical), same names grouped together
+  un=[...un].sort((a,b)=>{
+    const na=(a.name||'').toLowerCase();
+    const nb=(b.name||'').toLowerCase();
+    if(na<nb)return -1;
+    if(na>nb)return 1;
+    return 0;
+  });
   const uw=document.getElementById('unWrap');
   if(uw){
     if(!un.length)uw.innerHTML=`<div class="empty"><div class="ico">🔓</div><div>No unassigned devices.</div><div class="sub">Add devices from Entry to see them here.</div></div>`;
     else uw.innerHTML=`<table><thead><tr><th>#</th><th>Item Name</th><th>Serial / MAC</th><th>Remarks</th><th>Assign To →</th><th></th></tr></thead><tbody>${un.map((it,i)=>`<tr>
       <td class="tm">${i+1}</td>
-      <td class="tn">${hl(it.name,q)}</td>
+      <td class="tn" style="white-space:nowrap;max-width:none;">${hl(it.name,q)}</td>
       <td class="ts">${hl(it.serial,q)}</td>
       <td class="tm">${e(it.remarks||'')}</td>
       <td><div class="ar">${ENGS.map(eng=>`<button class="ab" onclick="authGuard('assign','${eng}',()=>assignPool('${it.id}','${eng}'))">${cap(eng)}</button>`).join('')}</div></td>
