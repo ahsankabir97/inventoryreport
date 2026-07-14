@@ -1661,7 +1661,7 @@ function renderAll(){
   document.getElementById('b-all').textContent=tot;
   document.getElementById('b-un').textContent=(D.unassigned||[]).length;
   document.getElementById('b-deleted').textContent=(D.deleted||[]).length;
-const RADIO_ITEMS_LIST = ['epmp cambium integrate radio sm-180','epmp cambium eforce300 with dish','nano airfiber 5xhd','nano power beam-m5 620','nano power beam-400','nano rocket ac-lite'];
+const RADIO_ITEMS_LIST = ['epmp cambium integrate radio sm-180','epmp cambium eforce300 with dish','epmp cambium eforce200','nano airfiber 5xhd','nano power beam-m5 620','nano power beam-400','nano rocket ac-lite'];
 let radioCount = 0;
 ENGS.forEach(eng => {
   (D[eng]||[]).forEach(it => {
@@ -1845,7 +1845,7 @@ const dvBadge=document.getElementById('b-deleted-view');
 // Radio Device page
   const radioPage = document.getElementById('page-radio');
   if(radioPage && radioPage.classList.contains('active')){
-    const RADIO_ITEMS = ['ePMP Cambium Integrate Radio SM-180','ePMP Cambium Eforce300 With Dish','NANO AIRFIBER 5XHD','NANO POWER BEAM-M5 620','NANO POWER BEAM-400','NANO ROCKET AC-LITE'];
+    const RADIO_ITEMS = ['ePMP Cambium Integrate Radio SM-180','ePMP Cambium Eforce300 With Dish','ePMP Cambium Eforce200','NANO AIRFIBER 5XHD','NANO POWER BEAM-M5 620','NANO POWER BEAM-400','NANO ROCKET AC-LITE'];
     let radioRows = [];
     ENGS.forEach(eng => {
       (D[eng]||[]).forEach(it => {
