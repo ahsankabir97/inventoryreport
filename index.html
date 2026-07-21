@@ -1483,6 +1483,15 @@ function logSerial(serial,action,detail){
   if(!D.serialLog[serial])D.serialLog[serial]=[];
   D.serialLog[serial].push({date:new Date().toISOString(),action,detail:detail||'',by:_currentUser||'unknown'});
 }
+function serialHistColor(action){
+  switch(action){
+    case 'Provided': return '#ef6c00';
+    case 'Returned': return '#1565c0';
+    case 'Done': return '#1b7a3d';
+    case 'Deleted': return '#c62828';
+    default: return 'var(--accent2)';
+  }
+}
 function showSerialHistory(serial){
   if(!D.serialLog)D.serialLog={};
   const log=(D.serialLog[serial]||[]).slice().sort((a,b)=>new Date(a.date)-new Date(b.date));
@@ -1498,7 +1507,7 @@ function showSerialHistory(serial){
       ${log.map((h,i)=>`<tr>
         <td class="tm">${i+1}</td>
         <td class="tt" style="white-space:nowrap;">${fdt(h.date)}</td>
-        <td class="tm" style="font-weight:800;color:var(--accent2);">${e(h.action)}</td>
+        <td class="tm" style="font-weight:800;color:${serialHistColor(h.action)};">${e(h.action)}</td>
         <td class="tm">${e(h.detail||'—')}</td>
         <td class="tm" style="font-weight:700;">${e(h.by?cap(h.by):'—')}</td>
       </tr>`).join('')}
