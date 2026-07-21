@@ -1396,6 +1396,18 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
   </div>
 </div>
 
+<!-- SERIAL / MAC HISTORY MODAL -->
+<div class="mbg" id="serialHistModal" onclick="if(event.target===this)closeSerialHist()">
+  <div class="modal" style="max-width:640px;width:92%;max-height:80vh;display:flex;flex-direction:column;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px;">
+      <h3 style="margin:0;display:flex;align-items:center;gap:8px;">🕓 Device History <span id="serialHistTitle" style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--accent2);background:rgba(59,130,246,.1);padding:3px 10px;border-radius:7px;"></span></h3>
+      <button onclick="closeSerialHist()" style="background:rgba(198,40,40,.1);border:1.5px solid rgba(198,40,40,.25);color:#b91c1c;border-radius:7px;width:28px;height:28px;cursor:pointer;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;" onmouseover="this.style.background='#b91c1c';this.style.color='#fff'" onmouseout="this.style.background='rgba(198,40,40,.1)';this.style.color='#b91c1c'">✕</button>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Entry থেকে এখন পর্যন্ত এই ডিভাইসের সম্পূর্ণ মুভমেন্ট হিস্টোরি — কোন তারিখে কাকে দেওয়া হয়েছিল।</div>
+    <div id="serialHistBody" class="tbl-wrap" style="overflow:auto;flex:1;"></div>
+  </div>
+</div>
+
 <div id="toast"></div>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -1457,7 +1469,42 @@ function saveCustomItems(){localStorage.setItem('customItems',JSON.stringify(CUS
 let HIDDEN_ITEMS=JSON.parse(localStorage.getItem('hiddenItems')||'[]');
 function saveHiddenItems(){localStorage.setItem('hiddenItems',JSON.stringify(HIDDEN_ITEMS));}
 
-let D={unassigned:[],deleted:[],rupchan:[],amit:[],tamim:[],reserved:[],done:[]};
+let D={unassigned:[],deleted:[],rupchan:[],amit:[],tamim:[],reserved:[],done:[],serialLog:{}};
+
+// ── SERIAL / MAC HISTORY LOG ───────────────────────────────────────────
+function logSerial(serial,action,detail){
+  if(!serial)return;
+  if(!D.serialLog)D.serialLog={};
+  if(!D.serialLog[serial])D.serialLog[serial]=[];
+  D.serialLog[serial].push({date:new Date().toISOString(),action,detail:detail||'',by:_currentUser||'unknown'});
+}
+function showSerialHistory(serial){
+  if(!D.serialLog)D.serialLog={};
+  const log=(D.serialLog[serial]||[]).slice().sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const modal=document.getElementById('serialHistModal');
+  const body=document.getElementById('serialHistBody');
+  const title=document.getElementById('serialHistTitle');
+  if(!modal||!body||!title)return;
+  title.textContent=serial;
+  if(!log.length){
+    body.innerHTML=`<div class="empty" style="padding:30px 10px;"><div class="ico">🕓</div>No history found for this device yet.</div>`;
+  }else{
+    body.innerHTML=`<table style="min-width:100%;"><thead><tr><th>#</th><th>Date</th><th>Event</th><th>Details</th><th>By</th></tr></thead><tbody>
+      ${log.map((h,i)=>`<tr>
+        <td class="tm">${i+1}</td>
+        <td class="tt">${fd(h.date)}</td>
+        <td class="tm" style="font-weight:800;color:var(--accent2);">${e(h.action)}</td>
+        <td class="tm">${e(h.detail||'—')}</td>
+        <td class="tm" style="font-weight:700;">${e(h.by?cap(h.by):'—')}</td>
+      </tr>`).join('')}
+    </tbody></table>`;
+  }
+  modal.classList.add('open');
+}
+function closeSerialHist(){
+  const modal=document.getElementById('serialHistModal');
+  if(modal)modal.classList.remove('open');
+}
 
 function fd(iso){
   if(!iso)return '';
@@ -1706,7 +1753,7 @@ const dvBadge=document.getElementById('b-deleted-view');
       <tbody>${items.map((it,i)=>`<tr data-status="${it.status}" class="${it.status==='Provided'?'provided-highlight':''}" onclick="toggleProvidedHighlight(this)">
         <td class="tm">${i+1}</td>
         <td class="tn">${hl(it.name,engQ)}</td>
-        <td class="ts" style="font-weight:700;">${hl(it.serial,engQ)}</td>
+        <td class="ts" style="font-weight:700;cursor:pointer;" title="Click to view history" onclick="event.stopPropagation();showSerialHistory('${it.serial}')">${hl(it.serial,engQ)}</td>
         <td><span class="status ${it.status==='IN-Hand'?'si':it.status==='Done'?'sd':'sp'}">${it.status}</span></td>
         <td class="tm">${e(it.tech||'—')}</td>
         <td class="tt">${fd(it.date)}</td>
@@ -1757,7 +1804,7 @@ const dvBadge=document.getElementById('b-deleted-view');
   else dw.innerHTML=`<table><thead><tr><th>#</th><th>Item Name</th><th>Serial / MAC</th><th>Client ID</th><th>Ticket ID</th><th>Technician</th><th>Engineer</th><th>Date</th><th>Remarks</th><th></th></tr></thead><tbody>${di.map((it,i)=>`<tr>
     <td class="tm">${i+1}</td>
     <td class="tn">${hl(it.name,q)}</td>
-    <td class="ts">${hl(it.serial,q)}</td>
+    <td class="ts" style="cursor:pointer;" title="Click to view history" onclick="showSerialHistory('${it.serial}')">${hl(it.serial,q)}</td>
     <td class="tm">${e(it.client||'')}</td>
     <td class="tm" style="white-space:nowrap;">${e(it.ticket||'')}</td>
     <td class="tm">${e(it.tech||'')}</td>
@@ -1814,7 +1861,7 @@ const dvBadge=document.getElementById('b-deleted-view');
     else uw.innerHTML=`<table><thead><tr><th>#</th><th>Item Name</th><th>Serial / MAC</th><th>Remarks</th><th>Assign To →</th><th></th></tr></thead><tbody>${un.map((it,i)=>`<tr>
       <td class="tm">${i+1}</td>
       <td class="tn">${hl(it.name,q)}</td>
-      <td class="ts">${hl(it.serial,q)}</td>
+      <td class="ts" style="cursor:pointer;" title="Click to view history" onclick="showSerialHistory('${it.serial}')">${hl(it.serial,q)}</td>
       <td class="tm">${e(it.remarks||'')}</td>
       <td><div class="ar">${ENGS.map(eng=>`<button class="ab" onclick="authGuard('assign','${eng}',()=>assignPool('${it.id}','${eng}'))">${cap(eng)}</button>`).join('')}</div></td>
       <td><button class="ab x" onclick="authGuard('delete',null,()=>delPool('${it.id}'))">🗑</button></td>
@@ -1832,7 +1879,7 @@ const dvBadge=document.getElementById('b-deleted-view');
     else delW.innerHTML=`<table style="min-width:100%"><thead><tr><th>#</th><th>Item Name</th><th>Serial / MAC</th><th>Was In</th><th>Status</th><th>Deleted By</th><th>Reason</th><th>Deleted On</th><th>Restore</th>${_currentUser==='admin'?'<th>Del</th>':''}</tr></thead><tbody>${del.map((it,i)=>`<tr>
       <td class="tm">${i+1}</td>
       <td class="tn">${hl(it.name,q)}</td>
-      <td class="ts">${hl(it.serial,q)}</td>
+      <td class="ts" style="cursor:pointer;" title="Click to view history" onclick="showSerialHistory('${it.serial}')">${hl(it.serial,q)}</td>
       <td><span class="tag-e">${e(it._deletedFrom||'—')}</span></td>
       <td><span class="status ${it.status==='IN-Hand'?'si':it.status==='Done'?'sd':it.status==='Provided'?'sp':'si'}">${it.status||'—'}</span></td>
       <td class="tm" style="font-weight:700;color:var(--accent2);">${e(it._deletedBy?cap(it._deletedBy):'—')}</td>
@@ -1907,7 +1954,7 @@ const dvBadge=document.getElementById('b-deleted-view');
             <tbody>${radioRows.map((r,i) => `<tr>
               <td class="tm">${i+1}</td>
               <td class="tn">${e(r.name)}</td>
-              <td class="ts">${e(r.serial)}</td>
+              <td class="ts" style="cursor:pointer;" title="Click to view history" onclick="showSerialHistory('${r.serial}')">${e(r.serial)}</td>
               <td><span class="tag-e" style="color:${ENG_COLORS[r._eng?.toLowerCase()]||'var(--accent2)'};">${e(r._eng)}</span></td>
               <td><span class="status ${r.status==='IN-Hand'?'si':r.status==='Done'?'sd':r.status==='Provided'?'sp':'si'}">${r.status==='IN-Hand'?'In Hand':r.status||'Unassigned'}</span></td>
               <td class="tm">${e(r.tech||'—')}</td>
@@ -1930,7 +1977,7 @@ function renderAllTable(rows){
   <tbody>${rows.map((r,i)=>`<tr>
     <td class="tm">${i+1}</td>
     <td class="tn">${hl(r.name,q)}</td>
-    <td class="ts">${hl(r.serial,q)}</td>
+    <td class="ts" style="cursor:pointer;" title="Click to view history" onclick="showSerialHistory('${r.serial}')">${hl(r.serial,q)}</td>
     <td><span class="tag-e" style="font-size:10px;padding:3px 9px;font-weight:800;">${e(r._eng)}</span></td>
     <td><span class="status ${r.status==='IN-Hand'?'si':r.status==='Done'?'sd':r.status==='Provided'?'sp':'si'}">${r.status==='IN-Hand'?'In Hand':r.status}</span></td>
     <td class="tm">${e(r.client||'—')}</td>
@@ -1984,7 +2031,7 @@ function updatePreview(){
 function addPool(){
   const{name,brand,serials,remarks}=getForm();
   if(!name||!serials.length){alert('Please enter Item Name and at least one Serial!');return;}
-  serials.forEach(serial=>D.unassigned.unshift({id:gid(),name,brand,serial,remarks}));
+  serials.forEach(serial=>{D.unassigned.unshift({id:gid(),name,brand,serial,remarks});logSerial(serial,'Entry',`Added to inventory — "${name}"`);});
   save();clearForm();renderAll();toast(`📤 ${serials.length} device(s) added to Unassigned`);
 }
 function assignPool(itemId,eng){
@@ -1992,12 +2039,14 @@ function assignPool(itemId,eng){
   const it=D.unassigned.splice(idx,1)[0];
   if(!D[eng])D[eng]=[];
   D[eng].unshift({id:gid(),name:it.name,brand:it.brand||'',serial:it.serial,status:'IN-Hand',tech:'',client:'',ticket:'',remarks:it.remarks||'',date:new Date().toISOString()});
+  logSerial(it.serial,'Assigned',`Assigned to ${cap(eng)} (In-Hand)`);
   save();renderAll();toast(`✅ "${it.serial}" → assigned to ${cap(eng)}`);
 }
 function returnIH(eng,id){
   const it=(D[eng]||[]).find(x=>x.id===id);if(!it)return;
   const prevTech=it.tech||'technician';
   it.status='IN-Hand';it.tech='';it.date=new Date().toISOString();
+  logSerial(it.serial,'Returned',`Returned from ${prevTech} to ${cap(eng)} (In-Hand)`);
   save();renderAll();
   toast(`↩ ${it.serial} has been returned from ${prevTech}`);
 }
@@ -2015,6 +2064,7 @@ function confirmProv(){
   if(!tech){alert('Please select a technician!');return;}
   const it=(D[eng]||[]).find(x=>x.id===id);if(!it)return;
   it.status='Provided';it.tech=tech;it.date=new Date().toISOString();
+  logSerial(it.serial,'Provided',`Provided to ${tech} by ${cap(eng)}`);
   save();renderAll();closeProvModal();
   toast(`↗ ${it.serial} has been provided to ${tech}`);
 }
@@ -2036,7 +2086,12 @@ function confirmDone(){
   const idx=(D[_de]||[]).findIndex(x=>x.id===_di);if(idx===-1)return;
   const it=D[_de].splice(idx,1)[0];
   if(!D.done)D.done=[];
-  D.done.unshift({id:gid(),name:it.name,brand:it.brand||'',serial:it.serial,client:document.getElementById('dc').value.trim()||it.client,ticket:document.getElementById('dt').value.trim()||it.ticket,tech:document.getElementById('dtech').value.trim(),engineer:document.getElementById('deng').value.trim(),remarks:document.getElementById('drm').value.trim()||it.remarks,date:new Date().toISOString()});
+  const _doneClient=document.getElementById('dc').value.trim()||it.client;
+  const _doneTicket=document.getElementById('dt').value.trim()||it.ticket;
+  const _doneTech=document.getElementById('dtech').value.trim();
+  const _doneEng=document.getElementById('deng').value.trim();
+  D.done.unshift({id:gid(),name:it.name,brand:it.brand||'',serial:it.serial,client:_doneClient,ticket:_doneTicket,tech:_doneTech,engineer:_doneEng,remarks:document.getElementById('drm').value.trim()||it.remarks,date:new Date().toISOString()});
+  logSerial(it.serial,'Done',`Marked Done — Tech: ${_doneTech||'—'}, Client: ${_doneClient||'—'}, Ticket: ${_doneTicket||'—'}`);
   save();closeDM();renderAll();toast('✅ Marked as Done');
 }
 
@@ -2076,15 +2131,15 @@ function confirmDelReason(){
   closeDelReason();
   if(type==='dev'){
     const it=(D[eng]||[]).find(x=>x.id===id);
-    if(it)sendToDeleted({...it,_deleteReason:reason},cap(eng));
+    if(it){sendToDeleted({...it,_deleteReason:reason},cap(eng));logSerial(it.serial,'Deleted',`Deleted from ${cap(eng)} — Reason: ${reason}`);}
     D[eng]=(D[eng]||[]).filter(x=>x.id!==id);
   } else if(type==='pool'){
     const it=(D.unassigned||[]).find(x=>x.id===id);
-    if(it)sendToDeleted({...it,status:'Unassigned',_deleteReason:reason},'Unassigned');
+    if(it){sendToDeleted({...it,status:'Unassigned',_deleteReason:reason},'Unassigned');logSerial(it.serial,'Deleted',`Deleted from Unassigned — Reason: ${reason}`);}
     D.unassigned=(D.unassigned||[]).filter(x=>x.id!==id);
   } else if(type==='done'){
     const it=(D.done||[]).find(x=>x.id===id);
-    if(it)sendToDeleted({...it,status:'Done',_deleteReason:reason},'Done');
+    if(it){sendToDeleted({...it,status:'Done',_deleteReason:reason},'Done');logSerial(it.serial,'Deleted',`Deleted from Done — Reason: ${reason}`);}
     D.done=(D.done||[]).filter(x=>x.id!==id);
   }
   save();renderAll();toast('🗑 Deleted — restore from Manage → Deleted');
@@ -2122,8 +2177,8 @@ function restoreDeleted(id){
   D.deleted.splice(idx,1);
   const item={...it};
   delete item._deletedFrom;delete item._deletedAt;delete item._deletedBy;delete item._deleteReason;
-  if(from==='Done'){if(!D.done)D.done=[];D.done.unshift({...item,id:gid()});toast(`↩ "${item.serial}" restored to Done`);}
-  else{if(!D.unassigned)D.unassigned=[];D.unassigned.unshift({...item,id:gid()});toast(`↩ "${item.serial}" restored to Unassigned`);}
+  if(from==='Done'){if(!D.done)D.done=[];D.done.unshift({...item,id:gid()});logSerial(item.serial,'Restored','Restored to Done');toast(`↩ "${item.serial}" restored to Done`);}
+  else{if(!D.unassigned)D.unassigned=[];D.unassigned.unshift({...item,id:gid()});logSerial(item.serial,'Restored','Restored to Unassigned');toast(`↩ "${item.serial}" restored to Unassigned`);}
   save();renderAll();
 }
 
@@ -2143,10 +2198,12 @@ function confirmRestoreDest(dest){
   if(dest==='eng' && engKey){
     if(!D[engKey])D[engKey]=[];
     D[engKey].unshift({...item,id:gid()});
+    logSerial(item.serial,'Restored',`Restored to ${cap(engKey)}`);
     save();renderAll();toast(`↩ "${item.serial}" restored to ${cap(engKey)}`);
   } else {
     if(!D.unassigned)D.unassigned=[];
     D.unassigned.unshift({...item,id:gid()});
+    logSerial(item.serial,'Restored','Restored to Unassigned');
     save();renderAll();toast(`↩ "${item.serial}" sent to Unassigned`);
   }
 }
@@ -2176,7 +2233,7 @@ function renderDeletedViewPage(){
       html += `<tr>
         <td class="tm">${i+1}</td>
         <td class="tn">${e(it.name)}</td>
-        <td class="ts">${e(it.serial)}</td>
+        <td class="ts" style="cursor:pointer;" title="Click to view history" onclick="showSerialHistory('${it.serial}')">${e(it.serial)}</td>
         <td><span class="tag-e">${e(it._deletedFrom||'—')}</span></td>
         <td><span class="status ${it.status==='IN-Hand'?'si':it.status==='Done'?'sd':it.status==='Provided'?'sp':'si'}">${it.status||'—'}</span></td>
         <td class="tm" style="font-weight:700;color:var(--accent2);">${e(it._deletedBy?cap(it._deletedBy):'—')}</td>
