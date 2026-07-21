@@ -1492,7 +1492,7 @@ function showSerialHistory(serial){
     body.innerHTML=`<table style="min-width:100%;"><thead><tr><th>#</th><th>Date</th><th>Event</th><th>Details</th><th>By</th></tr></thead><tbody>
       ${log.map((h,i)=>`<tr>
         <td class="tm">${i+1}</td>
-        <td class="tt">${fd(h.date)}</td>
+        <td class="tt" style="white-space:nowrap;">${fdt(h.date)}</td>
         <td class="tm" style="font-weight:800;color:var(--accent2);">${e(h.action)}</td>
         <td class="tm">${e(h.detail||'—')}</td>
         <td class="tm" style="font-weight:700;">${e(h.by?cap(h.by):'—')}</td>
@@ -1510,6 +1510,13 @@ function fd(iso){
   if(!iso)return '';
   const d=new Date(iso);
   return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+}
+function fdt(iso){
+  if(!iso)return '';
+  const d=new Date(iso);
+  const ds=d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  const ts=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:true});
+  return `${ds} <span style="color:#0a1e4a;font-weight:800;font-size:10.5px;">(${ts})</span>`;
 }
 
 // ── SYNC ─────────────────────────────────────────────────────────────
