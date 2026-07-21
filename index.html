@@ -2473,6 +2473,9 @@ go('all');
 if(_savedUrl){
   pullFromSheets(true).then(()=>{startPolling();});
 }
+
+// ── AUTO PAGE REFRESH (every 10 minutes) ───────────────────────────────
+setInterval(()=>{ location.reload(); }, 10*60*1000);
 // ═══════════════════════════════════════════════════════════════════
 // EXCEL EXPORT SYSTEM
 // ═══════════════════════════════════════════════════════════════════
