@@ -2173,6 +2173,7 @@ function delDone(id){openDelReason('done',null,id);}
 
 let _restorePendingId = null;
 let _restorePendingEngKey = null;
+let _restorePendingFrom = null;
 
 function restoreDeleted(id){
   if(_currentUser !== 'admin'){ authError(); return; } // এই line যোগ করো
@@ -2186,26 +2187,43 @@ function restoreDeleted(id){
     en.toLowerCase()===from.toLowerCase()
   );
 
+  // Always ask where the item should be restored to, whatever it was deleted from
+  _restorePendingId = id;
+  _restorePendingEngKey = engKey || null;
+  _restorePendingFrom = from;
+
+  document.getElementById('restoreDestSub').textContent = `"${it.serial}" (${it.name}) — where should it go?`;
+
+  const engRow = document.getElementById('restoreOptEng');
+  const doneRow = document.getElementById('restoreOptDone');
+
   if(engKey){
-    _restorePendingId = id;
-    _restorePendingEngKey = engKey;
-    document.getElementById('restoreDestSub').textContent = `"${it.serial}" (${it.name}) — where should it go?`;
+    engRow.style.display='flex';
     document.getElementById('restoreOptEngLabel').textContent = `Restore to ${cap(engKey)}`;
-    document.getElementById('restoreDestModal').style.display='flex';
-    return;
+    document.getElementById('restoreOptEngSub').textContent = "Restore to original engineer's list";
+  } else {
+    engRow.style.display='none';
   }
 
-  D.deleted.splice(idx,1);
-  const item={...it};
-  delete item._deletedFrom;delete item._deletedAt;delete item._deletedBy;delete item._deleteReason;
-  if(from==='Done'){if(!D.done)D.done=[];D.done.unshift({...item,id:gid()});logSerial(item.serial,'Restored','Restored to Done');toast(`↩ "${item.serial}" restored to Done`);}
-  else{if(!D.unassigned)D.unassigned=[];D.unassigned.unshift({...item,id:gid()});logSerial(item.serial,'Restored','Restored to Unassigned');toast(`↩ "${item.serial}" restored to Unassigned`);}
-  save();renderAll();
+  if(from==='Done'){
+    doneRow.style.display='flex';
+    document.getElementById('restoreOptDoneLabel').textContent = 'Restore to Done';
+    document.getElementById('restoreOptDoneSub').textContent = 'Restore to its original list (Done)';
+  } else {
+    doneRow.style.display='flex';
+    document.getElementById('restoreOptDoneLabel').textContent = 'Send to Done';
+    document.getElementById('restoreOptDoneSub').textContent = 'Mark it as completed instead';
+  }
+
+  document.getElementById('restoreOptUnassignedLabel').textContent = (from==='Done'||engKey) ? 'Send to Unassigned' : 'Restore to Unassigned';
+  document.getElementById('restoreOptUnassignedSub').textContent = (from==='Done'||engKey) ? 'Move to unassigned pool instead' : "Restore to its original list (Unassigned)";
+
+  document.getElementById('restoreDestModal').style.display='flex';
 }
 
 function closeRestoreDestModal(){
   document.getElementById('restoreDestModal').style.display='none';
-  _restorePendingId=null;_restorePendingEngKey=null;
+  _restorePendingId=null;_restorePendingEngKey=null;_restorePendingFrom=null;
 }
 
 function confirmRestoreDest(dest){
@@ -2221,12 +2239,19 @@ function confirmRestoreDest(dest){
     D[engKey].unshift({...item,id:gid()});
     logSerial(item.serial,'Restored',`Restored to ${cap(engKey)}`);
     save();renderAll();toast(`↩ "${item.serial}" restored to ${cap(engKey)}`);
+  } else if(dest==='done'){
+    if(!D.done)D.done=[];
+    D.done.unshift({...item,id:gid()});
+    logSerial(item.serial,'Restored','Restored to Done');
+    save();renderAll();toast(`↩ "${item.serial}" restored to Done`);
   } else {
     if(!D.unassigned)D.unassigned=[];
     D.unassigned.unshift({...item,id:gid()});
     logSerial(item.serial,'Restored','Restored to Unassigned');
     save();renderAll();toast(`↩ "${item.serial}" sent to Unassigned`);
   }
+  const dvPage=document.getElementById('page-deleted-view');
+  if(dvPage && dvPage.classList.contains('active')) renderDeletedViewPage();
 }
 function renderDeletedViewPage(){
   const page = document.getElementById('page-deleted-view');
@@ -2261,7 +2286,7 @@ function renderDeletedViewPage(){
         <td class="tm" style="max-width:150px;white-space:normal;color:#b91c1c;font-size:10.5px;">${e(it._deleteReason||'—')}</td>
         <td class="tt">${fd(it._deletedAt)}</td>
         ${canManage ? `<td>
-  <button class="ab restore" onclick="restoreDeleted('${it.id}');setTimeout(renderDeletedViewPage,200);">↩ Restore</button>
+  <button class="ab restore" onclick="restoreDeleted('${it.id}')">↩ Restore</button>
 </td>` : ''}
 ${_currentUser==='admin' ? `<td>
   <button class="ab x" onclick="permDeleteItem('${it.id}');setTimeout(renderDeletedViewPage,200);">🗑</button>
@@ -4021,14 +4046,21 @@ function pdfFull(){
         <span style="font-size:20px;">👤</span>
         <div>
           <div id="restoreOptEngLabel" style="font-weight:800;color:#1a4fa0;font-family:'outfit',sans-serif;font-size:13px;"></div>
-          <div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:1px;">Restore to original engineer's list</div>
+          <div id="restoreOptEngSub" style="font-size:11px;color:var(--muted);font-weight:600;margin-top:1px;">Restore to original engineer's list</div>
+        </div>
+      </div>
+      <div id="restoreOptDone" onclick="confirmRestoreDest('done')" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;cursor:pointer;border:2px solid rgba(22,163,74,.25);background:rgba(230,255,240,.4);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;color:var(--text);transition:all .15s;user-select:none;" onmouseover="this.style.borderColor='#16a34a';this.style.background='rgba(22,163,74,.1)'" onmouseout="this.style.borderColor='rgba(22,163,74,.25)';this.style.background='rgba(230,255,240,.4)'">
+        <span style="font-size:20px;">✅</span>
+        <div>
+          <div id="restoreOptDoneLabel" style="font-weight:800;color:#16a34a;font-family:'outfit',sans-serif;font-size:13px;"></div>
+          <div id="restoreOptDoneSub" style="font-size:11px;color:var(--muted);font-weight:600;margin-top:1px;"></div>
         </div>
       </div>
       <div onclick="confirmRestoreDest('unassigned')" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;cursor:pointer;border:2px solid rgba(91,141,217,.25);background:rgba(240,245,255,.4);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;color:var(--text);transition:all .15s;user-select:none;" onmouseover="this.style.borderColor='#5b8dd9';this.style.background='rgba(91,141,217,.12)'" onmouseout="this.style.borderColor='rgba(91,141,217,.25)';this.style.background='rgba(240,245,255,.4)'">
         <span style="font-size:20px;">🔓</span>
         <div>
-          <div style="font-weight:800;color:#5b8dd9;font-family:'outfit',sans-serif;font-size:13px;">Send to Unassigned</div>
-          <div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:1px;">Move to unassigned pool instead</div>
+          <div id="restoreOptUnassignedLabel" style="font-weight:800;color:#5b8dd9;font-family:'outfit',sans-serif;font-size:13px;">Send to Unassigned</div>
+          <div id="restoreOptUnassignedSub" style="font-size:11px;color:var(--muted);font-weight:600;margin-top:1px;">Move to unassigned pool instead</div>
         </div>
       </div>
     </div>
