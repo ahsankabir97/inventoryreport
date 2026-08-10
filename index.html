@@ -716,14 +716,20 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
 .manage-subtab.active .subtab-badge{background:rgba(255,255,255,.25);color:#fff;}
 
 /* Sync indicator */
-#syncDot{display:none;align-items:center;gap:5px;padding:5px 11px;border-radius:20px;font-size:11px;font-weight:700;font-family:'Outfit',serif;color:#fff;transition:background .3s;}
-#syncDot.shimmer-sync span{
+#syncDot{display:none;align-items:center;gap:6px;padding:5px 11px;border-radius:20px;font-size:11px;font-weight:700;font-family:'Outfit',serif;color:#fff;transition:background .3s,border-color .3s;backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.25);}
+#syncDot .live-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;box-shadow:0 0 5px rgba(74,222,128,.8);flex-shrink:0;}
+#syncDot.shimmer-sync .live-dot{animation:dotPulse 2.6s ease-in-out infinite;}
+@keyframes dotPulse{
+  0%,100%{opacity:1;box-shadow:0 0 5px rgba(74,222,128,.8);}
+  50%{opacity:.55;box-shadow:0 0 2px rgba(74,222,128,.4);}
+}
+#syncDot.shimmer-sync .live-label{
   background:linear-gradient(90deg,#ffffff 0%,#4ade80 30%,#ffffff 50%,#4ade80 70%,#ffffff 100%);
   background-size:200% auto;
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
-  animation:shimmerSync 1.8s linear infinite;
+  animation:shimmerSync 3.2s linear infinite;
 }
 @keyframes shimmerSync{
   0%{background-position:200% center;}
@@ -954,7 +960,7 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
     <div class="nav-subtitle">Motijheel Zone</div>
   </div>
   <div class="nav-right">
-    <div id="syncDot"><span></span></div>
+    <div id="syncDot"><span class="live-dot"></span><span class="live-label"></span></div>
     <div id="userBadge" title="Logout" onclick="doLogout()">
       <span class="ub-icon">👤</span>
       <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.2;">
@@ -1405,7 +1411,7 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
 
 <!-- SERIAL / MAC HISTORY MODAL -->
 <div class="mbg" id="serialHistModal" onclick="if(event.target===this)closeSerialHist()">
-  <div class="modal" style="max-width:640px;width:92%;max-height:85vh;display:flex;flex-direction:column;">
+  <div class="modal" style="max-width:1000px;width:95%;max-height:85vh;display:flex;flex-direction:column;">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px;">
       <h3 style="margin:0;display:flex;align-items:center;gap:8px;">🕓 Device History <span id="serialHistTitle" style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--accent2);background:rgba(59,130,246,.1);padding:3px 10px;border-radius:7px;"></span></h3>
       <button onclick="closeSerialHist()" style="background:rgba(198,40,40,.1);border:1.5px solid rgba(198,40,40,.25);color:#b91c1c;border-radius:7px;width:28px;height:28px;cursor:pointer;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;" onmouseover="this.style.background='#b91c1c';this.style.color='#fff'" onmouseout="this.style.background='rgba(198,40,40,.1)';this.style.color='#b91c1c'">✕</button>
@@ -1658,8 +1664,10 @@ function setSyncIndicator(state){
   const el=document.getElementById('syncDot');if(!el)return;
   const url=getUrl();if(!url){el.style.display='none';stopPolling();return;}
   el.style.display='flex';if(!_pollHandle)startPolling();
-  const cfg={idle:{bg:'#1a7a3a',text:'🟢 LIVE'},pending:{bg:'#f9a825',text:'⏳ Saving...'},syncing:{bg:'#3b82f6',text:'🔄 Syncing...'},ok:{bg:'#1a4fa0',text:'✅ Updated'},error:{bg:'#c62828',text:'❌ Sync Error'}}[state]||{bg:'#5b8dd9',text:''};
-  el.style.background=cfg.bg;el.querySelector('span').textContent=cfg.text;
+  const cfg={idle:{bg:'rgba(26,122,58,.22)',dot:'#4ade80',text:'LIVE'},pending:{bg:'rgba(249,168,37,.22)',dot:'#f9a825',text:'⏳ Saving...'},syncing:{bg:'rgba(59,130,246,.22)',dot:'#3b82f6',text:'🔄 Syncing...'},ok:{bg:'rgba(26,79,160,.22)',dot:'#1a4fa0',text:'✅ Updated'},error:{bg:'rgba(198,40,40,.22)',dot:'#ef4444',text:'❌ Sync Error'}}[state]||{bg:'rgba(91,141,217,.22)',dot:'#5b8dd9',text:''};
+  el.style.background=cfg.bg;
+  el.querySelector('.live-label').textContent=cfg.text;
+  el.querySelector('.live-dot').style.background=cfg.dot;
   if(state==='idle'){el.classList.add('shimmer-sync');}else{el.classList.remove('shimmer-sync');}
 }
 
@@ -1839,6 +1847,7 @@ const dvBadge=document.getElementById('b-deleted-view');
         <td class="tm">${e(it.remarks||'')}</td>
         <td><div class="ar">
           ${canDoActions&&it.status==='IN-Hand'?`<button class="ab p" onclick="event.stopPropagation();authGuard('provide','${eng}',()=>openProvModal('${eng}','${it.id}'))">↗ Provided</button>`:''}
+          ${_currentUser==='admin'?`<button class="ab" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;" onclick="event.stopPropagation();openShiftModal('${eng}','${it.id}')">🔀 Shift</button>`:''}
           ${canDoActions&&it.status!=='Done'?`<button class="ab d" onclick="event.stopPropagation();authGuard('done','${eng}',()=>openDM('${eng}','${it.id}'))">✅ Done</button>`:''}
           ${canDoActions&&it.status!=='IN-Hand'?`<button class="ab r" onclick="event.stopPropagation();authGuard('return','${eng}',()=>returnIH('${eng}','${it.id}'))">↩ Return</button>`:''}
           ${canDoActions?`<button class="ab x" onclick="event.stopPropagation();authGuard('delete','${eng}',()=>delDev('${eng}','${it.id}'))">🗑</button>`:''}
@@ -2256,16 +2265,21 @@ function restoreDeleted(id){
 
   document.getElementById('restoreDestSub').textContent = `"${it.serial}" (${it.name}) — where should it go?`;
 
-  const engRow = document.getElementById('restoreOptEng');
-  const doneRow = document.getElementById('restoreOptDone');
+  const ENG_ICON_COLORS={rupchan:'#f472b6',amit:'#34d399',tamim:'#fb923c',reserved:'#a78bfa'};
+  const engListEl = document.getElementById('restoreOptEngList');
+  engListEl.innerHTML = ENGS.map(en=>{
+    const isOriginal = en===engKey;
+    const col = ENG_ICON_COLORS[en]||'#1a4fa0';
+    return `<div onclick="confirmRestoreDest('eng','${en}')" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;cursor:pointer;border:2px solid ${isOriginal?'rgba(26,79,160,.4)':'rgba(26,79,160,.2)'};background:${isOriginal?'rgba(26,79,160,.12)':'rgba(230,240,255,.35)'};font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;color:var(--text);transition:all .15s;user-select:none;" onmouseover="this.style.borderColor='${col}';this.style.background='rgba(26,79,160,.12)'" onmouseout="this.style.borderColor='${isOriginal?'rgba(26,79,160,.4)':'rgba(26,79,160,.2)'}';this.style.background='${isOriginal?'rgba(26,79,160,.12)':'rgba(230,240,255,.35)'}'">
+      <span style="font-size:20px;">👤</span>
+      <div>
+        <div style="font-weight:800;color:${col};font-family:'outfit',sans-serif;font-size:13px;">Restore to ${cap(en)}</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:1px;">${isOriginal?"Original engineer's list":'Send to a different engineer'}</div>
+      </div>
+    </div>`;
+  }).join('');
 
-  if(engKey){
-    engRow.style.display='flex';
-    document.getElementById('restoreOptEngLabel').textContent = `Restore to ${cap(engKey)}`;
-    document.getElementById('restoreOptEngSub').textContent = "Restore to original engineer's list";
-  } else {
-    engRow.style.display='none';
-  }
+  const doneRow = document.getElementById('restoreOptDone');
 
   if(from==='Done'){
     doneRow.style.display='flex';
@@ -2288,13 +2302,13 @@ function closeRestoreDestModal(){
   _restorePendingId=null;_restorePendingEngKey=null;_restorePendingFrom=null;
 }
 
-function confirmRestoreDest(dest){
+function confirmRestoreDest(dest,chosenEng){
   if(!_restorePendingId)return;
   const idx=D.deleted.findIndex(x=>x.id===_restorePendingId);if(idx===-1){closeRestoreDestModal();return;}
   const it=D.deleted.splice(idx,1)[0];
   const item={...it};
   delete item._deletedFrom;delete item._deletedAt;delete item._deletedBy;delete item._deleteReason;
-  const engKey = _restorePendingEngKey;
+  const engKey = chosenEng || _restorePendingEngKey;
   closeRestoreDestModal();
   if(dest==='eng' && engKey){
     if(!D[engKey])D[engKey]=[];
@@ -2315,6 +2329,52 @@ function confirmRestoreDest(dest){
   const dvPage=document.getElementById('page-deleted-view');
   if(dvPage && dvPage.classList.contains('active')) renderDeletedViewPage();
 }
+// ── SHIFT DEVICE TO ANOTHER ENGINEER (admin only) ─────────────────────
+let _shiftPendingEng = null;
+let _shiftPendingId = null;
+
+function openShiftModal(eng,id){
+  if(_currentUser!=='admin'){ authError(); return; }
+  const it=(D[eng]||[]).find(x=>x.id===id);
+  if(!it){ toast('⚠️ Device not found'); return; }
+  _shiftPendingEng=eng; _shiftPendingId=id;
+  document.getElementById('shiftDestSub').textContent = `"${it.serial}" (${it.name}) — shift to which engineer?`;
+  const ENG_ICON_COLORS={rupchan:'#f472b6',amit:'#34d399',tamim:'#fb923c',reserved:'#a78bfa'};
+  const listEl=document.getElementById('shiftEngList');
+  const others=ENGS.filter(en=>en!==eng);
+  listEl.innerHTML = others.length ? others.map(en=>{
+    const col=ENG_ICON_COLORS[en]||'#7c3aed';
+    return `<div onclick="confirmShiftDest('${en}')" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;cursor:pointer;border:2px solid rgba(124,58,237,.25);background:rgba(243,236,255,.5);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;color:var(--text);transition:all .15s;user-select:none;" onmouseover="this.style.borderColor='${col}';this.style.background='rgba(124,58,237,.12)'" onmouseout="this.style.borderColor='rgba(124,58,237,.25)';this.style.background='rgba(243,236,255,.5)'">
+      <span style="font-size:20px;">🔀</span>
+      <div>
+        <div style="font-weight:800;color:${col};font-family:'outfit',sans-serif;font-size:13px;">Shift to ${cap(en)}</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:1px;">Move this device to ${cap(en)}'s list</div>
+      </div>
+    </div>`;
+  }).join('') : `<div style="font-size:12px;color:var(--muted);text-align:center;padding:10px;">No other engineers available.</div>`;
+  document.getElementById('shiftDestModal').style.display='flex';
+}
+
+function closeShiftDestModal(){
+  document.getElementById('shiftDestModal').style.display='none';
+  _shiftPendingEng=null;_shiftPendingId=null;
+}
+
+function confirmShiftDest(newEng){
+  if(_currentUser!=='admin'){ authError(); closeShiftDestModal(); return; }
+  if(!_shiftPendingId||!_shiftPendingEng){ closeShiftDestModal(); return; }
+  const fromEng=_shiftPendingEng;
+  const idx=(D[fromEng]||[]).findIndex(x=>x.id===_shiftPendingId);
+  if(idx===-1){ closeShiftDestModal(); return; }
+  const item=D[fromEng].splice(idx,1)[0];
+  if(!D[newEng])D[newEng]=[];
+  D[newEng].unshift({...item,id:gid()});
+  logSerial(item.serial,'Shifted',`Shifted from ${cap(fromEng)} to ${cap(newEng)}`);
+  closeShiftDestModal();
+  save();renderAll();
+  toast(`🔀 "${item.serial}" shifted to ${cap(newEng)}`);
+}
+
 function renderDeletedViewPage(){
   const page = document.getElementById('page-deleted-view');
   if(!page) return;
@@ -4104,13 +4164,7 @@ function pdfFull(){
     <div style="font-family:'outfit',sans-serif;font-size:16px;font-weight:800;color:#1e5bb8;margin-bottom:6px;display:flex;align-items:center;gap:8px;">↩ Restore Item</div>
     <div id="restoreDestSub" style="font-size:12px;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:18px;line-height:1.5;"></div>
     <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:6px;">
-      <div id="restoreOptEng" onclick="confirmRestoreDest('eng')" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;cursor:pointer;border:2px solid rgba(26,79,160,.25);background:rgba(230,240,255,.4);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;color:var(--text);transition:all .15s;user-select:none;" onmouseover="this.style.borderColor='#1a4fa0';this.style.background='rgba(26,79,160,.1)'" onmouseout="this.style.borderColor='rgba(26,79,160,.25)';this.style.background='rgba(230,240,255,.4)'">
-        <span style="font-size:20px;">👤</span>
-        <div>
-          <div id="restoreOptEngLabel" style="font-weight:800;color:#1a4fa0;font-family:'outfit',sans-serif;font-size:13px;"></div>
-          <div id="restoreOptEngSub" style="font-size:11px;color:var(--muted);font-weight:600;margin-top:1px;">Restore to original engineer's list</div>
-        </div>
-      </div>
+      <div id="restoreOptEngList" style="display:flex;flex-direction:column;gap:9px;"></div>
       <div id="restoreOptDone" onclick="confirmRestoreDest('done')" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;cursor:pointer;border:2px solid rgba(22,163,74,.25);background:rgba(230,255,240,.4);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;color:var(--text);transition:all .15s;user-select:none;" onmouseover="this.style.borderColor='#16a34a';this.style.background='rgba(22,163,74,.1)'" onmouseout="this.style.borderColor='rgba(22,163,74,.25)';this.style.background='rgba(230,255,240,.4)'">
         <span style="font-size:20px;">✅</span>
         <div>
@@ -4128,6 +4182,20 @@ function pdfFull(){
     </div>
     <div style="display:flex;gap:9px;margin-top:16px;">
       <button onclick="closeRestoreDestModal()" style="flex:1;padding:11px;background:rgba(221,232,248,.9);color:var(--text2);border:1px solid var(--border);border-radius:9px;font-family:'outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- SHIFT DEVICE TO ANOTHER ENGINEER MODAL (admin only) -->
+<div id="shiftDestModal" style="position:fixed;inset:0;z-index:5000;background:rgba(10,25,60,.55);display:none;align-items:center;justify-content:center;backdrop-filter:blur(5px);">
+  <div style="background:#fff;border-radius:18px;padding:30px 28px 24px;max-width:400px;width:92%;box-shadow:0 16px 56px rgba(0,0,0,.28);animation:pop .18s ease both;">
+    <div style="font-family:'outfit',sans-serif;font-size:16px;font-weight:800;color:#7c3aed;margin-bottom:6px;display:flex;align-items:center;gap:8px;">🔀 Shift Device</div>
+    <div id="shiftDestSub" style="font-size:12px;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:18px;line-height:1.5;"></div>
+    <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:6px;">
+      <div id="shiftEngList" style="display:flex;flex-direction:column;gap:9px;"></div>
+    </div>
+    <div style="display:flex;gap:9px;margin-top:16px;">
+      <button onclick="closeShiftDestModal()" style="flex:1;padding:11px;background:rgba(221,232,248,.9);color:var(--text2);border:1px solid var(--border);border-radius:9px;font-family:'outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;">Cancel</button>
     </div>
   </div>
 </div>
