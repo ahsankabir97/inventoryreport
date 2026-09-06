@@ -936,7 +936,6 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
 .lan-add-popup-cancel:hover{border-color:var(--accent);color:var(--accent);}
 
 </style>
-<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -979,18 +978,7 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
   <nav class="sidebar">
    <div class="sidebar-nav-items">
     <div class="sidebar-section">Engineers</div>
-    <div class="tab" id="tab-rupchan" onclick="go('rupchan')">
-      <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4" fill="rgba(244,114,182,.15)"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M15.5 6.5 C16.5 5 18 5.5 18.5 7"/></svg></span><span class="tab-label">Rupchan</span><span class="badge" id="b-rupchan">0</span>
-    </div>
-    <div class="tab" id="tab-amit" onclick="go('amit')">
-      <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4" fill="rgba(52,211,153,.15)"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M15.5 6.5 C16.5 5 18 5.5 18.5 7"/></svg></span><span class="tab-label">Amit</span><span class="badge" id="b-amit">0</span>
-    </div>
-    <div class="tab" id="tab-tamim" onclick="go('tamim')">
-      <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fb923c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4" fill="rgba(251,146,60,.15)"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M15.5 6.5 C16.5 5 18 5.5 18.5 7"/></svg></span><span class="tab-label">Tamim</span><span class="badge" id="b-tamim">0</span>
-    </div>
-    <div class="tab" id="tab-reserved" onclick="go('reserved')">
-      <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4" fill="rgba(167,139,250,.15)"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M15.5 6.5 C16.5 5 18 5.5 18.5 7"/></svg></span><span class="tab-label">Reserved</span><span class="badge" id="b-reserved">0</span>
-    </div>
+    <div id="engTabsContainer"><!-- Dynamically rendered via JS (renderEngTabs) --></div>
 
     <div class="sidebar-divider"></div>
     <div class="sidebar-section">Equipment</div>
@@ -1057,25 +1045,6 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
               PDF Export
             </button>
           </div>
-<div id="xlsxBtnWrap" style="display:none;">
-  <button onclick="openXlsxModal()"
-    style="display:flex;align-items:center;gap:7px;padding:8px 18px;
-           background:linear-gradient(135deg,#059669,#34d399);color:#fff;border:none;
-           border-radius:9px;font-family:'outfit',sans-serif;font-size:12.5px;font-weight:700;
-           cursor:pointer;box-shadow:0 3px 14px rgba(5,150,105,.35);transition:all .18s;
-           white-space:nowrap;letter-spacing:.2px;"
-    onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 5px 22px rgba(5,150,105,.52)'"
-    onmouseout="this.style.transform='';this.style.boxShadow='0 3px 14px rgba(5,150,105,.35)'">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-      <polyline points="14 2 14 8 20 8"/>
-      <line x1="16" y1="13" x2="8" y2="13"/>
-      <line x1="16" y1="17" x2="8" y2="17"/>
-    </svg>
-    Excel Export
-  </button>
-</div>
         </div>
       </div>
       <div class="stats" id="allStats"></div>
@@ -1091,10 +1060,7 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
 
     <!-- ENGINEER PAGES -->
     <div class="page" id="page-deleted-view"></div>
-    <div class="page" id="page-rupchan"></div>
-    <div class="page" id="page-amit"></div>
-    <div class="page" id="page-tamim"></div>
-    <div class="page" id="page-reserved"></div>
+    <div id="engPagesContainer"><!-- Dynamically rendered via JS (renderEngPages) --></div>
 <div class="page" id="page-radio"></div>
 	
     <!-- MANAGE SYSTEM -->
@@ -1115,13 +1081,9 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
           Unassigned <span id="b-un" class="subtab-badge subtab-badge-blue">0</span>
         </div>
-        <div class="manage-subtab" id="msub-tab-sheets" onclick="switchManageSub('sheets')">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
-          Google Sheets
-        </div>
-        <div class="manage-subtab" id="msub-tab-deleted" onclick="switchManageSub('deleted')">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-          Deleted Item <span id="b-deleted" class="subtab-badge subtab-badge-red">0</span>
+        <div class="manage-subtab" id="msub-tab-users" onclick="switchManageSub('users')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Users
         </div>
       </div>
 
@@ -1162,6 +1124,47 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
         </div>
       </div>
 
+      <!-- Users (Engineer Management) Sub-panel -->
+      <div id="msub-panel-users" style="display:none;">
+        <div style="max-width:660px;margin:0 auto;">
+          <div class="card" style="box-shadow:0 8px 32px rgba(26,79,160,.13);padding:16px 20px;margin-bottom:16px;">
+            <div class="card-title" style="font-size:14px;margin-bottom:14px;padding-bottom:10px;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Add New User
+            </div>
+            <div class="fg" style="margin-bottom:9px;">
+              <label>Username</label>
+              <input id="newUserName" type="text" placeholder="e.g. karim" autocomplete="off" style="padding:8px 12px;font-size:13px;">
+            </div>
+            <div class="fg" style="margin-bottom:9px;">
+              <label>Password</label>
+              <input id="newUserPass" type="password" placeholder="At least 6 characters" style="padding:8px 12px;font-size:13px;">
+            </div>
+            <div class="fg" style="margin-bottom:9px;">
+              <label>Confirm Password</label>
+              <input id="newUserPassConf" type="password" placeholder="Re-enter password" style="padding:8px 12px;font-size:13px;" onkeydown="if(event.key==='Enter')addEngineerUser()">
+            </div>
+            <div id="newUserErr" style="color:var(--red);font-size:11.5px;font-weight:700;min-height:16px;margin-bottom:4px;"></div>
+            <button class="entry-submit-btn" onclick="addEngineerUser()" style="margin-top:6px;font-size:14px;padding:13px;letter-spacing:.3px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add User
+            </button>
+          </div>
+
+          <div class="card" style="box-shadow:0 8px 32px rgba(26,79,160,.13);padding:16px 20px;">
+            <div class="card-title" style="font-size:14px;margin-bottom:14px;padding-bottom:10px;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Current User List
+            </div>
+            <div id="usersListWrap"></div>
+            <div style="font-size:10.5px;color:var(--muted);margin-top:8px;line-height:1.6;">
+              ⚠️ Deleting a user will automatically move all their devices to <strong>Unassigned</strong>, and this change will instantly apply everywhere — sidebar, PDF Export, Restore, etc. (synced across all users' browsers). The device's previous-owner history is preserved and remains visible in All Equipment.<br>
+              ✅ Tick <strong>"New Entry Access"</strong> to let a user open Manage (New Entry + Unassigned, where they can assign devices only to themselves) without giving them full admin access. Untick it anytime to instantly remove that access — it applies right away across all devices.
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Unassigned Sub-panel -->
 <div id="msub-panel-unassigned" style="display:none;">
   <div class="sh" style="margin-bottom:14px;">
@@ -1181,46 +1184,7 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
   <div class="tbl-wrap" id="unWrap"></div>
 </div>
 
-      <!-- Google Sheets Sub-panel -->
-      <div id="msub-panel-sheets" style="display:none;">
-        <div class="card" style="max-width:600px;">
-          <div class="card-title">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
-            Real-Time Multi-User Sync
-          </div>
-          <div style="background:rgba(26,79,160,.07);border:1px solid rgba(91,141,217,.4);border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:12.5px;color:var(--text2);line-height:1.7;font-family:'Plus Jakarta Sans',sans-serif;">
-            <strong style="color:var(--accent2);font-family:'outfit',sans-serif;display:block;margin-bottom:6px;">🌐 How to sync with 4 users:</strong>
-            1. Deploy the Apps Script code below in your Google Sheet.<br>
-            2. Paste the Web App URL and click <strong>"Connect &amp; Sync"</strong>.<br>
-            3. Share the same URL with the other 3 users — they paste and connect too.<br>
-            4. Any change by one user will <strong>auto-update others within 8 seconds</strong>.<br>
-            <span style="color:var(--teal);font-size:11.5px;">💡 Google Sheets acts as the shared database — no server needed.</span>
-          </div>
-          <div class="fg">
-            <label>Google Apps Script Web App URL</label>
-            <input id="sheetsUrl" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:12px;">
-            <div style="font-size:11px;color:var(--muted);margin-top:4px;">⚠️ When deploying: set "Execute as: Me" and "Who has access: Anyone".</div>
-          </div>
-          <div style="background:rgba(221,232,248,.7);border:1px solid var(--border);border-radius:8px;padding:12px;margin:12px 0;font-size:11px;color:var(--text2);font-family:'JetBrains Mono',monospace;max-height:260px;overflow-y:auto;line-height:1.6;white-space:pre-wrap;user-select:all;" id="scriptCode"></div>
-          <div style="display:flex;justify-content:space-between;gap:9px;margin-top:12px;flex-wrap:wrap;">
-            <button class="btn btn-g" onclick="copyScript()">📋 Copy Script</button>
-            <button class="btn btn-b" onclick="syncToSheetsInline()">🔗 Connect &amp; Sync</button>
-          </div>
-          <div id="syncStatusInline" style="margin-top:10px;font-size:12px;text-align:center;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;"></div>
-        </div>
-      </div>
-
-      <!-- Deleted Sub-panel -->
-      <div id="msub-panel-deleted" style="display:none;">
-        <div class="deleted-zone">
-          <div class="deleted-zone-header">
-            <div class="deleted-zone-title">🗂 Deleted Items</div>
-          </div>
-          <div class="tbl-wrap" id="deletedWrap" style="border:none;box-shadow:none;background:transparent;padding-bottom:48px;"></div>
-          <button class="clear-all-fab" id="clearAllBtn" onclick="clearAllDeleted()">🗑 Clear All</button>
-        </div>
-      </div>
-
+      <!-- Google Sheets & Deleted Item sub-panels removed from Manage per request -->
       </div><!-- /manageContent -->
     </div><!-- /page-manage -->
 
@@ -1417,7 +1381,7 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
       <button onclick="closeSerialHist()" style="background:rgba(198,40,40,.1);border:1.5px solid rgba(198,40,40,.25);color:#b91c1c;border-radius:7px;width:28px;height:28px;cursor:pointer;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;" onmouseover="this.style.background='#b91c1c';this.style.color='#fff'" onmouseout="this.style.background='rgba(198,40,40,.1)';this.style.color='#b91c1c'">✕</button>
     </div>
     <div id="serialHistName" style="font-family:'outfit',sans-serif;font-size:15px;font-weight:800;color:var(--text);margin:6px 0 2px;display:flex;align-items:center;gap:8px;"></div>
-    <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Entry থেকে এখন পর্যন্ত এই ডিভাইসের সম্পূর্ণ মুভমেন্ট হিস্টোরি — কোন তারিখে কাকে দেওয়া হয়েছিল।</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Complete movement history of this device since Entry — which date it was given to whom.</div>
     <div id="serialHistDetails" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;"></div>
     <div id="serialHistBody" class="tbl-wrap" style="overflow:auto;flex:1;"></div>
   </div>
@@ -1452,6 +1416,7 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
     if (data) {
       localStorage.setItem('inv7', JSON.stringify(data));
       if (typeof D !== 'undefined') D = data;
+      if (typeof ensureEngKeys === 'function') ensureEngKeys();
       if (typeof renderAll === 'function') renderAll();
       if (window._lanActive && typeof renderLAN === 'function') renderLAN();
     }
@@ -1465,7 +1430,7 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
     }
   });
 
-// 👇 এখানে এই block টা যোগ করো 👇
+// 👇 Add this block here 👇
   onValue(ref(db, 'lan_data'), (snapshot) => {
     const data = snapshot.val();
     if(data){
@@ -1473,9 +1438,259 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
       if(window._lanActive && typeof renderLAN === 'function') renderLAN();
     }
   });
+
+  // ── 4) Engineers (Users) real-time sync — user add/delete effect propagates instantly to all browsers
+  onValue(ref(db, 'engineers'), (snapshot) => {
+    const data = snapshot.val();
+    if(data && Array.isArray(data) && data.length){
+      localStorage.setItem('inv_engineers', JSON.stringify(data));
+      if(typeof applyEngineersUpdate === 'function') applyEngineersUpdate(data);
+    }
+  });
+
+  // ── 5) Entry-only access list real-time sync — admin can grant/revoke "New Entry" access per user
+  onValue(ref(db, 'entryAccess'), (snapshot) => {
+    const data = snapshot.val();
+    const arr = Array.isArray(data) ? data : [];
+    localStorage.setItem('inv_entry_access', JSON.stringify(arr));
+    if(typeof applyEntryAccessUpdate === 'function') applyEntryAccessUpdate(arr);
+  });
 </script>
 <script>
-const ENGS=['rupchan','amit','tamim','reserved'];
+// ── ENGINEERS (USERS) — dynamic, admin can add/delete ──────────────
+const ENGS_DEFAULT=['rupchan','amit','tamim','reserved'];
+function getEngineers(){
+  try{
+    const saved=localStorage.getItem('inv_engineers');
+    if(saved){const arr=JSON.parse(saved); if(Array.isArray(arr)&&arr.length) return arr;}
+  }catch(e){}
+  return [...ENGS_DEFAULT];
+}
+function saveEngineersList(arr){
+  localStorage.setItem('inv_engineers', JSON.stringify(arr));
+  if(window._firebaseReady && window._firebaseDB){
+    window._firebaseSet(window._firebaseRef(window._firebaseDB,'engineers'), arr)
+      .catch(err=>console.error('Firebase engineers save error:',err));
+  }
+}
+let ENGS = getEngineers();
+
+// ── PARTIAL ACCESS — users granted "New Entry only" access to Manage ──────
+function getEntryAccess(){
+  try{
+    const saved=localStorage.getItem('inv_entry_access');
+    if(saved){const arr=JSON.parse(saved); if(Array.isArray(arr)) return arr;}
+  }catch(e){}
+  return [];
+}
+function saveEntryAccessList(arr){
+  localStorage.setItem('inv_entry_access', JSON.stringify(arr));
+  if(window._firebaseReady && window._firebaseDB){
+    window._firebaseSet(window._firebaseRef(window._firebaseDB,'entryAccess'), arr)
+      .catch(err=>console.error('Firebase entryAccess save error:',err));
+  }
+}
+let ENTRY_ACCESS = getEntryAccess();
+function hasEntryAccess(u){ return u==='admin' || ENTRY_ACCESS.includes(u); }
+// Called when the entryAccess list changes — locally or via Firebase sync from another device
+function applyEntryAccessUpdate(newList){
+  ENTRY_ACCESS = Array.isArray(newList) ? newList : [];
+  const manageTab=document.getElementById('tab-manage');
+  if(manageTab) manageTab.style.display = hasEntryAccess(_currentUser) ? '' : 'none';
+  // If the current (non-admin) user's access was just revoked while viewing Manage, kick them out
+  if(_currentUser && _currentUser!=='admin' && !ENTRY_ACCESS.includes(_currentUser) && document.querySelector('#page-manage.active')){
+    go('all');
+    toast('⚠️ Your Manage access has been removed by admin.');
+  }
+  if(typeof applyManageSubtabVisibility==='function') applyManageSubtabVisibility();
+  const usersPanel=document.getElementById('msub-panel-users');
+  if(usersPanel && usersPanel.style.display!=='none' && typeof renderUsersPanel==='function') renderUsersPanel();
+}
+// Admin toggles a user's "New Entry only" access on/off
+function toggleEntryAccess(eng, checked){
+  if(_currentUser!=='admin'){authError();return;}
+  ENTRY_ACCESS = checked ? [...new Set([...ENTRY_ACCESS, eng])] : ENTRY_ACCESS.filter(x=>x!==eng);
+  saveEntryAccessList(ENTRY_ACCESS);
+  applyEntryAccessUpdate(ENTRY_ACCESS);
+  toast(checked ? `✅ "${cap(eng)}" can now use New Entry in Manage.` : `🚫 "${cap(eng)}"'s New Entry access removed.`);
+}
+// Show/hide the Unassigned & Users subtabs depending on who is viewing Manage
+function applyManageSubtabVisibility(){
+  const isAdmin = _currentUser==='admin';
+  // Unassigned is visible to anyone who can open Manage (entry-access users included);
+  // Users management stays admin-only.
+  const unassignedTab=document.getElementById('msub-tab-unassigned');
+  if(unassignedTab) unassignedTab.style.display = '';
+  const usersTab=document.getElementById('msub-tab-users');
+  if(usersTab) usersTab.style.display = isAdmin ? '' : 'none';
+  // If a non-admin was somehow left on the Users sub-panel, bump them back to New Entry
+  if(!isAdmin){
+    const usersPanel=document.getElementById('msub-panel-users');
+    if(usersPanel && usersPanel.style.display!=='none') switchManageSub('entry');
+  }
+}
+const ENG_PALETTE=['#f472b6','#34d399','#fb923c','#a78bfa','#60a5fa','#f59e0b','#38bdf8','#fb7185','#4ade80','#c084fc','#2dd4bf','#facc15'];
+function engColorFor(eng){
+  const idx=ENGS.indexOf(eng);
+  return ENG_PALETTE[(idx<0?0:idx)%ENG_PALETTE.length];
+}
+function ensureEngKeys(){
+  ENGS.forEach(eng=>{ if(!D[eng]) D[eng]=[]; });
+}
+const NON_ENG_PAGES=['all','done','deleted-view','manage','radio'];
+// Called when the engineers list changes — either locally (admin action) or via Firebase sync from another device
+function applyEngineersUpdate(newList){
+  const prevEngs = ENGS;
+  ENGS = Array.isArray(newList) && newList.length ? newList : getEngineers();
+  ensureEngKeys();
+  if(typeof renderEngTabs==='function') renderEngTabs();
+  if(typeof renderEngPages==='function') renderEngPages();
+  const usersPanel=document.getElementById('msub-panel-users');
+  if(usersPanel && usersPanel.style.display!=='none' && typeof renderUsersPanel==='function') renderUsersPanel();
+  // If the current user was viewing a deleted engineer's page, redirect back to All Equipment
+  const activePage=document.querySelector('.page.active');
+  if(activePage){
+    const activeName=activePage.id.replace('page-','');
+    if(prevEngs.includes(activeName) && !ENGS.includes(activeName)){ go('all'); }
+  }
+  if(typeof renderAll==='function') renderAll();
+}
+
+function engIconSvg(color){
+  return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4" fill="${color}22"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M15.5 6.5 C16.5 5 18 5.5 18.5 7"/></svg>`;
+}
+// ── Sidebar engineer tabs — rendered dynamically from ENGS ────────────
+function renderEngTabs(){
+  const wrap=document.getElementById('engTabsContainer');
+  if(!wrap) return;
+  wrap.innerHTML = ENGS.map(eng=>{
+    const color=engColorFor(eng);
+    return `<div class="tab" id="tab-${eng}" onclick="go('${eng}')">
+      <span class="tab-icon">${engIconSvg(color)}</span><span class="tab-label">${cap(eng)}</span><span class="badge" id="b-${eng}">0</span>
+    </div>`;
+  }).join('');
+}
+// ── Engineer content pages — each engineer needs an empty .page div ──
+function renderEngPages(){
+  const wrap=document.getElementById('engPagesContainer');
+  if(!wrap) return;
+  ENGS.forEach(eng=>{
+    if(!document.getElementById('page-'+eng)){
+      const div=document.createElement('div');
+      div.className='page';
+      div.id='page-'+eng;
+      wrap.appendChild(div);
+    }
+  });
+  // Remove pages that are no longer in the ENGS list (deleted users) from the DOM
+  Array.from(wrap.children).forEach(child=>{
+    const eng=child.id.replace('page-','');
+    if(!ENGS.includes(eng)) child.remove();
+  });
+}
+// ── Manage → Users panel: current user list + delete button ──────────────
+function renderUsersPanel(){
+  const wrap=document.getElementById('usersListWrap');
+  if(!wrap) return;
+  if(!ENGS.length){
+    wrap.innerHTML=`<div style="text-align:center;color:var(--muted);font-size:12.5px;padding:20px;">No users found.</div>`;
+    return;
+  }
+  wrap.innerHTML = ENGS.map(eng=>{
+    const color=engColorFor(eng);
+    const count=(D[eng]||[]).length;
+    const granted=ENTRY_ACCESS.includes(eng);
+    return `<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;background:rgba(255,255,255,.85);margin-bottom:8px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        ${engIconSvg(color)}
+        <span style="font-family:'outfit',sans-serif;font-weight:700;font-size:13px;color:var(--text);">${e(cap(eng))}</span>
+        <span style="font-size:11px;color:var(--muted);">(${count} items)</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <label title="Allow this user to open Manage → New Entry only" style="display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;font-size:11px;font-weight:700;color:${granted?'#1a7a3c':'var(--muted)'};">
+          <input type="checkbox" ${granted?'checked':''} onchange="toggleEntryAccess('${eng}',this.checked)" style="width:15px;height:15px;cursor:pointer;accent-color:#1a7a3c;">
+          New Entry Access
+        </label>
+        <button onclick="deleteEngineerUser('${eng}')" style="background:rgba(198,40,40,.1);border:1.5px solid rgba(198,40,40,.3);color:#c62828;border-radius:7px;padding:6px 12px;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap;">🗑 Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+// ── Add a new user ────────────────────────────────────────────────
+function addEngineerUser(){
+  if(_currentUser!=='admin'){authError();return;}
+  const uname=document.getElementById('newUserName').value.trim().toLowerCase();
+  const pass=document.getElementById('newUserPass').value;
+  const conf=document.getElementById('newUserPassConf').value;
+  const err=document.getElementById('newUserErr');
+  err.textContent='';
+  if(!uname||!pass||!conf){err.textContent='⚠️ Please fill in all fields.';return;}
+  if(!/^[a-z][a-z0-9_]{1,19}$/.test(uname)){err.textContent='⚠️ Only lowercase English letters/numbers/_ (2-20 characters), the first character must be a letter.';return;}
+  if(uname==='admin'){err.textContent='❌ A user cannot be created with this name.';return;}
+  if(ENGS.includes(uname)){err.textContent='❌ This username already exists.';return;}
+  if(pass.length<6){err.textContent='⚠️ Password must be at least 6 characters.';return;}
+  if(pass!==conf){err.textContent='❌ The two passwords do not match.';return;}
+
+  ENGS.push(uname);
+  saveEngineersList(ENGS);
+  ensureEngKeys();
+  save();
+  const pws=getPasswords();
+  pws[uname]=pass;
+  savePasswords(pws);
+
+  renderEngTabs();
+  renderEngPages();
+  renderUsersPanel();
+  renderAll();
+
+  document.getElementById('newUserName').value='';
+  document.getElementById('newUserPass').value='';
+  document.getElementById('newUserPassConf').value='';
+  toast(`✅ New user "${cap(uname)}" added!`);
+}
+// ── Delete a user (all their items will move to Unassigned) ──────────────────
+function deleteEngineerUser(eng){
+  if(_currentUser!=='admin'){authError();return;}
+  if(!ENGS.includes(eng))return;
+  if(ENGS.length<=1){toast('⚠️ At least 1 user must remain.');return;}
+  const itemCount=(D[eng]||[]).length;
+  const msg = itemCount>0
+    ? `Deleting "${cap(eng)}" will remove this user from everywhere, and their ${itemCount} item(s) will automatically move to Unassigned — but the device history (who held them) stays visible in All Equipment.\n\nAre you sure?`
+    : `Do you want to delete the user "${cap(eng)}"?`;
+  if(!confirm(msg)) return;
+
+  if(D[eng] && D[eng].length){
+    D[eng].forEach(it=>logSerial(it.serial,'Unassigned',`User "${cap(eng)}" was deleted — item automatically moved to Unassigned (previous holder history preserved).`));
+    D.unassigned=[...(D.unassigned||[]), ...D[eng].map(it=>({...it,status:'Unassigned',_prevEngineer:eng}))];
+  }
+  delete D[eng];
+  ENGS = ENGS.filter(x=>x!==eng);
+  saveEngineersList(ENGS);
+  save();
+
+  const pws=getPasswords();
+  delete pws[eng];
+  savePasswords(pws);
+
+  if(ENTRY_ACCESS.includes(eng)){
+    ENTRY_ACCESS = ENTRY_ACCESS.filter(x=>x!==eng);
+    saveEntryAccessList(ENTRY_ACCESS);
+  }
+
+  if(_currentUser===eng){
+    _currentUser=null;
+    localStorage.removeItem('inv_session');
+    document.getElementById('loginOverlay').style.display='flex';
+  }
+
+  renderEngTabs();
+  renderEngPages();
+  renderUsersPanel();
+  go('all');
+  toast(`🗑 User "${cap(eng)}" deleted from everywhere. Their items moved to Unassigned, device history preserved in All Equipment.`);
+}
+
 function gid(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5);}
 
 let CUSTOM_ITEMS=JSON.parse(localStorage.getItem('customItems')||'[]');
@@ -1484,7 +1699,8 @@ function saveCustomItems(){localStorage.setItem('customItems',JSON.stringify(CUS
 let HIDDEN_ITEMS=JSON.parse(localStorage.getItem('hiddenItems')||'[]');
 function saveHiddenItems(){localStorage.setItem('hiddenItems',JSON.stringify(HIDDEN_ITEMS));}
 
-let D={unassigned:[],deleted:[],rupchan:[],amit:[],tamim:[],reserved:[],done:[],serialLog:{}};
+let D={unassigned:[],deleted:[],done:[],serialLog:{}};
+ensureEngKeys();
 
 // ── SERIAL / MAC HISTORY LOG ───────────────────────────────────────────
 function logSerial(serial,action,detail){
@@ -1499,6 +1715,7 @@ function serialHistColor(action){
     case 'Returned': return '#1565c0';
     case 'Done': return '#1b7a3d';
     case 'Deleted': return '#c62828';
+    case 'Unassigned': return '#5b21b6';
     default: return 'var(--accent2)';
   }
 }
@@ -1600,20 +1817,20 @@ function fdt(iso){
 // ── SYNC ─────────────────────────────────────────────────────────────
 let _lastVersion=0,_pushTimer=null,_pollHandle=null,_userMadeChange=false;
 function getUrl(){return localStorage.getItem('sheetsUrl')||'';}
-function countItems(obj){return(obj.rupchan||[]).length+(obj.amit||[]).length+(obj.tamim||[]).length+(obj.reserved||[]).length+(obj.unassigned||[]).length+(obj.done||[]).length;}
+function countItems(obj){return ENGS.reduce((s,eng)=>s+((obj[eng]||[]).length),0)+(obj.unassigned||[]).length+(obj.done||[]).length;}
 function save(){
   _userMadeChange = true;
   D._version = Date.now();
   localStorage.setItem('inv7', JSON.stringify(D));
 
-  // ── Firebase এ save করো (Primary)
+  // ── Save to Firebase (Primary)
   if(window._firebaseReady && window._firebaseDB){
     window._firebaseSet(window._firebaseRef(window._firebaseDB, 'inventory'), D)
       .then(() => setSyncIndicator('ok'))
       .catch(err => { console.error('Firebase error:', err); setSyncIndicator('error'); });
   }
 
-  // ── Google Sheets এ copy পাঠাও (Secondary)
+  // ── Send a copy to Google Sheets (Secondary)
   schedulePush();
 }
 function schedulePush(){if(!getUrl())return;setSyncIndicator('pending');clearTimeout(_pushTimer);_pushTimer=setTimeout(pushNow,2000);}
@@ -1726,7 +1943,7 @@ function deleteCustomItem(i){
 
 // ── NAVIGATION ────────────────────────────────────────────────────────
 function go(name){
-  if(name==='manage' && _currentUser !== 'admin'){authError();return;}
+  if(name==='manage' && !hasEntryAccess(_currentUser)){authError();return;}
 if(name==='deleted-view'){
     _lanActive = null;
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -1743,24 +1960,23 @@ if(name==='deleted-view'){
   document.getElementById('page-lan').style.display='none';
   document.getElementById('tab-'+name).classList.add('active');
   document.getElementById('page-'+name).classList.add('active');
+  if(name==='manage') applyManageSubtabVisibility();
   renderAll();
 }
 
 function switchManageSub(sub){
-  ['entry','unassigned','sheets','deleted'].forEach(s=>{
+  if(_currentUser!=='admin' && sub==='users'){authError();return;}
+  ['entry','unassigned','users'].forEach(s=>{
     document.getElementById('msub-panel-'+s).style.display=s===sub?'':'none';
     document.getElementById('msub-tab-'+s).classList.toggle('active',s===sub);
   });
-  if(sub==='sheets'){
-    document.getElementById('scriptCode').textContent=SCRIPT_CODE;
-    const saved=localStorage.getItem('sheetsUrl')||'';
-    document.getElementById('sheetsUrl').value=saved;
-    document.getElementById('syncStatusInline').textContent='';
+  if(sub==='users'){
+    renderUsersPanel();
   }
 }
 
 function clearAllDeleted(){
-  if(_currentUser !== 'admin'){ authError(); return; } // এই line যোগ করো
+  if(_currentUser !== 'admin'){ authError(); return; } // added this line
   const count=(D.deleted||[]).length;
   if(!count){toast('⚠️ No deleted items to clear');return;}
   if(!confirm(`Remove ${count} deleted item(s) from interface?\n\nNote: Data remains in Google Sheets.`))return;
@@ -1769,7 +1985,7 @@ function clearAllDeleted(){
   toast(`🗑 ${count} item(s) cleared — still in Sheets`);
 }
 function permDeleteItem(id){
-  if(!confirm('এই item টা permanently delete করবেন?\nআর restore করা যাবে না।')) return;
+  if(!confirm('Permanently delete this item?\nIt cannot be restored.')) return;
   D.deleted = (D.deleted||[]).filter(x => x.id !== id);
   save();
   renderAll();
@@ -1794,7 +2010,6 @@ function renderAll(){
   document.getElementById('b-done').textContent=(D.done||[]).length;
   document.getElementById('b-all').textContent=tot;
   document.getElementById('b-un').textContent=(D.unassigned||[]).length;
-  document.getElementById('b-deleted').textContent=(D.deleted||[]).length;
 const RADIO_ITEMS_LIST = ['epmp cambium integrate radio sm-180','epmp cambium eforce300 with dish','epmp cambium eforce200','nano airfiber 5xhd','nano power beam-m5 620','nano power beam-400','nano rocket ac-lite'];
 let radioCount = 0;
 ENGS.forEach(eng => {
@@ -1817,10 +2032,8 @@ const dvBadge=document.getElementById('b-deleted-view');
 
   const q=sq();
 
-  const ENG_COLORS={rupchan:'#f472b6',amit:'#34d399',tamim:'#fb923c',reserved:'#a78bfa'};
-
   ENGS.forEach(eng=>{
-    const engColor=ENG_COLORS[eng]||'#60a5fa';
+    const engColor=engColorFor(eng);
     const ENG_ICON=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${engColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><circle cx="12" cy="8" r="4" fill="${engColor}22"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M15.5 6.5 C16.5 5 18 5.5 18.5 7"/></svg>`;
     const page = document.getElementById('page-'+eng);
 
@@ -1906,7 +2119,7 @@ const dvBadge=document.getElementById('b-deleted-view');
   let rows=[];
   ENGS.forEach(eng=>(D[eng]||[]).forEach(it=>rows.push({...it,_eng:cap(eng)})));
   (D.done||[]).forEach(it=>rows.push({...it,_eng:cap(it.engineer||'—'),status:'Done'}));
-  (D.unassigned||[]).forEach(it=>rows.push({...it,_eng:'—',status:'Unassigned'}));
+  (D.unassigned||[]).forEach(it=>rows.push({...it,_eng:it._prevEngineer?`${cap(it._prevEngineer)} (deleted user)`:'—',status:'Unassigned'}));
   if(q)rows=rows.filter(r=>r.name.toLowerCase().includes(q)||r.serial.toLowerCase().includes(q));
   document.getElementById('allStats').innerHTML=`
     <div class="stat t" onclick="filterAllTable('total','Total',this)">
@@ -1951,11 +2164,11 @@ const dvBadge=document.getElementById('b-deleted-view');
     if(!un.length)uw.innerHTML=`<div class="empty"><div class="ico">🔓</div><div>No unassigned devices.</div><div class="sub">Add devices from Entry to see them here.</div></div>`;
     else uw.innerHTML=`<table><thead><tr><th>#</th><th>Item Name</th><th>Serial / MAC</th><th>Remarks</th><th>Assign To →</th><th></th></tr></thead><tbody>${un.map((it,i)=>`<tr>
       <td class="tm">${i+1}</td>
-      <td class="tn">${hl(it.name,q)}</td>
+      <td class="tn">${hl(it.name,q)}${it._prevEngineer?`<div style="font-size:9.5px;color:var(--muted);font-weight:600;margin-top:2px;">Previously: ${e(cap(it._prevEngineer))} (deleted user)</div>`:''}</td>
       <td class="ts" style="cursor:pointer;" title="Click to view history" onclick="showSerialHistory('${it.serial}')">${hl(it.serial,q)}</td>
       <td class="tm">${e(it.remarks||'')}</td>
-      <td><div class="ar">${ENGS.map(eng=>`<button class="ab" onclick="authGuard('assign','${eng}',()=>assignPool('${it.id}','${eng}'))">${cap(eng)}</button>`).join('')}</div></td>
-      <td><button class="ab x" onclick="authGuard('delete',null,()=>delPool('${it.id}'))">🗑</button></td>
+      <td><div class="ar">${ENGS.filter(eng=>canAct('assign',eng)).map(eng=>`<button class="ab" onclick="authGuard('assign','${eng}',()=>assignPool('${it.id}','${eng}'))">${cap(eng)}</button>`).join('')}</div></td>
+      <td>${canAct('delete',null)?`<button class="ab x" onclick="authGuard('delete',null,()=>delPool('${it.id}'))">🗑</button>`:''}</td>
     </tr>`).join('')}</tbody></table>`;
   }
 
@@ -1998,7 +2211,7 @@ const dvBadge=document.getElementById('b-deleted-view');
       }
     });
     
-// Done items নিচে, বাকিগুলো উপরে
+// Done items at the bottom, the rest on top
     radioRows.sort((a, b) => {
       const nameA = (a.name||'').toLowerCase();
       const nameB = (b.name||'').toLowerCase();
@@ -2247,7 +2460,7 @@ let _restorePendingEngKey = null;
 let _restorePendingFrom = null;
 
 function restoreDeleted(id){
-  if(_currentUser !== 'admin'){ authError(); return; } // এই line যোগ করো
+  if(_currentUser !== 'admin'){ authError(); return; } // added this line
   if(!D.deleted)return;
   const idx=D.deleted.findIndex(x=>x.id===id);if(idx===-1)return;
   const it=D.deleted[idx];
@@ -2265,11 +2478,10 @@ function restoreDeleted(id){
 
   document.getElementById('restoreDestSub').textContent = `"${it.serial}" (${it.name}) — where should it go?`;
 
-  const ENG_ICON_COLORS={rupchan:'#f472b6',amit:'#34d399',tamim:'#fb923c',reserved:'#a78bfa'};
   const engListEl = document.getElementById('restoreOptEngList');
   engListEl.innerHTML = ENGS.map(en=>{
     const isOriginal = en===engKey;
-    const col = ENG_ICON_COLORS[en]||'#1a4fa0';
+    const col = engColorFor(en);
     return `<div onclick="confirmRestoreDest('eng','${en}')" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;cursor:pointer;border:2px solid ${isOriginal?'rgba(26,79,160,.4)':'rgba(26,79,160,.2)'};background:${isOriginal?'rgba(26,79,160,.12)':'rgba(230,240,255,.35)'};font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;color:var(--text);transition:all .15s;user-select:none;" onmouseover="this.style.borderColor='${col}';this.style.background='rgba(26,79,160,.12)'" onmouseout="this.style.borderColor='${isOriginal?'rgba(26,79,160,.4)':'rgba(26,79,160,.2)'}';this.style.background='${isOriginal?'rgba(26,79,160,.12)':'rgba(230,240,255,.35)'}'">
       <span style="font-size:20px;">👤</span>
       <div>
@@ -2339,11 +2551,10 @@ function openShiftModal(eng,id){
   if(!it){ toast('⚠️ Device not found'); return; }
   _shiftPendingEng=eng; _shiftPendingId=id;
   document.getElementById('shiftDestSub').textContent = `"${it.serial}" (${it.name}) — shift to which engineer?`;
-  const ENG_ICON_COLORS={rupchan:'#f472b6',amit:'#34d399',tamim:'#fb923c',reserved:'#a78bfa'};
   const listEl=document.getElementById('shiftEngList');
   const others=ENGS.filter(en=>en!==eng);
   listEl.innerHTML = others.length ? others.map(en=>{
-    const col=ENG_ICON_COLORS[en]||'#7c3aed';
+    const col=engColorFor(en);
     return `<div onclick="confirmShiftDest('${en}')" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;cursor:pointer;border:2px solid rgba(124,58,237,.25);background:rgba(243,236,255,.5);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;color:var(--text);transition:all .15s;user-select:none;" onmouseover="this.style.borderColor='${col}';this.style.background='rgba(124,58,237,.12)'" onmouseout="this.style.borderColor='rgba(124,58,237,.25)';this.style.background='rgba(243,236,255,.5)'">
       <span style="font-size:20px;">🔀</span>
       <div>
@@ -2446,15 +2657,18 @@ function authGuard(action, engKey, fn){
 
 function switchToSheets(){
   if(_currentUser==='admin'){
-    go('manage');
-    setTimeout(()=>switchManageSub('sheets'),80);
+    openSheetsUrlModal();
   } else {
     toast('📡 Google Sheets sync is available for Admin only.');
   }
 }
 
 // ── GOOGLE SHEETS ─────────────────────────────────────────────────────
-const SCRIPT_CODE = `// ════════════════════════════════════════════════════════════════════
+function getScriptCode(){
+  const engListJs = JSON.stringify(ENGS);
+  const engSheetNames = ENGS.map(cap);
+  const sheetNamesJs = JSON.stringify([...engSheetNames, "Done", "Unassigned", "All Equipment", "Deleted"]);
+  return `// ════════════════════════════════════════════════════════════════════
 // Inventory Dashboard — Real-Time Multi-User Apps Script
 // Deploy as: Web App → Execute as ME → Access: ANYONE (even anonymous)
 // ════════════════════════════════════════════════════════════════════
@@ -2488,7 +2702,7 @@ function doPost(e) {
     var mainHeaders    = ["Sheet","#","Item Name","Serial/MAC","Status","Technician","Client ID","Ticket ID","Engineer","Remarks","Date"];
     var deletedHeaders = ["#","Item Name","Serial/MAC","Was In","Status","Deleted At","Remarks"];
 
-    var sheetNames = ["Rupchan","Amit","Tamim","Reserved","Done","Unassigned","All Equipment","Deleted"];
+    var sheetNames = ${sheetNamesJs};
     sheetNames.forEach(function(name) {
       var sh = ss.getSheetByName(name) || ss.insertSheet(name);
       sh.clearContents();
@@ -2506,7 +2720,7 @@ function doPost(e) {
       sh.getRange(2,1,numRows,numCols).setFontWeight("bold").setHorizontalAlignment("center").setFontSize(11);
     }
 
-    ["rupchan","amit","tamim","reserved"].forEach(function(eng) {
+    ${engListJs}.forEach(function(eng) {
       var sh = ss.getSheetByName(eng.charAt(0).toUpperCase()+eng.slice(1));
       var rows = (data[eng]||[]).map(function(it,i) {
         return [eng,i+1,it.name,it.serial,it.status,it.tech||"",it.client||"",it.ticket||"",eng,it.remarks||"",it.date?new Date(it.date).toLocaleDateString():""];
@@ -2535,7 +2749,7 @@ function doPost(e) {
 
     var allSh = ss.getSheetByName("All Equipment");
     var allRows = [];
-    ["rupchan","amit","tamim","reserved"].forEach(function(eng) {
+    ${engListJs}.forEach(function(eng) {
       (data[eng]||[]).forEach(function(it) {
         allRows.push([eng,allRows.length+1,it.name,it.serial,it.status,it.tech||"",it.client||"",it.ticket||"",eng,it.remarks||"",it.date?new Date(it.date).toLocaleDateString():""]);
       });
@@ -2575,9 +2789,10 @@ function doPost(e) {
     return ContentService.createTextOutput(JSON.stringify({success:false,error:err.message})).setMimeType(ContentService.MimeType.JSON);
   }
 }`;
+}
 
 function copyScript(){
-  navigator.clipboard.writeText(SCRIPT_CODE).then(()=>toast('📋 Script copied!')).catch(()=>toast('⚠️ Please copy manually from the code box'));
+  navigator.clipboard.writeText(getScriptCode()).then(()=>toast('📋 Script copied!')).catch(()=>toast('⚠️ Please copy manually from the code box'));
 }
 
 async function syncToSheetsInline(){
@@ -2621,6 +2836,10 @@ const _sm=document.getElementById('sheetsUrl');if(_savedUrl&&_sm)_sm.value=_save
 
 const _local=JSON.parse(localStorage.getItem('inv7')||'null');
 if(_local){D=_local;_lastVersion=_local._version||0;}
+ensureEngKeys();
+
+renderEngTabs();
+renderEngPages();
 
 setSyncIndicator('idle');
 document.getElementById('tab-manage').style.display='none';
@@ -2632,234 +2851,6 @@ if(_savedUrl){
 
 // ── AUTO PAGE REFRESH (every 10 minutes) ───────────────────────────────
 setInterval(()=>{ location.reload(); }, 10*60*1000);
-// ═══════════════════════════════════════════════════════════════════
-// EXCEL EXPORT SYSTEM
-// ═══════════════════════════════════════════════════════════════════
-
-function openXlsxModal(){
-  if(_currentUser !== 'admin'){ authError(); return; }
-  document.getElementById('xlsxExportModal').style.display='flex';
-}
-function closeXlsxModal(){
-  document.getElementById('xlsxExportModal').style.display='none';
-}
-document.addEventListener('click', function(ev){
-  const m = document.getElementById('xlsxExportModal');
-  if(m && m.style.display==='flex' && ev.target===m) closeXlsxModal();
-});
-
-function xlsxHeaderStyle(){
-  return {
-    font:  { bold:true, color:{ rgb:'FFFFFF' }, sz:11 },
-    fill:  { fgColor:{ rgb:'1A4FA0' } },
-    alignment: { horizontal:'center', vertical:'center', wrapText:true },
-    border: {
-      top:    { style:'thin', color:{ rgb:'FFFFFF' } },
-      bottom: { style:'thin', color:{ rgb:'FFFFFF' } },
-      left:   { style:'thin', color:{ rgb:'FFFFFF' } },
-      right:  { style:'thin', color:{ rgb:'FFFFFF' } }
-    }
-  };
-}
-
-function xlsxCellStyle(even){
-  return {
-    font: { sz:10 },
-    fill: { fgColor:{ rgb: even ? 'D2E4FF' : 'FFFFFF' } },
-    alignment: { horizontal:'center', vertical:'center', wrapText:true },
-    border: {
-      top:    { style:'thin', color:{ rgb:'C5D8F0' } },
-      bottom: { style:'thin', color:{ rgb:'C5D8F0' } },
-      left:   { style:'thin', color:{ rgb:'C5D8F0' } },
-      right:  { style:'thin', color:{ rgb:'C5D8F0' } }
-    }
-  };
-}
-
-function makeSheet(headers, rows, headerColor){
-  const ws = {};
-  const hColor = headerColor || '1A4FA0';
-  const hStyle = {
-    font:  { bold:true, color:{ rgb:'FFFFFF' }, sz:11 },
-    fill:  { fgColor:{ rgb: hColor } },
-    alignment: { horizontal:'center', vertical:'center', wrapText:true },
-    border: {
-      top:    { style:'thin', color:{ rgb:'FFFFFF' } },
-      bottom: { style:'thin', color:{ rgb:'FFFFFF' } },
-      left:   { style:'thin', color:{ rgb:'FFFFFF' } },
-      right:  { style:'thin', color:{ rgb:'FFFFFF' } }
-    }
-  };
-
-  // Headers
-  headers.forEach((h, ci) => {
-    const addr = XLSX.utils.encode_cell({ r:0, c:ci });
-    ws[addr] = { v: h, t:'s', s: hStyle };
-  });
-
-  // Rows
-  rows.forEach((row, ri) => {
-    const even = ri % 2 === 0;
-    const rowStyle = {
-      font: { sz:10 },
-      fill: { fgColor:{ rgb: even ? 'EEF3FC' : 'FFFFFF' } },
-      alignment: { horizontal:'center', vertical:'center', wrapText:true },
-      border: {
-        top:    { style:'thin', color:{ rgb:'C5D8F0' } },
-        bottom: { style:'thin', color:{ rgb:'C5D8F0' } },
-        left:   { style:'thin', color:{ rgb:'C5D8F0' } },
-        right:  { style:'thin', color:{ rgb:'C5D8F0' } }
-      }
-    };
-    row.forEach((val, ci) => {
-      const addr = XLSX.utils.encode_cell({ r: ri+1, c: ci });
-      ws[addr] = { v: val==null?'':val, t:'s', s: rowStyle };
-    });
-  });
-
-  const totalRows = rows.length + 1;
-  const totalCols = headers.length;
-  ws['!ref'] = XLSX.utils.encode_range({ s:{r:0,c:0}, e:{r:totalRows, c:totalCols-1} });
-
-  // Column widths
-  ws['!cols'] = headers.map(h => ({ wch: Math.max(h.length + 4, 14) }));
-
-  // Freeze header row
-  ws['!freeze'] = { xSplit:0, ySplit:1, topLeftCell:'A2', activePane:'bottomLeft' };
-
-  return ws;
-}
-
-function fdXlsx(iso){
-  if(!iso) return '';
-  const d = new Date(iso);
-  return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
-}
-
-function exportXlsx(){
-  const wb = XLSX.utils.book_new();
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
-  const lan = initLAN(getLAN());
-
-  // ── All Equipment ──────────────────────────────────────────
-  if(document.getElementById('xls-all').checked){
-    const headers = ['#','Item Name','Serial / MAC','Assigned To','Status','Client ID','Ticket ID','Technician','Date','Remarks'];
-    const allRows = window._allRows || [];
-    const rows = allRows.map((r,i) => [
-      i+1, r.name||'', r.serial||'', r._eng||'—',
-      r.status||'', r.client||'—', r.ticket||'—',
-      r.tech||'—', fdXlsx(r.date||''), r.remarks||''
-    ]);
-    XLSX.utils.book_append_sheet(wb, makeSheet(headers, rows, '0F2D6E'), 'All Equipment');
-  }
-
-  // ── Engineers ──────────────────────────────────────────────
-  const engColors = { rupchan:'DB2777', amit:'059669', tamim:'EA580C', reserved:'7C3AED' };
-  ['rupchan','amit','tamim','reserved'].forEach(eng => {
-    if(!document.getElementById('xls-'+eng).checked) return;
-    const headers = ['#','Item Name','Serial / MAC','Status','Technician','Date','Remarks'];
-    const items = D[eng] || [];
-    const rows = items.map((it,i) => [
-      i+1, it.name||'', it.serial||'',
-      it.status||'', it.tech||'—',
-      fdXlsx(it.date||''), it.remarks||''
-    ]);
-    const sheetName = eng.charAt(0).toUpperCase()+eng.slice(1);
-    XLSX.utils.book_append_sheet(wb, makeSheet(headers, rows, engColors[eng]||'1A4FA0'), sheetName);
-  });
-
-  // ── Done List ──────────────────────────────────────────────
-  if(document.getElementById('xls-done').checked){
-    const headers = ['#','Item Name','Serial / MAC','Client ID','Ticket ID','Technician','Engineer','Date','Remarks'];
-    const items = D.done || [];
-    const rows = items.map((it,i) => [
-      i+1, it.name||'', it.serial||'',
-      it.client||'', it.ticket||'',
-      it.tech||'—', it.engineer||'—',
-      fdXlsx(it.date||''), it.remarks||''
-    ]);
-    XLSX.utils.book_append_sheet(wb, makeSheet(headers, rows, '0077B6'), 'Done List');
-  }
-
-  // ── Unassigned ─────────────────────────────────────────────
-  if(document.getElementById('xls-unassigned').checked){
-    const headers = ['#','Item Name','Serial / MAC','Remarks'];
-    const items = D.unassigned || [];
-    const rows = items.map((it,i) => [
-      i+1, it.name||'', it.serial||'', it.remarks||''
-    ]);
-    XLSX.utils.book_append_sheet(wb, makeSheet(headers, rows, '1E5BB8'), 'Unassigned');
-  }
-
-  // ── LAN Equipment ──────────────────────────────────────────
-  if(document.getElementById('xls-lan').checked){
-    // UTP
-    const utpHeaders = ['#','Type','Quantity','Unit','Client ID','Ticket ID','Technician','By','Remarks','Date'];
-    const utpRows = [];
-    utpRows.push([1,'📦 Current Stock', lan.utp?lan.utp.stock:0,'Feet','','','','','Total in store','']);
-    (lan.utp&&lan.utp.history||[]).slice().reverse().forEach((h,i)=>{
-      utpRows.push([i+2, h.type==='IN'?'📥 IN':'↗ OUT', h.qty,'Feet',
-        h.client||'', h.ticket||'', h.tech||'',
-        h.by?h.by.charAt(0).toUpperCase()+h.by.slice(1):'—',
-        h.remarks||'', fdXlsx(h.date||'')]);
-    });
-    XLSX.utils.book_append_sheet(wb, makeSheet(utpHeaders, utpRows, '0A5C36'), 'LAN - UTP Cable');
-
-    // RJ45
-    const rjHeaders = ['#','Type','Quantity','Unit','Client ID','Ticket ID','Technician','By','Remarks','Date'];
-    const rjRows = [];
-    rjRows.push([1,'📦 Current Stock', lan.rj45?lan.rj45.stock:0,'Pieces','','','','','Total in store','']);
-    (lan.rj45&&lan.rj45.history||[]).slice().reverse().forEach((h,i)=>{
-      rjRows.push([i+2, h.type==='IN'?'📥 IN':'↗ OUT', h.qty,'Pieces',
-        h.client||'', h.ticket||'', h.tech||'',
-        h.by?h.by.charAt(0).toUpperCase()+h.by.slice(1):'—',
-        h.remarks||'', fdXlsx(h.date||'')]);
-    });
-    XLSX.utils.book_append_sheet(wb, makeSheet(rjHeaders, rjRows, 'B45309'), 'LAN - RJ45');
-
-    // Others
-    const othHeaders = ['#','Item Name','Type','Quantity','Unit','Client ID','Ticket ID','Technician','By','Remarks','Date'];
-    const othRows = [];
-    let rowNum = 1;
-    LAN_OTHERS_ITEMS.forEach(item => {
-      const d = (lan.others&&lan.others[item]) || {stock:0, unit:'Pieces', history:[]};
-      othRows.push([rowNum++,'📦 '+item+' (Current Stock)', '', d.stock, d.unit||'Pieces','','','','','Total in store','']);
-      (d.history||[]).slice().reverse().forEach(h=>{
-        othRows.push([rowNum++, item, h.type==='IN'?'📥 IN':'↗ OUT', h.qty, h.unit||d.unit||'Pieces',
-          h.client||'', h.ticket||'', h.tech||'',
-          h.by?h.by.charAt(0).toUpperCase()+h.by.slice(1):'—',
-          h.remarks||'', fdXlsx(h.date||'')]);
-      });
-    });
-    XLSX.utils.book_append_sheet(wb, makeSheet(othHeaders, othRows, '7C3AED'), 'LAN - Others');
-  }
-
-  // ── Deleted Items ──────────────────────────────────────────
-  if(document.getElementById('xls-deleted').checked){
-    const headers = ['#','Item Name','Serial / MAC','Was In','Status','Deleted By','Reason','Deleted On'];
-    const items = D.deleted || [];
-    const rows = items.map((it,i) => [
-      i+1, it.name||'', it.serial||'',
-      it._deletedFrom||'—', it.status||'—',
-      it._deletedBy ? it._deletedBy.charAt(0).toUpperCase()+it._deletedBy.slice(1) : '—',
-      it._deleteReason||'—',
-      fdXlsx(it._deletedAt||'')
-    ]);
-    XLSX.utils.book_append_sheet(wb, makeSheet(headers, rows, 'B91C1C'), 'Deleted Items');
-  }
-
-  // ── Download ───────────────────────────────────────────────
-  if(wb.SheetNames.length === 0){
-    toast('⚠️ কমপক্ষে একটি sheet সিলেক্ট করুন!');
-    return;
-  }
-
-  const fileName = `Inventory_${dateStr.replace(/ /g,'_')}.xlsx`;
-  XLSX.writeFile(wb, fileName, { bookType:'xlsx', type:'binary', cellStyles:true });
-  closeXlsxModal();
-  toast('📥 Excel file downloaded!');
-}
 </script>
 
 <!-- LOGIN OVERLAY -->
@@ -2955,8 +2946,8 @@ let _currentUser = null;
 })();
 
 function getPasswords(){
-  // Firebase এ passwords আলাদা node এ থাকবে
-  // এখন localStorage fallback রাখো
+  // Passwords will be stored in a separate node in Firebase
+  // Keep a localStorage fallback for now
   try{
     const saved = localStorage.getItem('inv_passwords');
     if(saved) return {...DEFAULT_PASSWORDS,...JSON.parse(saved)};
@@ -2966,7 +2957,7 @@ function getPasswords(){
 
 function savePasswords(pwObj){
   localStorage.setItem('inv_passwords', JSON.stringify(pwObj));
-  // Firebase এও save করো
+  // Also save to Firebase
   if(window._firebaseReady && window._firebaseDB){
     window._firebaseSet(window._firebaseRef(window._firebaseDB, 'passwords'), pwObj);
   }
@@ -3022,12 +3013,12 @@ function applyRoleUI(){
     badge.querySelector('.ub-role').textContent = u==='admin'?'Admin':'Engineer';
   }
   const manageTab = document.getElementById('tab-manage');
-  if(manageTab) manageTab.style.display = (u==='admin'?'':'none');
-  if(u!=='admin' && document.querySelector('#page-manage.active')){go('all');}
+  if(manageTab) manageTab.style.display = (hasEntryAccess(u)?'':'none');
+  if(document.querySelector('#page-manage.active')){
+    if(hasEntryAccess(u)) applyManageSubtabVisibility(); else go('all');
+  }
   const pdfBtn = document.getElementById('pdfBtnWrap');
   if(pdfBtn) pdfBtn.style.display = (u==='admin'?'':'none');
-const xlsxBtn = document.getElementById('xlsxBtnWrap');
-if(xlsxBtn) xlsxBtn.style.display = (u==='admin' ? '' : 'none');
   renderAll();
 }
 
@@ -3136,7 +3127,7 @@ function saveLAN(lan){
   D._version = Date.now();
   localStorage.setItem('inv7', JSON.stringify(D));
 
-  // Firebase এ LAN data আলাদাভাবে save
+  // Save LAN data separately in Firebase
   if(window._firebaseReady && window._firebaseDB){
     window._firebaseSet(window._firebaseRef(window._firebaseDB, 'lan_data'), lan)
       .catch(err => console.error('LAN Firebase error:', err));
@@ -3152,7 +3143,7 @@ function initLAN(lan){
   if(!lan.others) lan.others={};
   LAN_OTHERS_ITEMS.forEach(it=>{
     if(!lan.others[it]) lan.others[it]={stock:0,unit:'Pieces',history:[]};
-    if(!lan.others[it].history) lan.others[it].history=[];  // ← এই line add
+    if(!lan.others[it].history) lan.others[it].history=[];  // ← added this line
   });
   return lan;
 }
@@ -3406,7 +3397,7 @@ function confirmLanOut(){
   toast('↗ '+qty+' '+unit+' provided to '+client);
 }
 
-/* ── renderLAN: kept for backwards-compat (PDF/XLSX callers) ──── */
+/* ── renderLAN: kept for backwards-compat (PDF callers) ──── */
 function renderLAN(){
   onLanItemChange();
 }
@@ -3566,7 +3557,7 @@ function confirmLanOthersEntry(){
     const lan = initLAN(getLAN());
     if(!lan.others) lan.others = {};
     if(!lan.others[item]) lan.others[item] = {stock:0, unit:'Pieces', history:[]};
-if(!lan.others[item].history) lan.others[item].history = [];  // ← এই line add করো
+if(!lan.others[item].history) lan.others[item].history = [];  // ← add this line
     lan.others[item].stock += qty;
     lan.others[item].unit = unit;
     lan.others[item].history.push({
@@ -3712,7 +3703,20 @@ function closeLanHistModal(){ document.getElementById('lanHistModal').classList.
 
 function openPdfModal(){
   if(_currentUser !== 'admin'){ authError(); return; }
+  renderPdfEngCards();
   document.getElementById('pdfExportModal').style.display='flex';
+}
+function renderPdfEngCards(){
+  const wrap=document.getElementById('pdfEngCards');
+  if(!wrap) return;
+  wrap.innerHTML = ENGS.map(eng=>{
+    const color=engColorFor(eng);
+    return `<div class="pdf-opt-card" onclick="triggerPDF('${eng}')" style="cursor:pointer;border:2px solid ${color}40;border-radius:13px;padding:16px 14px;background:${color}14;transition:all .16s;user-select:none;" onmouseover="this.style.borderColor='${color}';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='${color}40';this.style.transform=''">
+      <div style="font-size:24px;margin-bottom:8px;">👤</div>
+      <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:${color};">${e(cap(eng))}</div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5px;color:#5278a8;margin-top:3px;font-weight:500;">${e(cap(eng))}'s assigned devices</div>
+    </div>`;
+  }).join('');
 }
 function closePdfModal(){
   document.getElementById('pdfExportModal').style.display='none';
@@ -3730,7 +3734,7 @@ function triggerPDF(type){
     else if(type==='unassigned') pdfUnassigned();
     else if(type==='lan') pdfLAN();
     else if(type==='full') pdfFull();
-    else if(['rupchan','amit','tamim','reserved'].includes(type)) pdfEngineer(type);
+    else if(ENGS.includes(type)) pdfEngineer(type);
   }, 120);
 }
 
@@ -4037,7 +4041,7 @@ function pdfFull(){
   </tr>`).join('') || `<tr><td colspan="9" class="empty-note">No data</td></tr>`;
 
   // Engineers sections
-  const engSections = ['rupchan','amit','tamim','reserved'].map(eng=>{
+  const engSections = ENGS.map(eng=>{
     const items = D[eng]||[];
     const engName = eng.charAt(0).toUpperCase()+eng.slice(1);
     const rows = items.map((it,i)=>`<tr>
@@ -4383,33 +4387,8 @@ function pdfFull(){
           <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5px;color:#5278a8;margin-top:3px;font-weight:500;">Completed jobs with client & ticket info</div>
         </div>
 
-        <!-- Rupchan -->
-        <div class="pdf-opt-card" onclick="triggerPDF('rupchan')" style="cursor:pointer;border:2px solid rgba(244,114,182,.25);border-radius:13px;padding:16px 14px;background:rgba(253,242,248,.6);transition:all .16s;user-select:none;" onmouseover="this.style.borderColor='#f472b6';this.style.background='rgba(251,207,232,.7)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(244,114,182,.25)';this.style.background='rgba(253,242,248,.6)';this.style.transform=''">
-          <div style="font-size:24px;margin-bottom:8px;">👤</div>
-          <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#db2777;">Rupchan</div>
-          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5px;color:#5278a8;margin-top:3px;font-weight:500;">Rupchan's assigned devices</div>
-        </div>
-
-        <!-- Amit -->
-        <div class="pdf-opt-card" onclick="triggerPDF('amit')" style="cursor:pointer;border:2px solid rgba(52,211,153,.25);border-radius:13px;padding:16px 14px;background:rgba(240,253,244,.6);transition:all .16s;user-select:none;" onmouseover="this.style.borderColor='#34d399';this.style.background='rgba(209,250,229,.7)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(52,211,153,.25)';this.style.background='rgba(240,253,244,.6)';this.style.transform=''">
-          <div style="font-size:24px;margin-bottom:8px;">👤</div>
-          <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#059669;">Amit</div>
-          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5px;color:#5278a8;margin-top:3px;font-weight:500;">Amit's assigned devices</div>
-        </div>
-
-        <!-- Tamim -->
-        <div class="pdf-opt-card" onclick="triggerPDF('tamim')" style="cursor:pointer;border:2px solid rgba(251,146,60,.25);border-radius:13px;padding:16px 14px;background:rgba(255,247,237,.6);transition:all .16s;user-select:none;" onmouseover="this.style.borderColor='#fb923c';this.style.background='rgba(254,215,170,.7)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(251,146,60,.25)';this.style.background='rgba(255,247,237,.6)';this.style.transform=''">
-          <div style="font-size:24px;margin-bottom:8px;">👤</div>
-          <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#ea580c;">Tamim</div>
-          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5px;color:#5278a8;margin-top:3px;font-weight:500;">Tamim's assigned devices</div>
-        </div>
-
-        <!-- Reserved -->
-        <div class="pdf-opt-card" onclick="triggerPDF('reserved')" style="cursor:pointer;border:2px solid rgba(167,139,250,.25);border-radius:13px;padding:16px 14px;background:rgba(245,243,255,.6);transition:all .16s;user-select:none;" onmouseover="this.style.borderColor='#a78bfa';this.style.background='rgba(221,214,254,.7)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(167,139,250,.25)';this.style.background='rgba(245,243,255,.6)';this.style.transform=''">
-          <div style="font-size:24px;margin-bottom:8px;">👤</div>
-          <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#7c3aed;">Reserved</div>
-          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5px;color:#5278a8;margin-top:3px;font-weight:500;">Reserved's assigned devices</div>
-        </div>
+        <!-- Engineers — rendered dynamically (renderPdfEngCards) -->
+        <div id="pdfEngCards" style="display:contents;"></div>
 
         <!-- Unassigned -->
         <div class="pdf-opt-card" onclick="triggerPDF('unassigned')" style="cursor:pointer;border:2px solid rgba(91,141,217,.22);border-radius:13px;padding:16px 14px;background:rgba(238,243,252,.6);transition:all .16s;user-select:none;" onmouseover="this.style.borderColor='#5b8dd9';this.style.background='rgba(219,229,248,.7)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(91,141,217,.22)';this.style.background='rgba(238,243,252,.6)';this.style.transform=''">
@@ -4440,197 +4419,8 @@ function pdfFull(){
 
       <div style="margin-top:16px;padding:11px 14px;background:rgba(26,79,160,.06);border-radius:10px;border:1px solid rgba(91,141,217,.25);">
         <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;color:#5278a8;font-weight:600;line-height:1.6;">
-          💡 PDF খোলার পর <strong>Ctrl+P</strong> চাপুন → <strong>"Save as PDF"</strong> সিলেক্ট করুন → <strong>"More settings"</strong> এ গিয়ে Background graphics চালু রাখুন
+          💡 After opening the PDF, press <strong>Ctrl+P</strong> → select <strong>"Save as PDF"</strong> → go to <strong>"More settings"</strong> and keep Background graphics enabled
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- EXCEL EXPORT MODAL -->
-<div id="xlsxExportModal" style="display:none;position:fixed;inset:0;z-index:6000;
-     background:rgba(10,20,55,.65);backdrop-filter:blur(10px);
-     align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:20px;padding:0;width:520px;max-width:95vw;
-              max-height:90vh;overflow:hidden;
-              box-shadow:0 28px 80px rgba(10,20,60,.35);animation:pop .18s ease both;">
-    <div style="background:linear-gradient(135deg,#059669 0%,#0077b6 100%);
-                padding:22px 26px 18px;position:relative;">
-      <div style="font-family:'Merriweather',serif;font-size:17px;font-weight:700;
-                  color:#fff;letter-spacing:.3px;">📊 Excel Export</div>
-      <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;
-                  color:rgba(200,255,230,.75);margin-top:4px;font-weight:500;">
-        কোন sheet গুলো export করবেন সিলেক্ট করুন
-      </div>
-      <button onclick="closeXlsxModal()"
-        style="position:absolute;right:18px;top:18px;background:rgba(255,255,255,.15);
-               border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:8px;
-               width:30px;height:30px;cursor:pointer;font-size:14px;font-weight:700;
-               display:flex;align-items:center;justify-content:center;transition:all .15s;"
-        onmouseover="this.style.background='rgba(255,255,255,.28)'"
-        onmouseout="this.style.background='rgba(255,255,255,.15)'">✕</button>
-    </div>
-
-    <div style="padding:22px 24px;overflow-y:auto;max-height:calc(90vh - 120px);">
-      <div style="font-family:'Merriweather',serif;font-size:10px;font-weight:700;
-                  color:#5278a8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;">
-        Sheet সিলেক্ট করুন
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:9px;" id="xlsxCheckList">
-
-        <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;
-               border-radius:11px;cursor:pointer;border:2px solid rgba(26,79,160,.18);
-               background:rgba(240,245,255,.6);transition:all .15s;user-select:none;"
-               onmouseover="this.style.borderColor='#1a4fa0';this.style.background='rgba(220,233,255,.8)'"
-               onmouseout="this.style.borderColor='rgba(26,79,160,.18)';this.style.background='rgba(240,245,255,.6)'">
-          <input type="checkbox" id="xls-all" checked
-                 style="width:16px;height:16px;accent-color:#1a4fa0;cursor:pointer;">
-          <div>
-            <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#1a4fa0;">
-              🗂️ All Equipment
-            </div>
-            <div style="font-size:10.5px;color:#5278a8;margin-top:2px;">সব equipment একসাথে</div>
-          </div>
-        </label>
-
-        <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;
-               border-radius:11px;cursor:pointer;border:2px solid rgba(244,114,182,.2);
-               background:rgba(253,242,248,.6);transition:all .15s;user-select:none;"
-               onmouseover="this.style.borderColor='#f472b6';this.style.background='rgba(251,207,232,.7)'"
-               onmouseout="this.style.borderColor='rgba(244,114,182,.2)';this.style.background='rgba(253,242,248,.6)'">
-          <input type="checkbox" id="xls-rupchan" checked
-                 style="width:16px;height:16px;accent-color:#db2777;cursor:pointer;">
-          <div>
-            <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#db2777;">
-              👤 Rupchan
-            </div>
-            <div style="font-size:10.5px;color:#5278a8;margin-top:2px;">Rupchan এর devices</div>
-          </div>
-        </label>
-
-        <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;
-               border-radius:11px;cursor:pointer;border:2px solid rgba(52,211,153,.2);
-               background:rgba(240,253,244,.6);transition:all .15s;user-select:none;"
-               onmouseover="this.style.borderColor='#34d399';this.style.background='rgba(209,250,229,.7)'"
-               onmouseout="this.style.borderColor='rgba(52,211,153,.2)';this.style.background='rgba(240,253,244,.6)'">
-          <input type="checkbox" id="xls-amit" checked
-                 style="width:16px;height:16px;accent-color:#059669;cursor:pointer;">
-          <div>
-            <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#059669;">
-              👤 Amit
-            </div>
-            <div style="font-size:10.5px;color:#5278a8;margin-top:2px;">Amit এর devices</div>
-          </div>
-        </label>
-
-        <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;
-               border-radius:11px;cursor:pointer;border:2px solid rgba(251,146,60,.2);
-               background:rgba(255,247,237,.6);transition:all .15s;user-select:none;"
-               onmouseover="this.style.borderColor='#fb923c';this.style.background='rgba(254,215,170,.7)'"
-               onmouseout="this.style.borderColor='rgba(251,146,60,.2)';this.style.background='rgba(255,247,237,.6)'">
-          <input type="checkbox" id="xls-tamim" checked
-                 style="width:16px;height:16px;accent-color:#ea580c;cursor:pointer;">
-          <div>
-            <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#ea580c;">
-              👤 Tamim
-            </div>
-            <div style="font-size:10.5px;color:#5278a8;margin-top:2px;">Tamim এর devices</div>
-          </div>
-        </label>
-
-        <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;
-               border-radius:11px;cursor:pointer;border:2px solid rgba(167,139,250,.2);
-               background:rgba(245,243,255,.6);transition:all .15s;user-select:none;"
-               onmouseover="this.style.borderColor='#a78bfa';this.style.background='rgba(221,214,254,.7)'"
-               onmouseout="this.style.borderColor='rgba(167,139,250,.2)';this.style.background='rgba(245,243,255,.6)'">
-          <input type="checkbox" id="xls-reserved" checked
-                 style="width:16px;height:16px;accent-color:#7c3aed;cursor:pointer;">
-          <div>
-            <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#7c3aed;">
-              👤 Reserved
-            </div>
-            <div style="font-size:10.5px;color:#5278a8;margin-top:2px;">Reserved এর devices</div>
-          </div>
-        </label>
-
-        <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;
-               border-radius:11px;cursor:pointer;border:2px solid rgba(0,119,182,.2);
-               background:rgba(236,252,243,.6);transition:all .15s;user-select:none;"
-               onmouseover="this.style.borderColor='#0077b6';this.style.background='rgba(209,250,229,.7)'"
-               onmouseout="this.style.borderColor='rgba(0,119,182,.2)';this.style.background='rgba(236,252,243,.6)'">
-          <input type="checkbox" id="xls-done" checked
-                 style="width:16px;height:16px;accent-color:#0077b6;cursor:pointer;">
-          <div>
-            <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#0077b6;">
-              ☑️ Done List
-            </div>
-            <div style="font-size:10.5px;color:#5278a8;margin-top:2px;">Completed jobs</div>
-          </div>
-        </label>
-
-        <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;
-               border-radius:11px;cursor:pointer;border:2px solid rgba(91,141,217,.2);
-               background:rgba(238,243,252,.6);transition:all .15s;user-select:none;"
-               onmouseover="this.style.borderColor='#5b8dd9';this.style.background='rgba(219,229,248,.7)'"
-               onmouseout="this.style.borderColor='rgba(91,141,217,.2)';this.style.background='rgba(238,243,252,.6)'">
-          <input type="checkbox" id="xls-unassigned" checked
-                 style="width:16px;height:16px;accent-color:#1e5bb8;cursor:pointer;">
-          <div>
-            <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#1e5bb8;">
-              🔓 Unassigned
-            </div>
-            <div style="font-size:10.5px;color:#5278a8;margin-top:2px;">Unassigned devices</div>
-          </div>
-        </label>
-
-        <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;
-               border-radius:11px;cursor:pointer;border:2px solid rgba(5,150,105,.2);
-               background:rgba(236,253,245,.6);transition:all .15s;user-select:none;"
-               onmouseover="this.style.borderColor='#059669';this.style.background='rgba(209,250,229,.7)'"
-               onmouseout="this.style.borderColor='rgba(5,150,105,.2)';this.style.background='rgba(236,253,245,.6)'">
-          <input type="checkbox" id="xls-lan" checked
-                 style="width:16px;height:16px;accent-color:#059669;cursor:pointer;">
-          <div>
-            <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#059669;">
-              🔌 LAN Equipment
-            </div>
-            <div style="font-size:10.5px;color:#5278a8;margin-top:2px;">UTP, RJ-45 & Others stock + history</div>
-          </div>
-        </label>
-
-        <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;
-               border-radius:11px;cursor:pointer;border:2px solid rgba(185,28,28,.2);
-               background:rgba(254,242,242,.6);transition:all .15s;user-select:none;"
-               onmouseover="this.style.borderColor='#b91c1c';this.style.background='rgba(254,226,226,.7)'"
-               onmouseout="this.style.borderColor='rgba(185,28,28,.2)';this.style.background='rgba(254,242,242,.6)'">
-          <input type="checkbox" id="xls-deleted" checked
-                 style="width:16px;height:16px;accent-color:#b91c1c;cursor:pointer;">
-          <div>
-            <div style="font-family:'Merriweather',serif;font-size:13px;font-weight:700;color:#b91c1c;">
-              🗑️ Deleted Items
-            </div>
-            <div style="font-size:10.5px;color:#5278a8;margin-top:2px;">সব deleted items with reason</div>
-          </div>
-        </label>
-
-      </div>
-
-      <div style="display:flex;gap:10px;margin-top:18px;">
-        <button onclick="closeXlsxModal()"
-          style="flex:1;padding:12px;background:rgba(221,232,248,.9);color:var(--text2);
-                 border:1px solid var(--border);border-radius:10px;font-family:'outfit',sans-serif;
-                 font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;">
-          Cancel
-        </button>
-        <button onclick="exportXlsx()"
-          style="flex:2;padding:12px;background:linear-gradient(135deg,#059669,#0077b6);
-                 color:#fff;border:none;border-radius:10px;font-family:'outfit',sans-serif;
-                 font-size:13px;font-weight:700;cursor:pointer;
-                 box-shadow:0 4px 16px rgba(5,150,105,.35);transition:all .2s;"
-          onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 22px rgba(5,150,105,.5)'"
-          onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(5,150,105,.35)'">
-          📥 Download Excel
-        </button>
       </div>
     </div>
   </div>
