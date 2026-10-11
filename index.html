@@ -935,6 +935,7 @@ tr.provided-highlight:hover{background:rgba(239,108,0,.30) !important;}
 .lan-add-popup-cancel{padding:8px 12px;border:1.5px solid rgba(91,141,217,.3);border-radius:7px;background:transparent;color:var(--muted);font-family:'outfit',sans-serif;font-size:11.5px;font-weight:700;cursor:pointer;transition:all .15s;}
 .lan-add-popup-cancel:hover{border-color:var(--accent);color:var(--accent);}
 
+td.ts{user-select:none;-webkit-user-select:none;}
 </style>
 </head>
 <body>
@@ -1743,6 +1744,11 @@ function findItemBySerial(serial){
   if(it)return {...it,status:it.status||'Deleted',engineer:it._deletedFrom||''};
   return null;
 }
+function copySerial(txt){
+  const done=()=>toast('📋 Copied: '+txt);
+  const fb=()=>{try{const t=document.createElement('textarea');t.value=txt;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);done();}catch(e){toast('⚠️ Copy failed');}};
+  if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(txt).then(done).catch(fb);else fb();
+}
 function showSerialHistory(serial){
   if(!D.serialLog)D.serialLog={};
   const log=(D.serialLog[serial]||[]).slice().sort((a,b)=>new Date(a.date)-new Date(b.date));
@@ -2053,7 +2059,7 @@ const dvBadge=document.getElementById('b-deleted-view');
       <tbody>${items.map((it,i)=>`<tr data-status="${it.status}" class="${it.status==='Provided'?'provided-highlight':''}" onclick="toggleProvidedHighlight(this)">
         <td class="tm">${i+1}</td>
         <td class="tn">${hl(it.name,engQ)}</td>
-        <td class="ts" style="font-weight:700;cursor:pointer;" title="Click to view history" onclick="event.stopPropagation();showSerialHistory('${it.serial}')">${hl(it.serial,engQ)}</td>
+        <td class="ts" style="font-weight:700;cursor:pointer;" title="Click = copy • Double-click = history" onclick="event.stopPropagation();copySerial('${it.serial}')" ondblclick="event.stopPropagation();showSerialHistory('${it.serial}')">${hl(it.serial,engQ)}</td>
         <td><span class="status ${it.status==='IN-Hand'?'si':it.status==='Done'?'sd':'sp'}">${it.status}</span></td>
         <td class="tm">${e(it.tech||'—')}</td>
         <td class="tt">${fd(it.date)}</td>
@@ -2105,7 +2111,7 @@ const dvBadge=document.getElementById('b-deleted-view');
   else dw.innerHTML=`<table><thead><tr><th>#</th><th>Item Name</th><th>Serial / MAC</th><th>Client ID</th><th>Ticket ID</th><th>Technician</th><th>Engineer</th><th>Date</th><th>Remarks</th><th></th></tr></thead><tbody>${di.map((it,i)=>`<tr>
     <td class="tm">${i+1}</td>
     <td class="tn">${hl(it.name,q)}</td>
-    <td class="ts" style="cursor:pointer;" title="Click to view history" onclick="showSerialHistory('${it.serial}')">${hl(it.serial,q)}</td>
+    <td class="ts" style="cursor:pointer;" title="Click = copy • Double-click = history" onclick="event.stopPropagation();copySerial('${it.serial}')" ondblclick="event.stopPropagation();showSerialHistory('${it.serial}')">${hl(it.serial,q)}</td>
     <td class="tm">${e(it.client||'')}</td>
     <td class="tm" style="white-space:nowrap;">${e(it.ticket||'')}</td>
     <td class="tm">${e(it.tech||'')}</td>
@@ -2165,7 +2171,7 @@ const dvBadge=document.getElementById('b-deleted-view');
     else uw.innerHTML=`<table><thead><tr><th>#</th><th>Item Name</th><th>Serial / MAC</th><th>Remarks</th><th>Assign To →</th><th></th></tr></thead><tbody>${un.map((it,i)=>`<tr>
       <td class="tm">${i+1}</td>
       <td class="tn">${hl(it.name,q)}${it._prevEngineer?`<div style="font-size:9.5px;color:var(--muted);font-weight:600;margin-top:2px;">Previously: ${e(cap(it._prevEngineer))} (deleted user)</div>`:''}</td>
-      <td class="ts" style="cursor:pointer;" title="Click to view history" onclick="showSerialHistory('${it.serial}')">${hl(it.serial,q)}</td>
+      <td class="ts" style="cursor:pointer;" title="Click = copy • Double-click = history" onclick="event.stopPropagation();copySerial('${it.serial}')" ondblclick="event.stopPropagation();showSerialHistory('${it.serial}')">${hl(it.serial,q)}</td>
       <td class="tm">${e(it.remarks||'')}</td>
       <td><div class="ar">${ENGS.filter(eng=>canAct('assign',eng)).map(eng=>`<button class="ab" onclick="authGuard('assign','${eng}',()=>assignPool('${it.id}','${eng}'))">${cap(eng)}</button>`).join('')}</div></td>
       <td>${canAct('delete',null)?`<button class="ab x" onclick="authGuard('delete',null,()=>delPool('${it.id}'))">🗑</button>`:''}</td>
@@ -2183,7 +2189,7 @@ const dvBadge=document.getElementById('b-deleted-view');
     else delW.innerHTML=`<table style="min-width:100%"><thead><tr><th>#</th><th>Item Name</th><th>Serial / MAC</th><th>Was In</th><th>Status</th><th>Deleted By</th><th>Reason</th><th>Deleted On</th><th>Restore</th>${_currentUser==='admin'?'<th>Del</th>':''}</tr></thead><tbody>${del.map((it,i)=>`<tr>
       <td class="tm">${i+1}</td>
       <td class="tn">${hl(it.name,q)}</td>
-      <td class="ts" style="cursor:pointer;" title="Click to view history" onclick="showSerialHistory('${it.serial}')">${hl(it.serial,q)}</td>
+      <td class="ts" style="cursor:pointer;" title="Click = copy • Double-click = history" onclick="event.stopPropagation();copySerial('${it.serial}')" ondblclick="event.stopPropagation();showSerialHistory('${it.serial}')">${hl(it.serial,q)}</td>
       <td><span class="tag-e">${e(it._deletedFrom||'—')}</span></td>
       <td><span class="status ${it.status==='IN-Hand'?'si':it.status==='Done'?'sd':it.status==='Provided'?'sp':'si'}">${it.status||'—'}</span></td>
       <td class="tm" style="font-weight:700;color:var(--accent2);">${e(it._deletedBy?cap(it._deletedBy):'—')}</td>
@@ -2258,7 +2264,7 @@ const dvBadge=document.getElementById('b-deleted-view');
             <tbody>${radioRows.map((r,i) => `<tr>
               <td class="tm">${i+1}</td>
               <td class="tn">${e(r.name)}</td>
-              <td class="ts" style="cursor:pointer;" title="Click to view history" onclick="showSerialHistory('${r.serial}')">${e(r.serial)}</td>
+              <td class="ts" style="cursor:pointer;" title="Click = copy • Double-click = history" onclick="event.stopPropagation();copySerial('${r.serial}')" ondblclick="event.stopPropagation();showSerialHistory('${r.serial}')">${e(r.serial)}</td>
               <td><span class="tag-e" style="color:${ENG_COLORS[r._eng?.toLowerCase()]||'var(--accent2)'};">${e(r._eng)}</span></td>
               <td><span class="status ${r.status==='IN-Hand'?'si':r.status==='Done'?'sd':r.status==='Provided'?'sp':'si'}">${r.status==='IN-Hand'?'In Hand':r.status||'Unassigned'}</span></td>
               <td class="tm">${e(r.tech||'—')}</td>
@@ -2281,7 +2287,7 @@ function renderAllTable(rows){
   <tbody>${rows.map((r,i)=>`<tr>
     <td class="tm">${i+1}</td>
     <td class="tn">${hl(r.name,q)}</td>
-    <td class="ts" style="cursor:pointer;" title="Click to view history" onclick="showSerialHistory('${r.serial}')">${hl(r.serial,q)}</td>
+    <td class="ts" style="cursor:pointer;" title="Click = copy • Double-click = history" onclick="event.stopPropagation();copySerial('${r.serial}')" ondblclick="event.stopPropagation();showSerialHistory('${r.serial}')">${hl(r.serial,q)}</td>
     <td><span class="tag-e" style="font-size:10px;padding:3px 9px;font-weight:800;">${e(r._eng)}</span></td>
     <td><span class="status ${r.status==='IN-Hand'?'si':r.status==='Done'?'sd':r.status==='Provided'?'sp':'si'}">${r.status==='IN-Hand'?'In Hand':r.status}</span></td>
     <td class="tm">${e(r.client||'—')}</td>
@@ -2612,7 +2618,7 @@ function renderDeletedViewPage(){
       html += `<tr>
         <td class="tm">${i+1}</td>
         <td class="tn">${e(it.name)}</td>
-        <td class="ts" style="cursor:pointer;" title="Click to view history" onclick="showSerialHistory('${it.serial}')">${e(it.serial)}</td>
+        <td class="ts" style="cursor:pointer;" title="Click = copy • Double-click = history" onclick="event.stopPropagation();copySerial('${it.serial}')" ondblclick="event.stopPropagation();showSerialHistory('${it.serial}')">${e(it.serial)}</td>
         <td><span class="tag-e">${e(it._deletedFrom||'—')}</span></td>
         <td><span class="status ${it.status==='IN-Hand'?'si':it.status==='Done'?'sd':it.status==='Provided'?'sp':'si'}">${it.status||'—'}</span></td>
         <td class="tm" style="font-weight:700;color:var(--accent2);">${e(it._deletedBy?cap(it._deletedBy):'—')}</td>
